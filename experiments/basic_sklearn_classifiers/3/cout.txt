@@ -1,0 +1,89 @@
+INFO - basic_sklearn_classifiers - Running command 'main'
+INFO - basic_sklearn_classifiers - Started run with ID "3"
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'n_neighbors': 8, 'weights': 'uniform'}  with cv scores [0.79796599 0.79129989 0.79394924 0.79531664 0.7934188 ]  mean: 0.7943901105683859
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'n_neighbors': 8, 'weights': 'distance'}  with cv scores [0.79155628 0.78651397 0.79010341 0.79659858 0.78641026]  mean: 0.7902364996198002
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'n_neighbors': 10, 'weights': 'uniform'}  with cv scores [0.80078626 0.79232544 0.79600034 0.79719682 0.7934188 ]  mean: 0.7959455331818377
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'n_neighbors': 10, 'weights': 'distance'}  with cv scores [0.79548757 0.78959063 0.7947184  0.79745321 0.79017094]  mean: 0.7934841495759366
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'n_neighbors': 20, 'weights': 'uniform'}  with cv scores [0.79924793 0.79189813 0.79591488 0.79488933 0.78846154]  mean: 0.7940823598246041
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'n_neighbors': 20, 'weights': 'distance'}  with cv scores [0.80352107 0.79454747 0.80104265 0.80035894 0.79324786]  mean: 0.7985435988011836
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'n_neighbors': 50, 'weights': 'uniform'}  with cv scores [0.79446201 0.78899239 0.79326553 0.78762499 0.7857265 ]  mean: 0.7900142847020891
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'n_neighbors': 50, 'weights': 'distance'}  with cv scores [0.80172635 0.79625673 0.8013845  0.79916246 0.79350427]  mean: 0.7984068627343561
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'n_neighbors': 70, 'weights': 'uniform'}  with cv scores [0.78873601 0.78625758 0.78959063 0.78454833 0.78410256]  mean: 0.7866470233751662
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'n_neighbors': 70, 'weights': 'distance'}  with cv scores [0.80010256 0.79506025 0.80087172 0.79685497 0.79282051]  mean: 0.7971420018889466
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'n_neighbors': 90, 'weights': 'uniform'}  with cv scores [0.78335185 0.78275361 0.7873686  0.78420648 0.78034188]  mean: 0.7836044840933313
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'n_neighbors': 90, 'weights': 'distance'}  with cv scores [0.79864969 0.79514571 0.79967524 0.79600034 0.79230769]  mean: 0.7963557355387113
+Algorithm  KNeighborsClassifier  has achieved test_acc: 0.7946123341993709 and test_time: 64477199
+The optimal hyperparameters were determined as {'n_neighbors': 20, 'weights': 'distance'}
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'C': 0.5, 'kernel': 'poly'}  with cv scores [0.75343988 0.75335441 0.75335441 0.75335441 0.7534188 ]  mean: 0.7533843845620616
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'C': 0.5, 'kernel': 'rbf'}  with cv scores [0.75343988 0.75335441 0.75335441 0.75335441 0.7525641 ]  mean: 0.7532134443911215
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'C': 0.5, 'kernel': 'sigmoid'}  with cv scores [0.63644133 0.66575506 0.67566875 0.67883087 0.67521368]  mean: 0.666381936820361
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'C': 0.75, 'kernel': 'poly'}  with cv scores [0.75343988 0.75335441 0.75335441 0.75335441 0.7534188 ]  mean: 0.7533843845620616
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'C': 0.75, 'kernel': 'rbf'}  with cv scores [0.75343988 0.75335441 0.75335441 0.75335441 0.75162393]  mean: 0.7530254102030873
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'C': 0.75, 'kernel': 'sigmoid'}  with cv scores [0.63498846 0.66814802 0.67105376 0.67267755 0.67      ]  mean: 0.6633735578155713
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'C': 1.0, 'kernel': 'poly'}  with cv scores [0.75343988 0.75335441 0.75335441 0.75335441 0.7534188 ]  mean: 0.7533843845620616
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'C': 1.0, 'kernel': 'rbf'}  with cv scores [0.75446543 0.75335441 0.75335441 0.75463636 0.75418803]  mean: 0.7539997297330859
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'C': 1.0, 'kernel': 'sigmoid'}  with cv scores [0.6335356  0.66789163 0.66891719 0.67045552 0.66837607]  mean: 0.6618352000011687
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'C': 1.25, 'kernel': 'poly'}  with cv scores [0.75343988 0.75335441 0.75335441 0.75335441 0.7534188 ]  mean: 0.7533843845620616
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'C': 1.25, 'kernel': 'rbf'}  with cv scores [0.75583283 0.75420904 0.75335441 0.75668746 0.75452991]  mean: 0.7549227336110509
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'C': 1.25, 'kernel': 'sigmoid'}  with cv scores [0.64669686 0.66746432 0.66737886 0.6700282  0.66666667]  mean: 0.6636469817394525
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'C': 1.5, 'kernel': 'poly'}  with cv scores [0.75343988 0.75335441 0.75335441 0.75335441 0.7534188 ]  mean: 0.7533843845620616
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'C': 1.5, 'kernel': 'rbf'}  with cv scores [0.75668746 0.75822579 0.75651654 0.75685839 0.75401709]  mean: 0.7564610549028975
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(
+Finished {'C': 1.5, 'kernel': 'sigmoid'}  with cv scores [0.64652594 0.66994274 0.67011367 0.66831895 0.67051282]  mean: 0.6650828222001626
+Algorithm  SVC  has achieved test_acc: 0.7521536988923835 and test_time: 73492097
+The optimal hyperparameters were determined as {'C': 1.5, 'kernel': 'rbf'}
+/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_split.py:676: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=5.
+  warnings.warn(

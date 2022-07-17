@@ -1,0 +1,90 @@
+{
+  "artifacts": [
+    "raw_data.csv",
+    "training_cv_runs.json",
+    "production_training_runs.json"
+  ],
+  "command": "main",
+  "experiment": {
+    "base_dir": "/net/nascip131/users/cip/praktikum/ruzpro01/fachprakt_mcf_with_ml/src",
+    "dependencies": [
+      "matplotlib==3.5.0",
+      "numpy==1.21.2",
+      "sacred==0.8.2",
+      "scikit-learn==1.0.2"
+    ],
+    "mainfile": "basic_sklearn_classifiers.py",
+    "name": "basic_sklearn_classifiers",
+    "repositories": [
+      {
+        "commit": "ec77a2c694adbd8e4ba3029ec7b6d001183625a5",
+        "dirty": false,
+        "url": "https://gitlab.rhrk.uni-kl.de/vdwarth/fachprakt_mcf_with_ml.git"
+      },
+      {
+        "commit": "ec77a2c694adbd8e4ba3029ec7b6d001183625a5",
+        "dirty": false,
+        "url": "https://gitlab.rhrk.uni-kl.de/vdwarth/fachprakt_mcf_with_ml.git"
+      },
+      {
+        "commit": "ec77a2c694adbd8e4ba3029ec7b6d001183625a5",
+        "dirty": false,
+        "url": "https://gitlab.rhrk.uni-kl.de/vdwarth/fachprakt_mcf_with_ml.git"
+      }
+    ],
+    "sources": [
+      [
+        "basic_sklearn_classifiers.py",
+        "_sources/basic_sklearn_classifiers_6d4009aa9ba0ffac368e51c7b7d7bc4f.py"
+      ],
+      [
+        "compare_generated_instances.py",
+        "_sources/compare_generated_instances_5de640172a08bbd05088fae9f21e4e04.py"
+      ],
+      [
+        "util.py",
+        "_sources/util_e8a891a52ccb88aca6ddfe200d90070d.py"
+      ]
+    ]
+  },
+  "heartbeat": "2022-01-18T13:56:21.326532",
+  "host": {
+    "ENV": {},
+    "cpu": "Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz",
+    "hostname": "chiron",
+    "os": [
+      "Linux",
+      "Linux-5.10.0-9-amd64-x86_64-with-glibc2.31"
+    ],
+    "python_version": "3.9.7"
+  },
+  "meta": {
+    "command": "main",
+    "options": {
+      "--beat-interval": null,
+      "--capture": null,
+      "--comment": null,
+      "--debug": false,
+      "--enforce_clean": false,
+      "--file_storage": null,
+      "--force": false,
+      "--help": false,
+      "--loglevel": null,
+      "--mongo_db": null,
+      "--name": null,
+      "--pdb": false,
+      "--print-config": false,
+      "--priority": null,
+      "--queue": false,
+      "--s3": null,
+      "--sql": null,
+      "--tiny_db": null,
+      "--unobserved": false
+    }
+  },
+  "resources": [],
+  "result": null,
+  "start_time": "2022-01-18T12:32:40.234613",
+  "status": "COMPLETED",
+  "stop_time": "2022-01-18T13:56:19.318448"
+}

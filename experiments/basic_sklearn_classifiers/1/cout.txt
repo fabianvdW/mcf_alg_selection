@@ -1,0 +1,171 @@
+Finished {'n_neighbors': 8, 'weights': 'uniform'}  with cv scores [0.6626506  0.64257028 0.67203219 0.68209256 0.65995976]  mean: 0.663861078115278
+Finished {'n_neighbors': 8, 'weights': 'distance'}  with cv scores [0.65461847 0.63253012 0.69014085 0.6639839  0.64587525]  mean: 0.6574297188755021
+Finished {'n_neighbors': 10, 'weights': 'uniform'}  with cv scores [0.67068273 0.66064257 0.65392354 0.67605634 0.65191147]  mean: 0.66264332985867
+Finished {'n_neighbors': 10, 'weights': 'distance'}  with cv scores [0.6686747  0.63253012 0.69014085 0.66599598 0.65995976]  mean: 0.6634602797507939
+Finished {'n_neighbors': 20, 'weights': 'uniform'}  with cv scores [0.68473896 0.66666667 0.67605634 0.67806841 0.66599598]  mean: 0.6743052693672074
+Finished {'n_neighbors': 20, 'weights': 'distance'}  with cv scores [0.68273092 0.64658635 0.69014085 0.67404427 0.65593561]  mean: 0.6698875986844763
+Finished {'n_neighbors': 50, 'weights': 'uniform'}  with cv scores [0.6626506  0.6686747  0.67203219 0.67002012 0.66599598]  mean: 0.66787471818865
+Finished {'n_neighbors': 50, 'weights': 'distance'}  with cv scores [0.68875502 0.6686747  0.67404427 0.67806841 0.65995976]  mean: 0.6739004306966295
+Finished {'n_neighbors': 70, 'weights': 'uniform'}  with cv scores [0.6686747  0.66064257 0.66800805 0.67002012 0.66599598]  mean: 0.6666682827891041
+Finished {'n_neighbors': 70, 'weights': 'distance'}  with cv scores [0.68273092 0.6626506  0.67203219 0.67806841 0.65794769]  mean: 0.6706859631685698
+Finished {'n_neighbors': 90, 'weights': 'uniform'}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'n_neighbors': 90, 'weights': 'distance'}  with cv scores [0.67670683 0.66666667 0.67806841 0.67605634 0.65593561]  mean: 0.6706867712297884
+Algorithm  KNeighborsClassifier  has achieved test_acc: 0.6414790996784566 and test_time: 1279873
+The optimal hyperparameters were determined as {'n_neighbors': 20, 'weights': 'uniform'}
+Finished {'C': 0.5, 'kernel': 'poly'}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'C': 0.5, 'kernel': 'rbf'}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'C': 0.5, 'kernel': 'sigmoid'}  with cv scores [0.57831325 0.51405622 0.59959759 0.59557344 0.49295775]  mean: 0.5560996501094924
+Finished {'C': 0.75, 'kernel': 'poly'}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'C': 0.75, 'kernel': 'rbf'}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'C': 0.75, 'kernel': 'sigmoid'}  with cv scores [0.57831325 0.51204819 0.59959759 0.60362173 0.48289738]  mean: 0.5552956291968679
+Finished {'C': 1.0, 'kernel': 'poly'}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'C': 1.0, 'kernel': 'rbf'}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'C': 1.0, 'kernel': 'sigmoid'}  with cv scores [0.57831325 0.51204819 0.59959759 0.60764588 0.48088531]  mean: 0.5556980436837895
+Finished {'C': 1.25, 'kernel': 'poly'}  with cv scores [0.66465863 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6674723037017285
+Finished {'C': 1.25, 'kernel': 'rbf'}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'C': 1.25, 'kernel': 'sigmoid'}  with cv scores [0.57831325 0.51004016 0.59959759 0.60965795 0.47887324]  mean: 0.5552964372580866
+Finished {'C': 1.5, 'kernel': 'poly'}  with cv scores [0.66465863 0.66666667 0.66800805 0.67203219 0.66800805]  mean: 0.66787471818865
+Finished {'C': 1.5, 'kernel': 'rbf'}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'C': 1.5, 'kernel': 'sigmoid'}  with cv scores [0.59437751 0.50401606 0.59959759 0.60764588 0.47686117]  mean: 0.5564996404127578
+Algorithm  SVC  has achieved test_acc: 0.6334405144694534 and test_time: 1115654
+The optimal hyperparameters were determined as {'C': 1.5, 'kernel': 'poly'}
+Finished {'n_restarts_optimizer': 0}  with cv scores [0.28714859 0.28714859 0.28772636 0.28571429 0.28571429]  mean: 0.28669042366649694
+Finished {'n_restarts_optimizer': 1}  with cv scores [0.28714859 0.28714859 0.28772636 0.28571429 0.28571429]  mean: 0.28669042366649694
+Algorithm  GaussianProcessClassifier  has achieved test_acc: 0.3327974276527331 and test_time: 15184153
+The optimal hyperparameters were determined as {'n_restarts_optimizer': 0}
+Finished {'criterion': 'gini', 'splitter': 'best', 'max_depth': None}  with cv scores [0.77911647 0.78714859 0.82696177 0.80482897 0.79678068]  mean: 0.7989672977624784
+Finished {'criterion': 'gini', 'splitter': 'best', 'max_depth': 3}  with cv scores [0.81726908 0.80120482 0.84104628 0.83098592 0.82696177]  mean: 0.8234935718730052
+Finished {'criterion': 'gini', 'splitter': 'best', 'max_depth': 5}  with cv scores [0.8313253  0.80120482 0.85915493 0.83299799 0.82293763]  mean: 0.829524132748297
+Finished {'criterion': 'gini', 'splitter': 'best', 'max_depth': 8}  with cv scores [0.81325301 0.79116466 0.83098592 0.83903421 0.80885312]  mean: 0.8166581820238701
+Finished {'criterion': 'gini', 'splitter': 'random', 'max_depth': None}  with cv scores [0.76305221 0.74497992 0.79275654 0.75855131 0.78672032]  mean: 0.7692120595056282
+Finished {'criterion': 'gini', 'splitter': 'random', 'max_depth': 3}  with cv scores [0.69879518 0.64457831 0.66800805 0.68008048 0.67806841]  mean: 0.6739060871251608
+Finished {'criterion': 'gini', 'splitter': 'random', 'max_depth': 5}  with cv scores [0.81726908 0.79116466 0.84909457 0.82897384 0.78873239]  mean: 0.8150469079537466
+Finished {'criterion': 'gini', 'splitter': 'random', 'max_depth': 8}  with cv scores [0.81124498 0.7811245  0.85311871 0.8028169  0.81488934]  mean: 0.8126388855219672
+Finished {'criterion': 'entropy', 'splitter': 'best', 'max_depth': None}  with cv scores [0.77108434 0.7751004  0.81488934 0.75452716 0.78269618]  mean: 0.7796594830024323
+Finished {'criterion': 'entropy', 'splitter': 'best', 'max_depth': 3}  with cv scores [0.81726908 0.80120482 0.84104628 0.83098592 0.81488934]  mean: 0.821079084951476
+Finished {'criterion': 'entropy', 'splitter': 'best', 'max_depth': 5}  with cv scores [0.8253012  0.82128514 0.84104628 0.79275654 0.82696177]  mean: 0.8214701865813353
+Finished {'criterion': 'entropy', 'splitter': 'best', 'max_depth': 8}  with cv scores [0.79718876 0.80120482 0.83299799 0.78269618 0.80482897]  mean: 0.8037833426260373
+Finished {'criterion': 'entropy', 'splitter': 'random', 'max_depth': None}  with cv scores [0.77309237 0.74297189 0.80080483 0.80482897 0.79275654]  mean: 0.7828909198160853
+Finished {'criterion': 'entropy', 'splitter': 'random', 'max_depth': 3}  with cv scores [0.66465863 0.67269076 0.78873239 0.72837022 0.71227364]  mean: 0.7133451310271266
+Finished {'criterion': 'entropy', 'splitter': 'random', 'max_depth': 5}  with cv scores [0.76506024 0.7811245  0.79074447 0.81086519 0.8249497 ]  mean: 0.7945488190185288
+Finished {'criterion': 'entropy', 'splitter': 'random', 'max_depth': 8}  with cv scores [0.81325301 0.77710843 0.82293763 0.81287726 0.81287726]  mean: 0.8078107197401275
+Algorithm  DecisionTreeClassifier  has achieved test_acc: 0.8456591639871383 and test_time: 1010316
+The optimal hyperparameters were determined as {'criterion': 'gini', 'splitter': 'best', 'max_depth': 5}
+Finished {'criterion': 'gini', 'max_depth': None, 'n_estimators': 10}  with cv scores [0.79919679 0.79718876 0.80482897 0.82696177 0.83299799]  mean: 0.8122348549126082
+Finished {'criterion': 'gini', 'max_depth': None, 'n_estimators': 50}  with cv scores [0.8313253  0.80321285 0.85110664 0.82092555 0.82696177]  mean: 0.8267064232786275
+Finished {'criterion': 'gini', 'max_depth': None, 'n_estimators': 100}  with cv scores [0.8253012  0.80120482 0.85513078 0.82696177 0.81488934]  mean: 0.8246975830888947
+Finished {'criterion': 'gini', 'max_depth': None, 'n_estimators': 200}  with cv scores [0.83534137 0.80722892 0.85110664 0.83299799 0.81891348]  mean: 0.8291176779552819
+Finished {'criterion': 'gini', 'max_depth': 3, 'n_estimators': 10}  with cv scores [0.77911647 0.75100402 0.7444668  0.72837022 0.7806841 ]  mean: 0.7567283217376548
+Finished {'criterion': 'gini', 'max_depth': 3, 'n_estimators': 50}  with cv scores [0.7811245  0.72690763 0.77464789 0.74245473 0.7665996 ]  mean: 0.7583468683587469
+Finished {'criterion': 'gini', 'max_depth': 3, 'n_estimators': 100}  with cv scores [0.77309237 0.73493976 0.77867203 0.7806841  0.75653924]  mean: 0.7647855001494913
+Finished {'criterion': 'gini', 'max_depth': 3, 'n_estimators': 200}  with cv scores [0.76706827 0.75502008 0.7806841  0.75251509 0.78269618]  mean: 0.767596745129411
+Finished {'criterion': 'gini', 'max_depth': 5, 'n_estimators': 10}  with cv scores [0.77710843 0.78915663 0.82293763 0.80684105 0.80684105]  mean: 0.8005769557101645
+Finished {'criterion': 'gini', 'max_depth': 5, 'n_estimators': 50}  with cv scores [0.82329317 0.79317269 0.85110664 0.83501006 0.82897384]  mean: 0.8263112813426746
+Finished {'criterion': 'gini', 'max_depth': 5, 'n_estimators': 100}  with cv scores [0.82128514 0.79518072 0.85513078 0.8249497  0.83501006]  mean: 0.8263112813426744
+Finished {'criterion': 'gini', 'max_depth': 5, 'n_estimators': 200}  with cv scores [0.82730924 0.79116466 0.85311871 0.82696177 0.82696177]  mean: 0.8251032298206912
+Finished {'criterion': 'gini', 'max_depth': 8, 'n_estimators': 10}  with cv scores [0.81927711 0.78714859 0.84507042 0.82897384 0.83098592]  mean: 0.8222911767795529
+Finished {'criterion': 'gini', 'max_depth': 8, 'n_estimators': 50}  with cv scores [0.83333333 0.80120482 0.85513078 0.84507042 0.83299799]  mean: 0.8335474695562934
+Finished {'criterion': 'gini', 'max_depth': 8, 'n_estimators': 100}  with cv scores [0.8313253  0.81124498 0.85915493 0.84305835 0.83098592]  mean: 0.8351538952591049
+Finished {'criterion': 'gini', 'max_depth': 8, 'n_estimators': 200}  with cv scores [0.83333333 0.80923695 0.86720322 0.84507042 0.82696177]  mean: 0.8363611387198693
+Finished {'criterion': 'entropy', 'max_depth': None, 'n_estimators': 10}  with cv scores [0.82329317 0.79718876 0.83098592 0.8249497  0.81891348]  mean: 0.8190662044556495
+Finished {'criterion': 'entropy', 'max_depth': None, 'n_estimators': 50}  with cv scores [0.82329317 0.80120482 0.84909457 0.82293763 0.81690141]  mean: 0.8226863187155058
+Finished {'criterion': 'entropy', 'max_depth': None, 'n_estimators': 100}  with cv scores [0.82730924 0.80321285 0.84305835 0.82897384 0.82897384]  mean: 0.8263056249141435
+Finished {'criterion': 'entropy', 'max_depth': None, 'n_estimators': 200}  with cv scores [0.82730924 0.80321285 0.84909457 0.84104628 0.82092555]  mean: 0.828317697348751
+Finished {'criterion': 'entropy', 'max_depth': 3, 'n_estimators': 10}  with cv scores [0.80722892 0.7188755  0.73641851 0.71026157 0.76861167]  mean: 0.7482792336347401
+Finished {'criterion': 'entropy', 'max_depth': 3, 'n_estimators': 50}  with cv scores [0.75301205 0.74899598 0.7444668  0.75653924 0.75251509]  mean: 0.7511058317778154
+Finished {'criterion': 'entropy', 'max_depth': 3, 'n_estimators': 100}  with cv scores [0.76104418 0.74497992 0.77464789 0.74849095 0.77867203]  mean: 0.7615669923153379
+Finished {'criterion': 'entropy', 'max_depth': 3, 'n_estimators': 200}  with cv scores [0.76907631 0.74698795 0.7806841  0.75251509 0.7806841 ]  mean: 0.7659895113653811
+Finished {'criterion': 'entropy', 'max_depth': 5, 'n_estimators': 10}  with cv scores [0.79116466 0.79718876 0.85714286 0.81891348 0.81690141]  mean: 0.8162622320266983
+Finished {'criterion': 'entropy', 'max_depth': 5, 'n_estimators': 50}  with cv scores [0.82128514 0.79919679 0.85110664 0.83702213 0.81488934]  mean: 0.8247000072725509
+Finished {'criterion': 'entropy', 'max_depth': 5, 'n_estimators': 100}  with cv scores [0.82128514 0.79518072 0.84708249 0.82897384 0.8249497 ]  mean: 0.8234943799342238
+Finished {'criterion': 'entropy', 'max_depth': 5, 'n_estimators': 200}  with cv scores [0.82730924 0.79317269 0.85311871 0.83702213 0.82897384]  mean: 0.8279193231679232
+Finished {'criterion': 'entropy', 'max_depth': 8, 'n_estimators': 10}  with cv scores [0.8313253  0.79718876 0.85513078 0.82293763 0.82696177]  mean: 0.8267088474622838
+Finished {'criterion': 'entropy', 'max_depth': 8, 'n_estimators': 50}  with cv scores [0.83935743 0.80722892 0.85714286 0.84507042 0.83299799]  mean: 0.8363595225974321
+Finished {'criterion': 'entropy', 'max_depth': 8, 'n_estimators': 100}  with cv scores [0.83333333 0.80923695 0.85110664 0.84708249 0.8249497 ]  mean: 0.8331418228244972
+Finished {'criterion': 'entropy', 'max_depth': 8, 'n_estimators': 200}  with cv scores [0.83333333 0.81325301 0.84909457 0.83702213 0.83903421]  mean: 0.8343474501628243
+Algorithm  RandomForestClassifier  has achieved test_acc: 0.8327974276527331 and test_time: 1010532
+The optimal hyperparameters were determined as {'criterion': 'gini', 'max_depth': 8, 'n_estimators': 200}
+Finished {'hidden_layer_sizes': 100, 'activation': 'tanh', 'solver': 'sgd', 'learning_rate_init': 0.001}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'hidden_layer_sizes': 100, 'activation': 'tanh', 'solver': 'sgd', 'learning_rate_init': 0.01}  with cv scores [0.66666667 0.67068273 0.66800805 0.66800805 0.67605634]  mean: 0.6698843664396015
+Finished {'hidden_layer_sizes': 100, 'activation': 'tanh', 'solver': 'sgd', 'learning_rate_init': 0.1}  with cv scores [0.39759036 0.66666667 0.67002012 0.67002012 0.66800805]  mean: 0.614461063570176
+Finished {'hidden_layer_sizes': 100, 'activation': 'tanh', 'solver': 'adam', 'learning_rate_init': 0.001}  with cv scores [0.67068273 0.61445783 0.66800805 0.66800805 0.66599598]  mean: 0.6574305269367207
+Finished {'hidden_layer_sizes': 100, 'activation': 'tanh', 'solver': 'adam', 'learning_rate_init': 0.01}  with cv scores [0.66666667 0.66666667 0.66800805 0.50503018 0.66800805]  mean: 0.6348759221998659
+Finished {'hidden_layer_sizes': 100, 'activation': 'tanh', 'solver': 'adam', 'learning_rate_init': 0.1}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'hidden_layer_sizes': 100, 'activation': 'relu', 'solver': 'sgd', 'learning_rate_init': 0.001}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'hidden_layer_sizes': 100, 'activation': 'relu', 'solver': 'sgd', 'learning_rate_init': 0.01}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'hidden_layer_sizes': 100, 'activation': 'relu', 'solver': 'sgd', 'learning_rate_init': 0.1}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'hidden_layer_sizes': 100, 'activation': 'relu', 'solver': 'adam', 'learning_rate_init': 0.001}  with cv scores [0.70682731 0.52811245 0.71227364 0.76458753 0.64788732]  mean: 0.6719376499963637
+Finished {'hidden_layer_sizes': 100, 'activation': 'relu', 'solver': 'adam', 'learning_rate_init': 0.01}  with cv scores [0.72891566 0.64257028 0.73843058 0.71830986 0.69818913]  mean: 0.7052831042479778
+Finished {'hidden_layer_sizes': 100, 'activation': 'relu', 'solver': 'adam', 'learning_rate_init': 0.1}  with cv scores [0.66666667 0.66465863 0.66800805 0.67002012 0.66800805]  mean: 0.6674723037017285
+Finished {'hidden_layer_sizes': (50, 50), 'activation': 'tanh', 'solver': 'sgd', 'learning_rate_init': 0.001}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'hidden_layer_sizes': (50, 50), 'activation': 'tanh', 'solver': 'sgd', 'learning_rate_init': 0.01}  with cv scores [0.6686747  0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6682755165531341
+Finished {'hidden_layer_sizes': (50, 50), 'activation': 'tanh', 'solver': 'sgd', 'learning_rate_init': 0.1}  with cv scores [0.66666667 0.66666667 0.66800805 0.66599598 0.66800805]  mean: 0.6670690811535882
+Finished {'hidden_layer_sizes': (50, 50), 'activation': 'tanh', 'solver': 'adam', 'learning_rate_init': 0.001}  with cv scores [0.67068273 0.6686747  0.66800805 0.67605634 0.6639839 ]  mean: 0.6694811438914613
+Finished {'hidden_layer_sizes': (50, 50), 'activation': 'tanh', 'solver': 'adam', 'learning_rate_init': 0.01}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'hidden_layer_sizes': (50, 50), 'activation': 'tanh', 'solver': 'adam', 'learning_rate_init': 0.1}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'hidden_layer_sizes': (50, 50), 'activation': 'relu', 'solver': 'sgd', 'learning_rate_init': 0.001}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'hidden_layer_sizes': (50, 50), 'activation': 'relu', 'solver': 'sgd', 'learning_rate_init': 0.01}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'hidden_layer_sizes': (50, 50), 'activation': 'relu', 'solver': 'sgd', 'learning_rate_init': 0.1}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'hidden_layer_sizes': (50, 50), 'activation': 'relu', 'solver': 'adam', 'learning_rate_init': 0.001}  with cv scores [0.63253012 0.53413655 0.55331992 0.42454728 0.56338028]  mean: 0.5415828303152247
+Finished {'hidden_layer_sizes': (50, 50), 'activation': 'relu', 'solver': 'adam', 'learning_rate_init': 0.01}  with cv scores [0.67670683 0.66465863 0.60965795 0.34607646 0.71227364]  mean: 0.6018747020274257
+Finished {'hidden_layer_sizes': (50, 50), 'activation': 'relu', 'solver': 'adam', 'learning_rate_init': 0.1}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'hidden_layer_sizes': (50, 100, 100, 50), 'activation': 'tanh', 'solver': 'sgd', 'learning_rate_init': 0.001}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'hidden_layer_sizes': (50, 100, 100, 50), 'activation': 'tanh', 'solver': 'sgd', 'learning_rate_init': 0.01}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.67203219]  mean: 0.6686787391012743
+Finished {'hidden_layer_sizes': (50, 100, 100, 50), 'activation': 'tanh', 'solver': 'sgd', 'learning_rate_init': 0.1}  with cv scores [0.66666667 0.66064257 0.66800805 0.67002012 0.66800805]  mean: 0.6666690908503228
+Finished {'hidden_layer_sizes': (50, 100, 100, 50), 'activation': 'tanh', 'solver': 'adam', 'learning_rate_init': 0.001}  with cv scores [0.6686747  0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6682755165531341
+Finished {'hidden_layer_sizes': (50, 100, 100, 50), 'activation': 'tanh', 'solver': 'adam', 'learning_rate_init': 0.01}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'hidden_layer_sizes': (50, 100, 100, 50), 'activation': 'tanh', 'solver': 'adam', 'learning_rate_init': 0.1}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Finished {'hidden_layer_sizes': (50, 100, 100, 50), 'activation': 'relu', 'solver': 'sgd', 'learning_rate_init': 0.001}  with cv scores [0.04618474 0.66666667 0.04426559 0.67002012 0.04627767]  mean: 0.294682957180836
+Finished {'hidden_layer_sizes': (50, 100, 100, 50), 'activation': 'relu', 'solver': 'sgd', 'learning_rate_init': 0.01}  with cv scores [0.66666667 0.04618474 0.04426559 0.04426559 0.66800805]  mean: 0.293878128206993
+Finished {'hidden_layer_sizes': (50, 100, 100, 50), 'activation': 'relu', 'solver': 'sgd', 'learning_rate_init': 0.1}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.04627767]  mean: 0.5435278336686789
+Finished {'hidden_layer_sizes': (50, 100, 100, 50), 'activation': 'relu', 'solver': 'adam', 'learning_rate_init': 0.001}  with cv scores [0.6064257  0.55823293 0.40643863 0.67203219 0.42253521]  mean: 0.5331329341510912
+Finished {'hidden_layer_sizes': (50, 100, 100, 50), 'activation': 'relu', 'solver': 'adam', 'learning_rate_init': 0.01}  with cv scores [0.66666667 0.65662651 0.41649899 0.67002012 0.64788732]  mean: 0.6115399222645108
+Finished {'hidden_layer_sizes': (50, 100, 100, 50), 'activation': 'relu', 'solver': 'adam', 'learning_rate_init': 0.1}  with cv scores [0.66666667 0.66666667 0.66800805 0.67002012 0.66800805]  mean: 0.6678739101274312
+Algorithm  MLPClassifier  has achieved test_acc: 0.6913183279742765 and test_time: 7147759
+The optimal hyperparameters were determined as {'hidden_layer_sizes': 100, 'activation': 'relu', 'solver': 'adam', 'learning_rate_init': 0.01}
+Finished {'n_estimators': 5, 'learning_rate': 0.8}  with cv scores [0.81726908 0.80321285 0.84104628 0.80885312 0.81690141]  mean: 0.8174565465079635
+Finished {'n_estimators': 5, 'learning_rate': 0.85}  with cv scores [0.81726908 0.80321285 0.84104628 0.80885312 0.81690141]  mean: 0.8174565465079635
+Finished {'n_estimators': 5, 'learning_rate': 1.0}  with cv scores [0.81726908 0.80321285 0.84104628 0.80885312 0.81690141]  mean: 0.8174565465079635
+Finished {'n_estimators': 5, 'learning_rate': 1.15}  with cv scores [0.81726908 0.80321285 0.83702213 0.80885312 0.81690141]  mean: 0.8166517175341204
+Finished {'n_estimators': 5, 'learning_rate': 1.3}  with cv scores [0.81726908 0.79518072 0.80885312 0.77062374 0.80482897]  mean: 0.7993511268413694
+Finished {'n_estimators': 7, 'learning_rate': 0.8}  with cv scores [0.81726908 0.80321285 0.84104628 0.80885312 0.81690141]  mean: 0.8174565465079635
+Finished {'n_estimators': 7, 'learning_rate': 0.85}  with cv scores [0.81325301 0.80321285 0.84104628 0.80885312 0.81690141]  mean: 0.8166533336565578
+Finished {'n_estimators': 7, 'learning_rate': 1.0}  with cv scores [0.81526104 0.80120482 0.84305835 0.80885312 0.81690141]  mean: 0.8170557481434793
+Finished {'n_estimators': 7, 'learning_rate': 1.15}  with cv scores [0.81325301 0.81927711 0.83702213 0.80885312 0.81287726]  mean: 0.8182565271144941
+Finished {'n_estimators': 7, 'learning_rate': 1.3}  with cv scores [0.80923695 0.81927711 0.80482897 0.78269618 0.82293763]  mean: 0.8077953665769717
+Finished {'n_estimators': 9, 'learning_rate': 0.8}  with cv scores [0.80120482 0.80120482 0.84305835 0.81086519 0.81690141]  mean: 0.8146469176504813
+Finished {'n_estimators': 9, 'learning_rate': 0.85}  with cv scores [0.81325301 0.79518072 0.81690141 0.81488934 0.81690141]  mean: 0.8114251775714528
+Finished {'n_estimators': 9, 'learning_rate': 1.0}  with cv scores [0.80321285 0.80120482 0.86720322 0.81690141 0.82696177]  mean: 0.8230968138146146
+Finished {'n_estimators': 9, 'learning_rate': 1.15}  with cv scores [0.81124498 0.80321285 0.86921529 0.80482897 0.82897384]  mean: 0.8234951879954424
+Finished {'n_estimators': 9, 'learning_rate': 1.3}  with cv scores [0.80722892 0.80120482 0.80080483 0.78470825 0.83098592]  mean: 0.8049865457807084
+Finished {'n_estimators': 11, 'learning_rate': 0.8}  with cv scores [0.81526104 0.80321285 0.84909457 0.81287726 0.81891348]  mean: 0.8198718414907115
+Finished {'n_estimators': 11, 'learning_rate': 0.85}  with cv scores [0.81927711 0.80120482 0.84104628 0.81488934 0.81891348]  mean: 0.8190662044556497
+Finished {'n_estimators': 11, 'learning_rate': 1.0}  with cv scores [0.81124498 0.82730924 0.86720322 0.82293763 0.83702213]  mean: 0.8331434389469345
+Finished {'n_estimators': 11, 'learning_rate': 1.15}  with cv scores [0.80120482 0.80522088 0.85311871 0.8028169  0.8249497 ]  mean: 0.8174622029364945
+Finished {'n_estimators': 11, 'learning_rate': 1.3}  with cv scores [0.80321285 0.80722892 0.81086519 0.8028169  0.82897384]  mean: 0.810619540536391
+Finished {'n_estimators': 13, 'learning_rate': 0.8}  with cv scores [0.80522088 0.80120482 0.85110664 0.8249497  0.81891348]  mean: 0.8202791043449451
+Finished {'n_estimators': 13, 'learning_rate': 0.85}  with cv scores [0.80923695 0.82128514 0.85513078 0.81086519 0.81086519]  mean: 0.821476651071085
+Finished {'n_estimators': 13, 'learning_rate': 1.0}  with cv scores [0.79718876 0.80522088 0.86317907 0.8249497  0.84104628]  mean: 0.8263169377712055
+Finished {'n_estimators': 13, 'learning_rate': 1.15}  with cv scores [0.81124498 0.81325301 0.85714286 0.81690141 0.81287726]  mean: 0.8222839042285844
+Finished {'n_estimators': 13, 'learning_rate': 1.3}  with cv scores [0.79919679 0.81124498 0.80080483 0.8028169  0.83299799]  mean: 0.8094122970756266
+Finished {'n_estimators': 50, 'learning_rate': 0.8}  with cv scores [0.73694779 0.75100402 0.84909457 0.80080483 0.76861167]  mean: 0.7812925747254612
+Finished {'n_estimators': 50, 'learning_rate': 0.85}  with cv scores [0.71686747 0.80321285 0.75452716 0.83299799 0.79476861]  mean: 0.7804748167721186
+Finished {'n_estimators': 50, 'learning_rate': 1.0}  with cv scores [0.72891566 0.81325301 0.8028169  0.75855131 0.7806841 ]  mean: 0.7768441977164191
+Finished {'n_estimators': 50, 'learning_rate': 1.15}  with cv scores [0.73092369 0.79317269 0.81086519 0.81891348 0.79678068]  mean: 0.7901311483357978
+Finished {'n_estimators': 50, 'learning_rate': 1.3}  with cv scores [0.70481928 0.78313253 0.76056338 0.82897384 0.8249497 ]  mean: 0.7804877457516181
+Algorithm  AdaBoostClassifier  has achieved test_acc: 0.837620578778135 and test_time: 1012692
+The optimal hyperparameters were determined as {'n_estimators': 11, 'learning_rate': 1.0}
+Finished {}  with cv scores [0.54016064 0.53815261 0.44466801 0.47887324 0.54929577]  mean: 0.510230055028969
+Algorithm  GaussianNB  has achieved test_acc: 0.5755627009646302 and test_time: 1533946
+The optimal hyperparameters were determined as {}
+Finished {'reg_param': -1}  with cv scores [0.04618474 0.04618474 0.04426559 0.04426559 0.04627767]  mean: 0.04543566620607177
+Finished {'reg_param': -0.5}  with cv scores [0.04618474 0.04618474 0.04426559 0.04426559 0.04627767]  mean: 0.04543566620607177
+Finished {'reg_param': 0}  with cv scores [0.437751   0.56425703 0.56136821 0.19919517 0.25955734]  mean: 0.4044257512949181
+Finished {'reg_param': 0.5}  with cv scores [0.6746988  0.65060241 0.66800805 0.68008048 0.71026157]  mean: 0.6767302610845798
+Finished {'reg_param': 1}  with cv scores [0.55220884 0.3313253  0.5331992  0.32796781 0.56338028]  mean: 0.4616162840496796
+D:\Programme\Anaconda\envs\work\lib\site-packages\sklearn\discriminant_analysis.py:715: UserWarning: Variables are collinear
+  warnings.warn("Variables are collinear")
+Algorithm  QuadraticDiscriminantAnalysis  has achieved test_acc: 0.7009646302250804 and test_time: 1034783
+The optimal hyperparameters were determined as {'reg_param': 0.5}
+Baseline(always predict NetworkSimplex) test_acc 0.6334405144694534 and test_time: 1115654
+Optimal time: 1001255

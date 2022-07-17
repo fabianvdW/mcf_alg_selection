@@ -1,0 +1,78 @@
+[
+ {
+  "name": "KNeighborsClassifier",
+  "test_accuracy": 0.7946123341993709,
+  "test_time": 64477199,
+  "hyperparameters": {
+   "n_neighbors": 20,
+   "weights": "distance"
+  }
+ },
+ {
+  "name": "SVC",
+  "test_accuracy": 0.7521536988923835,
+  "test_time": 73492097,
+  "hyperparameters": {
+   "C": 1.5,
+   "kernel": "rbf"
+  }
+ },
+ {
+  "name": "DecisionTreeClassifier",
+  "test_accuracy": 0.9005196225899084,
+  "test_time": 54530965,
+  "hyperparameters": {
+   "criterion": "entropy",
+   "splitter": "best",
+   "max_depth": 8,
+   "class_weight": null
+  }
+ },
+ {
+  "name": "RandomForestClassifier",
+  "test_accuracy": 0.910365103240804,
+  "test_time": 54367618,
+  "hyperparameters": {
+   "criterion": "entropy",
+   "max_depth": null,
+   "n_estimators": 200,
+   "class_weight": null
+  }
+ },
+ {
+  "name": "MLPClassifier",
+  "test_accuracy": 0.7769725146998496,
+  "test_time": 76925400,
+  "hyperparameters": {
+   "hidden_layer_sizes": 100,
+   "activation": "tanh",
+   "solver": "adam",
+   "learning_rate_init": 0.001
+  }
+ },
+ {
+  "name": "AdaBoostClassifier",
+  "test_accuracy": 0.7542732120880623,
+  "test_time": 58549145,
+  "hyperparameters": {
+   "n_estimators": 5,
+   "learning_rate": 0.85
+  }
+ },
+ {
+  "name": "GaussianNB",
+  "test_accuracy": 0.2176945166142486,
+  "test_time": 4016359302,
+  "hyperparameters": {}
+ },
+ {
+  "name": "baseline",
+  "test_accuracy": 0.7472309585669356,
+  "test_time": 58556354
+ },
+ {
+  "name": "GroundTruth",
+  "test_accuracy": 1.0,
+  "test_time": 53970202
+ }
+]

@@ -1,0 +1,11 @@
+*.min.gz
+.hg
+.hgignore
+.hgeol
+lemon/build/*
+*.o
+*.obj
+*.exe
+*.vs
+*.min
+src/__pycache__/

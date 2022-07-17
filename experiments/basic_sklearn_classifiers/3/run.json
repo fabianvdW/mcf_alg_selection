@@ -1,0 +1,101 @@
+{
+  "artifacts": [
+    "raw_data.csv"
+  ],
+  "command": "main",
+  "experiment": {
+    "base_dir": "/net/nascip131/users/cip/praktikum/ruzpro01/fachprakt_mcf_with_ml/src",
+    "dependencies": [
+      "matplotlib==3.5.0",
+      "numpy==1.21.2",
+      "sacred==0.8.2",
+      "scikit-learn==1.0.2"
+    ],
+    "mainfile": "basic_sklearn_classifiers.py",
+    "name": "basic_sklearn_classifiers",
+    "repositories": [
+      {
+        "commit": "5330e73412af14463c9a4ff35b1b0cb39acf443c",
+        "dirty": false,
+        "url": "https://gitlab.rhrk.uni-kl.de/vdwarth/fachprakt_mcf_with_ml.git"
+      },
+      {
+        "commit": "5330e73412af14463c9a4ff35b1b0cb39acf443c",
+        "dirty": false,
+        "url": "https://gitlab.rhrk.uni-kl.de/vdwarth/fachprakt_mcf_with_ml.git"
+      },
+      {
+        "commit": "5330e73412af14463c9a4ff35b1b0cb39acf443c",
+        "dirty": false,
+        "url": "https://gitlab.rhrk.uni-kl.de/vdwarth/fachprakt_mcf_with_ml.git"
+      }
+    ],
+    "sources": [
+      [
+        "basic_sklearn_classifiers.py",
+        "_sources/basic_sklearn_classifiers_d4e2f3d6aa828fad51d3c237304e2dec.py"
+      ],
+      [
+        "compare_generated_instances.py",
+        "_sources/compare_generated_instances_d97f6b6e9232b95cb2453b76dd85ad8f.py"
+      ],
+      [
+        "util.py",
+        "_sources/util_e8a891a52ccb88aca6ddfe200d90070d.py"
+      ]
+    ]
+  },
+  "fail_trace": [
+    "Traceback (most recent call last):\n",
+    "  File \"/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sacred/config/captured_function.py\", line 42, in captured_function\n    result = wrapped(*args, **kwargs)\n",
+    "  File \"/net/nascip131/users/cip/praktikum/ruzpro01/fachprakt_mcf_with_ml/src/basic_sklearn_classifiers.py\", line 63, in main\n    cv_scores = cross_val_score(clf, train_data, y=train_label, n_jobs=-1)\n",
+    "  File \"/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_validation.py\", line 509, in cross_val_score\n    cv_results = cross_validate(\n",
+    "  File \"/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/sklearn/model_selection/_validation.py\", line 267, in cross_validate\n    results = parallel(\n",
+    "  File \"/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/joblib/parallel.py\", line 1056, in __call__\n    self.retrieve()\n",
+    "  File \"/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/joblib/parallel.py\", line 935, in retrieve\n    self._output.extend(job.get(timeout=self.timeout))\n",
+    "  File \"/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/site-packages/joblib/_parallel_backends.py\", line 542, in wrap_future_result\n    return future.result(timeout=timeout)\n",
+    "  File \"/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/concurrent/futures/_base.py\", line 445, in result\n    return self.__get_result()\n",
+    "  File \"/users/cip/praktikum/ruzpro01/.conda/envs/minai/lib/python3.9/concurrent/futures/_base.py\", line 390, in __get_result\n    raise self._exception\n",
+    "joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.\n\nThe exit codes of the workers are {SIGSEGV(-11)}\n"
+  ],
+  "heartbeat": "2022-01-17T14:22:45.923739",
+  "host": {
+    "ENV": {},
+    "cpu": "Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz",
+    "hostname": "chiron",
+    "os": [
+      "Linux",
+      "Linux-5.10.0-9-amd64-x86_64-with-glibc2.31"
+    ],
+    "python_version": "3.9.7"
+  },
+  "meta": {
+    "command": "main",
+    "options": {
+      "--beat-interval": null,
+      "--capture": null,
+      "--comment": null,
+      "--debug": false,
+      "--enforce_clean": false,
+      "--file_storage": null,
+      "--force": false,
+      "--help": false,
+      "--loglevel": null,
+      "--mongo_db": null,
+      "--name": null,
+      "--pdb": false,
+      "--print-config": false,
+      "--priority": null,
+      "--queue": false,
+      "--s3": null,
+      "--sql": null,
+      "--tiny_db": null,
+      "--unobserved": false
+    }
+  },
+  "resources": [],
+  "result": null,
+  "start_time": "2022-01-17T13:09:24.494541",
+  "status": "FAILED",
+  "stop_time": "2022-01-17T14:22:45.930620"
+}
