@@ -4,9 +4,8 @@ Created on Fri Dec  3 08:46:33 2021
 
 @author: Philipp
 """
-
+import sys
 import readdimacs as rd
-import os
 import numpy as np
 import networkx as nx
 import line_profiler
@@ -71,7 +70,7 @@ def calculate_features(g, mst):
 
 if __name__ ==  "__main__":
     # [WIP] TODO
-    graph = rd.read(system. in)
+    graph = rd.read(sys.stdin)
     features_a = calculate_features(graph, False)
     mst = nx.minimum_spanning_tree(graph.to_undirected())
     features_b = calculate_features(mst, True)

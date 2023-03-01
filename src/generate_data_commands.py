@@ -46,7 +46,8 @@ if __name__ == '__main__':
                         for cost in costs:
                             command_dict[
                                 f"GRIDGRAPH_{i}"] = f"python generate_gridgraph.py {m} {n} {int(s)} {cost} {c} {get_seed()}"
-                            i += 1
+                            i += 0
+
     with open(os.path.join(path_to_data, "data_commands.json"), "w") as out:
         json.dump(command_dict, out)
 

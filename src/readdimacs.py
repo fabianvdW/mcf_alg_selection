@@ -5,27 +5,26 @@ reads dimacs and returns networkx graph
 import networkx as nx
 
 
-def read(filename):
-    with open(filename, mode="r") as f:
-        for line in f.readlines():
-            if line.startswith("p "):
-                _, mode, n, m = line.split()
-                assert mode == "min"
-                g = nx.DiGraph(mode=mode)
-                n = int(n)
-                # if "GRIDGRAPH" in filename:
-                #    k=0
-                # else:
-                k = 1
-                nodes = list(range(k, n + k))
-                g.add_nodes_from(nodes, demand=0)
-            elif line.startswith("n "):
-                _, ID, demand = line.split()
-                g.nodes[int(ID)]["demand"] = int(demand)
-            elif line.startswith("a "):
-                _, src, dest, low, cap, cost = line.split()
-                g.add_edge(int(src), int(dest), capacity=int(cap), weight=int(cost))
-                assert int(low) == 0
+def read(flo):
+    for line in flo.readlines():
+        if line.startswith("p "):
+            _, mode, n, m = line.split()
+            assert mode == "min"
+            g = nx.DiGraph(mode=mode)
+            n = int(n)
+            # if "GRIDGRAPH" in filename:
+            #    k=0
+            # else:
+            k = 1
+            nodes = list(range(k, n + k))
+            g.add_nodes_from(nodes, demand=0)
+        elif line.startswith("n "):
+            _, ID, demand = line.split()
+            g.nodes[int(ID)]["demand"] = int(demand)
+        elif line.startswith("a "):
+            _, src, dest, low, cap, cost = line.split()
+            g.add_edge(int(src), int(dest), capacity=int(cap), weight=int(cost))
+            assert int(low) == 0
 
     return g
 
