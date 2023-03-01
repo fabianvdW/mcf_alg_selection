@@ -69,22 +69,11 @@ def calculate_features(g, mst):
     return features
 
 
-path_to_data = r"../data/generated_data"
-features_list = []
-i = 0
-
-for file in os.listdir(path_to_data):
-    if file.endswith(".min"):
-        features = []
-        features.append(file)  # Seed
-        if i % 100 == 0:
-            print(i)
-        graph = rd.read(os.path.join(path_to_data, file))
-        features.extend(calculate_features(graph, False))
-        mst = nx.minimum_spanning_tree(graph.to_undirected())
-        features.extend(calculate_features(mst, True))
-        features_list.append(' '.join(map(str, features)) + "\n")
-        i += 1
-
-with open(path_to_data + r"/features.txt", "w") as f:
-    f.writelines(features_list)
+if __name__ ==  "__main__":
+    # [WIP] TODO
+    graph = rd.read(system. in)
+    features_a = calculate_features(graph, False)
+    mst = nx.minimum_spanning_tree(graph.to_undirected())
+    features_b = calculate_features(mst, True)
+    print(features_a)
+    print(features_b)

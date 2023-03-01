@@ -65,11 +65,10 @@ def main(family, k, amount):
     problem_num = k
     n = 2 ** k
     supply_nodes = demand_nodes = int(n ** (0.5))
-    m = 0
     min_cost, max_cost = 1, 10000
     total_supply = int(1000 * (n ** 0.5))
     min_cap, max_cap = 1, 1000
-    params = [0, problem_num, n, supply_nodes, demand_nodes, m, min_cost, max_cost, total_supply, 0, 0, 100, 100,
+    params = [0, problem_num, n, supply_nodes, demand_nodes, 0, min_cost, max_cost, total_supply, 0, 0, 100, 100,
               min_cap, max_cap]
     path_to_data = path_to_project + '/data/lemon_data/netgen/generated/'
 
@@ -103,8 +102,6 @@ def main(family, k, amount):
 
 def create(amount, nodes, costs, supply, cap, density, sdnodes, param_list, path_to_data):
     params = [0, 8, nodes, sdnodes, sdnodes, density, 1, costs, supply, 0, 0, 100, 100, 1, cap]
-
-    # print(params)
     generate(params, amount, "None", path_to_netgen, path_to_data, param_list)
 
 

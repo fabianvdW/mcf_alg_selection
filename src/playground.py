@@ -23,15 +23,6 @@ train_data, test_data, train_label, test_label, train_times, test_times = train_
                                                                                            random_state=1)
 
 
-def simple_grid_search(options, curr_selection):
-    if not options:
-        yield curr_selection.copy()
-    else:
-        option_name, option_values = options[0]
-        for value in option_values:
-            curr_selection[option_name] = value
-            yield from simple_grid_search(options[1:], curr_selection=curr_selection)
-
 
 algo_and_options = [
     (KNeighborsClassifier, [("n_neighbors", [8, 10, 20, 50, 70, 90]), ("weights", ["uniform", "distance"])]),

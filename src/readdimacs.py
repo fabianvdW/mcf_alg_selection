@@ -3,8 +3,6 @@ reads dimacs and returns networkx graph
 """
 
 import networkx as nx
-import os
-import math
 
 
 def read(filename):
