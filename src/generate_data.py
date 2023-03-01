@@ -7,7 +7,7 @@ Netgen, Gridgen, Goto and Gridgraph
 import generate_netgen as net
 import generate_gridgen as ggen
 import generate_goto as goto
-import generate_gridgraph_neu as ggraph
+import generate_gridgraph as ggraph
 
 path_to_project = '../'
 path_to_data = path_to_project + 'data/generated_data/'
