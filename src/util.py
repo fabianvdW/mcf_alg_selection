@@ -1,8 +1,10 @@
 import os, json
+
 TIME_LIMIT = 2 * 10 ** 6  # 2s
 
 path_to_project = os.path.join("..")
 path_to_data = os.path.join(path_to_project, "data", "generated_data")
+
 
 def algorithm_selection_metric(algorithm_list, df_section):
     # Maybe one can vectorize this(cf. https://stackoverflow.com/questions/24833130/how-can-i-select-a-specific-column-from-each-row-in-a-pandas-dataframe)

@@ -16,7 +16,6 @@ def get_seed():
     return int(time.time() * 100 * 100 * random.random())
 
 
-
 nodes = [2 ** k for k in range(6, 11)]
 costs = [2, 10, 100, 1000, 10000]
 supply = [1, 10, 100, 1000]
@@ -50,4 +49,3 @@ if __name__ == '__main__':
 
     with open(os.path.join(path_to_data, "data_commands.json"), "w") as out:
         json.dump(command_dict, out)
-

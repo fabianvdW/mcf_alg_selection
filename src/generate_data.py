@@ -4,7 +4,6 @@ Create MCF-instances with different params with
 Netgen, Gridgen, Goto and Gridgraph
 """
 
-
 path_to_project = '../'
 path_to_data = path_to_project + 'data/generated_data/'
 

@@ -1,7 +1,6 @@
 import subprocess
 from util import TIME_LIMIT
 from func_timeout import func_timeout, FunctionTimedOut
-import sys
 
 
 def call_algorithm(algorithm, instance_data):

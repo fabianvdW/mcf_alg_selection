@@ -68,7 +68,7 @@ def calculate_features(g, mst):
     return features
 
 
-if __name__ ==  "__main__":
+if __name__ == "__main__":
     graph = rd.read(sys.stdin)
     features_a = calculate_features(graph, False)
     mst = nx.minimum_spanning_tree(graph.to_undirected())

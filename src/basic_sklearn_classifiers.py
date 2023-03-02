@@ -26,7 +26,7 @@ exp, EXP_FOLDER = Experiment(experiment_name), "../experiments/"
 @exp.main
 def main():
     combined_data = data.get_data()
-    #combined_data.drop("g_shortest_path", axis=1, inplace=True)
+    # combined_data.drop("g_shortest_path", axis=1, inplace=True)
     # Save raw data
     save_obj_to_exp(exp, "raw_data.csv", lambda path: combined_data.to_csv(path))
 
@@ -40,7 +40,7 @@ def main():
     algo_and_options = [
         (KNeighborsClassifier, [("n_neighbors", [8, 10, 20, 50, 70, 90]), ("weights", ["uniform", "distance"])]),
         (SVC, [("C", [0.5, 0.75, 1.0, 1.25, 1.5]), ("kernel", ["poly", "rbf", "sigmoid"])]),
-        #(GaussianProcessClassifier, [("n_restarts_optimizer", [0, 1])]),
+        # (GaussianProcessClassifier, [("n_restarts_optimizer", [0, 1])]),
         (DecisionTreeClassifier, [("criterion", ["gini", "entropy"]), ("splitter", ["best", "random"]),
                                   ("max_depth", [None, 3, 5, 8]), ("class_weight", [None, "balanced"])]),
         (RandomForestClassifier, [("criterion", ["gini", "entropy"]), ("max_depth", [None, 3, 5, 8]),
@@ -51,7 +51,7 @@ def main():
         (AdaBoostClassifier,
          [("n_estimators", [5, 7, 9, 11, 13, 50]), ("learning_rate", [0.8, 0.85, 1., 1.15, 1.3])]),
         (GaussianNB, [])]
-        #(QuadraticDiscriminantAnalysis, [("reg_param", [-1, -0.5, 0, 0.5, 1])])]
+    # (QuadraticDiscriminantAnalysis, [("reg_param", [-1, -0.5, 0, 0.5, 1])])]
 
     training_cv_runs = []
     production_training_runs = []

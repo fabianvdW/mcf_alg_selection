@@ -22,12 +22,10 @@ train_data, test_data, train_label, test_label, train_times, test_times = train_
                                                                                            test_size=0.2,
                                                                                            random_state=1)
 
-
-
 algo_and_options = [
     (KNeighborsClassifier, [("n_neighbors", [8, 10, 20, 50, 70, 90]), ("weights", ["uniform", "distance"])]),
     (SVC, [("C", [0.5, 0.75, 1.0, 1.25, 1.5]), ("kernel", ["poly", "rbf", "sigmoid"])]),
-    #(GaussianProcessClassifier, [("n_restarts_optimizer", [0, 1])]),
+    # (GaussianProcessClassifier, [("n_restarts_optimizer", [0, 1])]),
     (DecisionTreeClassifier, [("criterion", ["gini", "entropy"]), ("splitter", ["best", "random"]),
                               ("max_depth", [None, 3, 5, 8])]),
     (RandomForestClassifier, [("criterion", ["gini", "entropy"]), ("max_depth", [None, 3, 5, 8]),
