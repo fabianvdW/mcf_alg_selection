@@ -30,15 +30,12 @@ auto since(std::chrono::time_point<clock_t, duration_t> const& start)
 
 int main(int argc, char** argv)
 {
-  string fileName = argv[1];
-  cout << fileName << " ";
-  ifstream file(fileName);
   SmartDigraph g;
   SmartDigraph::ArcMap<int> lowerMap(g);
   SmartDigraph::ArcMap<int> capacityMap(g);
   SmartDigraph::ArcMap<int> costMap(g);
   SmartDigraph::NodeMap<int> supplyMap(g);
-  readDimacsMin(file, g, lowerMap, capacityMap, costMap, supplyMap);
+  readDimacsMin(std::cin, g, lowerMap, capacityMap, costMap, supplyMap);
 
   int acc = 0;
   for (SmartDigraph::NodeIt n(g); n != INVALID; ++n)
@@ -48,7 +45,7 @@ int main(int argc, char** argv)
     return 0;
   }
 
-  int algo = stoi(argv[2]);
+  int algo = stoi(argv[1]);
   int time = -1;
   long long cost = -1;
   if(algo == 0){
@@ -63,35 +60,6 @@ int main(int argc, char** argv)
     ns.run();
     time = since<std::chrono::microseconds>(start).count();
     cost = ns.totalCost<long long>();
-  }else if(algo == 1){
-    //CS2
-    const redi::pstreams::pmode mode = redi::pstreams::pstdout|redi::pstreams::pstderr;
-    redi::ipstream proc("cat "+fileName+" | ./../cs2/cs2.exe", mode);
-    string line;
-    if(std::getline(proc.err(), line)){
-        if(line.find("unbalanced problem") != std::string::npos){
-          time = 0;
-          cost = 0;
-        }else if(line.find("Error 2") != std::string::npos){
-          cout << "There is no feasible solution! Jumping to next file." << endl;
-          return 0;
-        }else{
-          cout << "Encountered unknown cs2 problem! Aborting." << endl;
-          return 0;
-      }
-      
-    }else{
-      proc.clear();
-      int i=0;
-      while(proc.out() >> line){
-        if(i==0){
-          time = stoi(line);
-        }else{
-          cost = stoll(line);
-        }
-        i++;
-      }
-    }
   }else if(algo == 2){
     //SSP
     CapacityScaling<SmartDigraph> cas(g);

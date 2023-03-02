@@ -1928,7 +1928,7 @@ int main (int argc, char **argv)
   
   
   //printf ("c time:  %15lu    cost:  %15.0f\n", end-start, cost);
-  printf("%lu\n",end-start);
+  printf("%lu ",end-start);
   printf("%lu\n",(unsigned long)cost);
   
 /*  printf ("c refines:    %10ld     discharges: %10ld\n",

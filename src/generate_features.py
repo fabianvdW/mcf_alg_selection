@@ -12,7 +12,7 @@ import line_profiler
 
 
 # To node depth mst
-# features_of_graph = [seed, number of nodes, number of arcs, min cost, max cost,
+# features_of_graph = [number of nodes, number of arcs, min cost, max cost,
 #                      sum cost, mean cost, std cost, min cap, max cap, sum cap, 
 #                      mean cap, std cap, max of min of shortest path from supply to demand,
 #                      supply, num of supply nodes, number of arcs between source and sink]
@@ -69,10 +69,8 @@ def calculate_features(g, mst):
 
 
 if __name__ ==  "__main__":
-    # [WIP] TODO
     graph = rd.read(sys.stdin)
     features_a = calculate_features(graph, False)
     mst = nx.minimum_spanning_tree(graph.to_undirected())
     features_b = calculate_features(mst, True)
-    print(features_a)
-    print(features_b)
+    print(" ".join(map(lambda x: str(x), features_a + features_b)))
