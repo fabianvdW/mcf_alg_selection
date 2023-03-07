@@ -8,6 +8,25 @@ from util import *
 from call_algorithm import call_algorithm_timeout
 
 
+# TODO:
+# -Change the runtime determination such that it can be repeated n-times until a stochastic test yields that
+# it has not to be repeated anymore (A first "stochastic" test could just say: Repeat 2 times)
+# -Change the runtime determination such that it runs before the features are generated and if an instance
+# proves to be infeasible do not determine the features anymore
+# -Change the main loop such that it incorporates the data generation:
+# For each of the data sources, generate random commands until a fixed amount (Say N=25,000) of feasible! instances
+# were evaluated
+# In a first iteration, just assume that different data sources are given via a black box function source() which returns a single
+# data generation command.
+
+def source():
+    return "python generate_gridgraph.py 5 5 5 2 1 5920924449881"
+
+
+def stochastic_test(runtimes):
+    return len(runtimes) >= 2
+
+
 def run_task(task):
     id, data_command, run_features, run_runtimes = task
     res = [id, None, None]
