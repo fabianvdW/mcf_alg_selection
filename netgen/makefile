@@ -1,4 +1,4 @@
-CFLAGS = -O -DDIMACS -std=c17 -O3
+CFLAGS = -O -DDIMACS -std=c17 -O3 -o netgen
 
 OBJS = netgen.o index.o random.o
 

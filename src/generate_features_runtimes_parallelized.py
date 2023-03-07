@@ -42,7 +42,6 @@ def run_task(task):
             res[2] = invalid_or_error
         else:
             res[2] = f"{times[0]} {times[1]} {times[2]} {times[3]} {times[4]} {times[5]} {times[6]}"
-    print(f"Finished task with id {id}")
     return res
 
 
@@ -86,4 +85,5 @@ if __name__ == "__main__":
                 out_features.write(f"{id} {res_features}\n")
             if res_runtimes:
                 out_runtimes.write(f"{id} {res_runtimes}\n")
+            print(f"Finished task with id {id}")
             items_to_evaluate -= 1

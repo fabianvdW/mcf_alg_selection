@@ -1,1 +1,1 @@
-cc goto.c -lm -I . -o goto.exe
+gcc goto.c -lm -I . -o goto

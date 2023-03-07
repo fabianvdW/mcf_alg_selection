@@ -23,18 +23,31 @@ cd build
 cmake ..
 make
 ```
-If everything worked, this command should work:
-```
-./src/lemon-project.exe
-< Hello World! This is LEMON library here.
-< We have a directed graph with 2 nodes and 1 arc.
-```
-At this point lemon is up and running.
+If everything worked an executable `./src/lemon-project` should exist. At this point lemon is up and running.
 
 Getting netgen to run:
 ```
 cd netgen
 make
-./netgen
 ```
-At this point netgen is up and running.
+At this point netgen is up and running if a `netgen` executable exists.
+
+Getting gridgen to run:
+```
+cd gridgen
+gcc gridgen.c -lm -o gridgen
+```
+At this point gridgen is up and running if a `gridgen` executable exists.
+
+Getting goto to run:
+```
+cd goto
+gcc goto.c -lm -I . -o goto
+```
+At this point goto is up and running if a `goto` exectuable exists.
+
+Getting cs2 to run:
+```
+cd cs2
+make
+```
