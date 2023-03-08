@@ -4,15 +4,13 @@ import os
 from multiprocessing.dummy import Pool as ThreadPool
 import json
 import sys
+import numpy as np
 from util import *
 from call_algorithm import call_algorithm
+from runtime_benchmarking import is_significant
 
 
 # TODO:
-# -Change the runtime determination such that it can be repeated n-times until a stochastic test yields that
-# it has not to be repeated anymore (A first "stochastic" test could just say: Repeat 2 times)
-# -Change the runtime determination such that it runs before the features are generated and if an instance
-# proves to be infeasible do not determine the features anymore
 # -Change the main loop such that it incorporates the data generation:
 # For each of the data sources, generate random commands until a fixed amount (Say N=25,000) of feasible! instances
 # were evaluated
@@ -23,44 +21,51 @@ def source():
     return "python generate_gridgraph.py 5 5 5 2 1 5920924449881"
 
 
-def stochastic_test(runtimes):
-    return len(runtimes) >= 2
-
-
 def run_task(task):
     id, data_command, run_features, run_runtimes = task
     res = [id, None, None]
     instance_data = subprocess.run(data_command, capture_output=True).stdout
-    if run_features:
-        features_proc = subprocess.run("python generate_features.py", capture_output=True, input=instance_data,
-                                       shell=True)
-        res[1] = features_proc.stdout.decode("utf-8").rstrip()
     if run_runtimes:
-        times = []
         costs = []
         invalid_or_error = None
-        for algo in range(4):
-            timed_out, result = call_algorithm(algo, instance_data)
-            try:
-                if timed_out:
-                    time = TIME_LIMIT
-                    cost = -1
-                else:
-                    time, cost = result.split(" ")
-                    time, cost = int(time), int(cost)
-                times.append(time)
-                costs.append(cost)
-            except:
-                print("invalid")
-                invalid_or_error = "ERROR: " + " ".join(result.strip().split(" ")[0:])
-                break
-        if not invalid_or_error and any(c != costs[0] and time != TIME_LIMIT for (c, time) in zip(costs, times)):
-            invalid_or_error = "The algorithms do not agree on one cost."
-
+        N = [1 for _ in range(4)]
+        while invalid_or_error is None and N is not None:
+            runtimes = [[] for _ in range(4)]
+            # Setup the task list in terms of indices
+            task_list = [j for _ in range(N[j]) for j in range(4)]
+            task_list = np.random.permutation(task_list)
+            for algo in task_list:
+                timed_out, result = call_algorithm(algo, instance_data)
+                try:
+                    if timed_out:
+                        time = TIME_LIMIT
+                    else:
+                        time, cost = result.split(" ")
+                        time, cost = int(time), int(cost)
+                        costs.append(cost)
+                    runtimes[algo].append(time)
+                except:
+                    invalid_or_error = "ERROR: " + " ".join(result.strip().split(" ")[0:])
+                    print(f"Task with id {id} has {invalid_or_error}")
+                    break
+            N = is_significant(runtimes)
+            if N is None:
+                means = np.array([np.array(x).mean() for x in runtimes])
+                res[2] = f"{means[0]} {means[1]} {means[2]} {means[3]}"
+            else:
+                print(f"Task with id {id}: Retrying with N={N} as runtimes {runtimes} proved insignificant.")
         if invalid_or_error:
+            res[1] = "Features not determined as instance proved to be not feasible"
+            run_features = False
             res[2] = invalid_or_error
-        else:
-            res[2] = f"{times[0]} {times[1]} {times[2]} {times[3]}"
+        elif any(c != costs[0] for c in costs):
+            res[1] = "Features not determined as algorithms do not agree on one cost"
+            run_features = False
+            res[2] = "The algorithms do not agree on one cost."
+
+    if run_features:
+        features_proc = subprocess.run("python generate_features.py", capture_output=True, input=instance_data)
+        res[1] = features_proc.stdout.decode("utf-8").rstrip()
     return res
 
 
@@ -79,15 +84,11 @@ if __name__ == "__main__":
         data_commands = json.load(infile)
 
     tasks = []
-    key = "GRIDGRAPH_2704"
-    tasks = [(key, data_commands[key], False, True) for _ in range(1000)]
-    """
     for key in data_commands.keys():
         in_features = key in existing_features
         in_runtimes = key in existing_runtimes
         if not in_features or not in_runtimes:
             tasks.append((key, data_commands[key], not in_features, not in_runtimes))
-    """
     items_to_evaluate = len(tasks)
     result_queue = queue.Queue()
 
