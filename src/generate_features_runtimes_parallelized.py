@@ -32,7 +32,7 @@ def run_task(task):
         while invalid_or_error is None and N is not None:
             runtimes = [[] for _ in range(4)]
             # Setup the task list in terms of indices
-            task_list = [j for _ in range(N[j]) for j in range(4)]
+            task_list = [j for j in range(4) for _ in range(N[j])]
             task_list = np.random.permutation(task_list)
             for algo in task_list:
                 timed_out, result = call_algorithm(algo, instance_data)
@@ -50,6 +50,7 @@ def run_task(task):
                     break
             N = is_significant(runtimes)
             if N is None:
+                print(f"Task with id {id}: Finished as runtimes {runtimes} proved significant.")
                 means = np.array([np.array(x).mean() for x in runtimes])
                 res[2] = f"{means[0]} {means[1]} {means[2]} {means[3]}"
             else:

@@ -1,6 +1,6 @@
 import os, json
 
-TIME_LIMIT = 10 * 10 ** 6  # 4s
+TIME_LIMIT = 1 * 10 ** 6  # 4s
 
 path_to_project = os.path.join("..")
 path_to_data = os.path.join(path_to_project, "data", "generated_data")
