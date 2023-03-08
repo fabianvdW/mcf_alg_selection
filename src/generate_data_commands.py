@@ -25,7 +25,7 @@ if __name__ == '__main__':
     i = 0
     command_dict = {}
     # 27000 GRIDGRAPH instances
-    width = [5, 10, 20, 30, 50, 70, 100]
+    width = [5, 10, 20, 30, 50, 70, 200]
     for m in width:
         for n in width:
             for s in [s * ((m * n) ** 0.5) for s in supply]:

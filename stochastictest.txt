@@ -1,0 +1,2 @@
+We chose 200ms as an upper bound for the standard deviation of runtimes independent of the runtime itself.
+This bound is much larger than the highest standard deviations observed during testing, which were around 60ms in a noisy environment.

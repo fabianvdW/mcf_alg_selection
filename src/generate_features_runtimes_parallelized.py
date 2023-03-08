@@ -30,7 +30,7 @@ def stochastic_test(runtimes):
 def run_task(task):
     id, data_command, run_features, run_runtimes = task
     res = [id, None, None]
-    instance_data = subprocess.run(data_command, capture_output=True, shell=True).stdout
+    instance_data = subprocess.run(data_command, capture_output=True).stdout
     if run_features:
         features_proc = subprocess.run("python generate_features.py", capture_output=True, input=instance_data,
                                        shell=True)
@@ -39,7 +39,7 @@ def run_task(task):
         times = []
         costs = []
         invalid_or_error = None
-        for algo in range(7):
+        for algo in range(4):
             timed_out, result = call_algorithm(algo, instance_data)
             try:
                 if timed_out:
@@ -60,7 +60,7 @@ def run_task(task):
         if invalid_or_error:
             res[2] = invalid_or_error
         else:
-            res[2] = f"{times[0]} {times[1]} {times[2]} {times[3]} {times[4]} {times[5]} {times[6]}"
+            res[2] = f"{times[0]} {times[1]} {times[2]} {times[3]}"
     return res
 
 
@@ -79,7 +79,7 @@ if __name__ == "__main__":
         data_commands = json.load(infile)
 
     tasks = []
-    key = "GRIDGRAPH_2724"
+    key = "GRIDGRAPH_2704"
     tasks = [(key, data_commands[key], False, True) for _ in range(1000)]
     """
     for key in data_commands.keys():
