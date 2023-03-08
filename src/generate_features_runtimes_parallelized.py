@@ -79,12 +79,15 @@ if __name__ == "__main__":
         data_commands = json.load(infile)
 
     tasks = []
+    key = "GRIDGRAPH_2724"
+    tasks = [(key, data_commands[key], False, True) for _ in range(1000)]
+    """
     for key in data_commands.keys():
         in_features = key in existing_features
         in_runtimes = key in existing_runtimes
         if not in_features or not in_runtimes:
             tasks.append((key, data_commands[key], not in_features, not in_runtimes))
-
+    """
     items_to_evaluate = len(tasks)
     result_queue = queue.Queue()
 
