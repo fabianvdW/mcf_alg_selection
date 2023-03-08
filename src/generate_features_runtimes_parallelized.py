@@ -5,7 +5,7 @@ from multiprocessing.dummy import Pool as ThreadPool
 import json
 import sys
 from util import *
-from call_algorithm import call_algorithm_timeout
+from call_algorithm import call_algorithm
 
 
 # TODO:
@@ -40,7 +40,7 @@ def run_task(task):
         costs = []
         invalid_or_error = None
         for algo in range(7):
-            timed_out, result = call_algorithm_timeout(algo, instance_data)
+            timed_out, result = call_algorithm(algo, instance_data)
             try:
                 if timed_out:
                     time = TIME_LIMIT
