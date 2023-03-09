@@ -7,7 +7,7 @@ import sys
 import numpy as np
 from util import *
 from call_algorithm import call_algorithm
-from runtime_benchmarking import is_significant
+from stochastics import is_significant_baseline
 
 
 # TODO:
@@ -48,7 +48,7 @@ def run_task(task):
                     invalid_or_error = "ERROR: " + " ".join(result.strip().split(" ")[0:])
                     print(f"Task with id {id} has {invalid_or_error}")
                     break
-            N = is_significant(runtimes)
+            N = is_significant_baseline(runtimes)
             if N is None and invalid_or_error is None:
                 print(f"Task with id {id}: Finished as runtimes {runtimes} proved significant.")
                 means = np.array([np.array(x).mean() for x in runtimes])
