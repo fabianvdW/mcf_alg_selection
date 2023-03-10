@@ -53,21 +53,32 @@ def is_significant_baseline(runtimes, sigma_upper=200000, significance_level=0.9
             return None
         else:
             # Do estimation for new N according to baseline feasible solution given in PDF
+            b = s  # Definition of b changes, see pdf
+            non_zeros = np.sum(b > 0.)
+            q = [scipy.stats.t.ppf(significance_level ** (1 / non_zeros), df=N[j] - 1) if b[j] > 0. else np.inf for j in
+                 range(algorithms)]
             means[j_star] = np.inf
             j_prime = np.argmin(means)
             means[j_star] = min_mean
-            b = s  # Definition of b changes, see pdf
-            q = [scipy.stats.t.ppf(significance_level ** (1 / algorithms), df=N[j] - 1) for j in range(algorithms)]
             if np.isclose(a[j_prime], 0):
                 return 2 * N
-            N_initial = ((q[j_star] * b[j_star] + q[j_prime] * b[j_prime]) / a[j_prime]) ** 2
-            N_new = np.zeros(algorithms)
-            N_new[j_star] = N_initial
-            for j in range(algorithms):
-                if j == j_star:
-                    continue
+
+            N_new = np.array([0 if b[j] > 0. else 2 for j in range(algorithms)])
+            if b[j_star] == 0:
+                for j in range(algorithms):
+                    if b[j] > 0.:
+                        N_new[j] = (q[j] * b[j] / a[j]) ** 2  # We know a[j] < 0. else we would have returned 2*N above
+            else:
+                if b[j_prime] > 0.:
+                    N_initial = ((q[j_star] * b[j_star] + q[j_prime] * b[j_prime]) / a[j_prime]) ** 2
                 else:
-                    N_new[j] =  ((q[j] * b[j]) / (a[j] + b[j_star] * q[j_star] / np.sqrt(N_initial))) ** 2
+                    N_initial = ((q[j_star] * b[j_star]) / a[j_prime]) ** 2
+                N_new[j_star] = N_initial
+                for j in range(algorithms):
+                    if j == j_star or b[j] == 0.:
+                        continue
+                    else:
+                        N_new[j] = ((q[j] * b[j]) / (a[j] + b[j_star] * q[j_star] / np.sqrt(N_initial))) ** 2
             N_new = np.clip(N_new, N, 8 * N)
             N_new = [int(x) for x in np.ceil(N_new)]
             debug_print(f"N target value: {means @ np.array(N_new)}", debug)

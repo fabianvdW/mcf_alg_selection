@@ -53,8 +53,12 @@ def run_task(task):
                 print(f"Task with id {id}: Finished as runtimes {runtimes} proved significant.")
                 means = np.array([np.array(x).mean() for x in runtimes])
                 res[2] = f"{means[0]} {means[1]} {means[2]} {means[3]}"
-            else:
-                print(f"Task with id {id}: Retrying with N={N} as runtimes {runtimes} proved insignificant.")
+            elif invalid_or_error is None:
+                if sum(N) >= 10000:
+                    invalid_or_error = f"ERROR: Too many runs (N={N}) were requested, dropping instance"
+                    print(f"Task with id {id}: {invalid_or_error}")
+                else:
+                    print(f"Task with id {id}: Retrying with N={N} as runtimes {runtimes} proved insignificant.")
         if invalid_or_error:
             res[1] = "Features not determined as instance proved to be not feasible"
             run_features = False
