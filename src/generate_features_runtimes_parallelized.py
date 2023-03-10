@@ -48,7 +48,8 @@ def run_task(task):
                     invalid_or_error = "ERROR: " + " ".join(result.strip().split(" ")[0:])
                     print(f"Task with id {id} has {invalid_or_error}")
                     break
-            N = is_significant_baseline(runtimes)
+            if not invalid_or_error:
+                N = is_significant_baseline(runtimes)
             if N is None and invalid_or_error is None:
                 print(f"Task with id {id}: Finished as runtimes {runtimes} proved significant.")
                 means = np.array([np.array(x).mean() for x in runtimes])
