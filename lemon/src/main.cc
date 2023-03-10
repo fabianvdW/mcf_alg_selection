@@ -13,19 +13,35 @@
 #include <lemon/capacity_scaling.h>
 #include <lemon/cycle_canceling.h>
 #include <lemon/dimacs.h>
+#include <stdio.h>
+#include <processthreadsapi.h>
+
+#ifdef _WIN32
+#include <Windows.h>
+double get_cpu_time(){
+    FILETIME a,b,c,d;
+    if (GetProcessTimes(GetCurrentProcess(),&a,&b,&c,&d) != 0){
+        //  Returns total user time.
+        //  Can be tweaked to include kernel times as well.
+        return
+            (double)(d.dwLowDateTime |
+            ((unsigned long long)d.dwHighDateTime << 32));
+    }else{
+        //  Handle error
+        return 0.0;
+    }
+}
+#else
+#include <time.h>
+#include <sys/time.h>
+double get_cpu_time(){
+    return (double)clock() / CLOCKS_PER_SEC;
+}
+#endif
+
 namespace fs = std::filesystem;
 using namespace lemon;
 using namespace std;
-
-template <
-    class result_t   = std::chrono::milliseconds,
-    class clock_t    = std::chrono::steady_clock,
-    class duration_t = std::chrono::milliseconds
->
-auto since(std::chrono::time_point<clock_t, duration_t> const& start)
-{
-    return std::chrono::duration_cast<result_t>(clock_t::now() - start);
-}
 
 
 int main(int argc, char** argv)
@@ -44,10 +60,12 @@ int main(int argc, char** argv)
     cout << "There is no feasible solution! Jumping to next file." << endl;
     return 0;
   }
+  double c_start;
+  double c_end;
 
   int algo = stoi(argv[1]);
-  int time = -1;
   long long cost = -1;
+
   if(algo == 0){
     //NetworkSimplex
     NetworkSimplex<SmartDigraph> ns(g);
@@ -56,9 +74,9 @@ int main(int argc, char** argv)
     ns.costMap(costMap);
     ns.supplyMap(supplyMap);
     ns.supplyType(NetworkSimplex<SmartDigraph>::GEQ);
-    auto start = std::chrono::steady_clock::now();
+    c_start = get_cpu_time();
     ns.run();
-    time = since<std::chrono::microseconds>(start).count();
+    c_end = get_cpu_time();
     cost = ns.totalCost<long long>();
   }else if(algo == 2){
     //SSP
@@ -67,9 +85,9 @@ int main(int argc, char** argv)
     cas.upperMap(capacityMap);
     cas.costMap(costMap);
     cas.supplyMap(supplyMap);
-    auto start = std::chrono::steady_clock::now();
+    c_start = get_cpu_time();
     cas.run(1);
-    time = since<std::chrono::microseconds>(start).count();
+    c_end = get_cpu_time();
     cost = cas.totalCost<long long>();
   }else if(algo == 3){
     //CAS
@@ -78,9 +96,9 @@ int main(int argc, char** argv)
     cas.upperMap(capacityMap);
     cas.costMap(costMap);
     cas.supplyMap(supplyMap);
-    auto start = std::chrono::steady_clock::now();
+    c_start = get_cpu_time();
     cas.run();
-    time = since<std::chrono::microseconds>(start).count();
+    c_end = get_cpu_time();
     cost = cas.totalCost<long long>();
   }else if(algo == 4){
     //Cycle Canceling
@@ -89,9 +107,9 @@ int main(int argc, char** argv)
     cc.upperMap(capacityMap);
     cc.costMap(costMap);
     cc.supplyMap(supplyMap);
-    auto start = std::chrono::steady_clock::now();
+    c_start = get_cpu_time();
     cc.run(CycleCanceling<SmartDigraph>::SIMPLE_CYCLE_CANCELING);
-    time = since<std::chrono::microseconds>(start).count(); 
+    c_end = get_cpu_time();
     cost = cc.totalCost<long long>();
   }else if(algo == 5){
     CycleCanceling<SmartDigraph> cc(g);
@@ -99,9 +117,9 @@ int main(int argc, char** argv)
     cc.upperMap(capacityMap);
     cc.costMap(costMap);
     cc.supplyMap(supplyMap);
-    auto start = std::chrono::steady_clock::now();
+    c_start = get_cpu_time();
     cc.run(CycleCanceling<SmartDigraph>::MINIMUM_MEAN_CYCLE_CANCELING);
-    time = since<std::chrono::microseconds>(start).count();
+    c_end = get_cpu_time();
     cost = cc.totalCost<long long>(); 
   }else if(algo == 6){
     CycleCanceling<SmartDigraph> cc(g);
@@ -109,14 +127,13 @@ int main(int argc, char** argv)
     cc.upperMap(capacityMap);
     cc.costMap(costMap);
     cc.supplyMap(supplyMap);
-    auto start = std::chrono::steady_clock::now();
+    c_start = get_cpu_time();
     cc.run(CycleCanceling<SmartDigraph>::CANCEL_AND_TIGHTEN);
-    time = since<std::chrono::microseconds>(start).count();
+    c_end = get_cpu_time();
     cost = cc.totalCost<long long>(); 
   }
-  cout << time << " " << cost << endl;
+  double elapsed = (c_end - c_start) * 1000000.0;
+  printf("%.0f ",elapsed);
+  printf("%lu\n",(unsigned long)cost);
   return 0;
-
-}    
-
-
+}

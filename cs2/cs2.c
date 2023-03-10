@@ -21,6 +21,28 @@
 
 #include "types_cs2.h"
 
+#ifdef _WIN32
+#include <Windows.h>
+double get_cpu_time(){
+    FILETIME a,b,c,d;
+    if (GetProcessTimes(GetCurrentProcess(),&a,&b,&c,&d) != 0){
+        //  Returns total user time.
+        //  Can be tweaked to include kernel times as well.
+        return
+            (double)(d.dwLowDateTime |
+            ((unsigned long long)d.dwHighDateTime << 32));
+    }else{
+        //  Handle error
+        return 0.0;
+    }
+}
+#else
+#include <time.h>
+#include <sys/time.h>
+double get_cpu_time(){
+    return (double)clock() / CLOCKS_PER_SEC;
+}
+#endif
 
 #define N_NODE( i ) ( ( (i) == NULL ) ? -1 : ( (i) - ndp + nmin ) )
 #define N_ARC( a ) ( ( (a) == NULL )? -1 : (a) - arp )
@@ -1917,20 +1939,15 @@ int main (int argc, char **argv)
   
   
   m2 = 2 * m;
-  //printf ("c nodes: %15ld     arcs:  %15ld\n", n, m ); 
-  struct timeval  tv;
-  gettimeofday(&tv, NULL);
+  //printf ("c nodes: %15ld     arcs:  %15ld\n", n, m );
 
-  unsigned long start = (tv.tv_sec) * 1000000+ (tv.tv_usec);
+  double start = get_cpu_time();
   cs2 ( n, m2, ndp, arp, f_sc, c_max, cap, &cost );
-  gettimeofday(&tv, NULL);
-  unsigned long end = (tv.tv_sec) * 1000000+ (tv.tv_usec);
-  
-  
+  double end = get_cpu_time();
+  double time = (end-start)*1000000.0;
   //printf ("c time:  %15lu    cost:  %15.0f\n", end-start, cost);
-  printf("%lu ",end-start);
+  printf("%.0f ",time);
   printf("%lu\n",(unsigned long)cost);
-  
 /*  printf ("c refines:    %10ld     discharges: %10ld\n",
 	  n_refine, n_discharge);
   printf ("c pushes:     %10ld     relabels:   %10ld\n",
