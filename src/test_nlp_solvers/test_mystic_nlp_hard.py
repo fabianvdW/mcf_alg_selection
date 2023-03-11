@@ -35,11 +35,11 @@ if __name__ == "__main__":
             N_new[j] = ((q[j] * b[j]) / (a[j] + b[j_star] * q[j_star] / np.sqrt(N_initial))) ** 2
     N_new = np.clip(N_new, np.array([3 for _ in range(algorithms)]), 1600*N)
     print(f"Initial N_new: {N_new}")
-    print(f"Initial opt value: {means @ N_new}")
+    print(f"Initial opt value: {(means+200000) @ N_new}")
     x0 = np.concatenate((N_new, [q[j_star]]))
 
     def obj(x):
-        return means @ x[:algorithms]
+        return (means + 200000) @ x[:algorithms]
 
     def g(x):
         q = solve_qs(x)
