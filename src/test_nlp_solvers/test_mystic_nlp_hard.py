@@ -33,8 +33,7 @@ if __name__ == "__main__":
             continue
         else:
             N_new[j] = ((q[j] * b[j]) / (a[j] + b[j_star] * q[j_star] / np.sqrt(N_initial))) ** 2
-    N_new = np.clip(N_new, N, 1600*N)
-    N_new = [int(x) for x in np.ceil(N_new)]
+    N_new = np.clip(N_new, np.array([3 for _ in range(algorithms)]), 1600*N)
     print(f"Initial N_new: {N_new}")
     print(f"Initial opt value: {means @ N_new}")
     x0 = np.concatenate((N_new, [q[j_star]]))
@@ -59,7 +58,15 @@ if __name__ == "__main__":
     import time
     curr_time = time.time()
 
-    solution = mystic.solvers.fmin(obj, x0, penalty=penalty, disp=False)
+    #solution = mystic.solvers.fmin(obj, x0, penalty=penalty, disp=False)
+
+    solution = mystic.solvers.diffev(obj, x0,penalty=penalty, bounds=[(2, 100000) for _ in range(algorithms)] + [(-100000, 100000)],
+                                     maxfun=2000, maxiter=2000, npop=40)
+    """
+    solution = mystic.solvers.diffev2(obj, x0,penalty=penalty, bounds=[(2, 100000) for _ in range(algorithms)] + [(-100000, 100000)],
+                                     maxfun=2000, maxiter=2000, npop=20)
+    """
+
     print(f"Time {time.time() - curr_time}s")
     print(solution)
     print(f"Obj: {obj(solution)}")
