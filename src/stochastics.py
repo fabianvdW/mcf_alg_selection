@@ -49,6 +49,10 @@ def hypothesis_test(N, j_star, a, b, significance_level, debug, normal_dist=True
         q = solve_qs_1(j_star, a, b, q_j_star[0])
     else:
         q = q0
+    debug_print(f"q0's in {'first' if normal_dist else 'second'} test: {q0}", debug)
+    debug_print(
+        f"Significance level of q0 reached in {'first' if normal_dist else 'second'} test: {g_norm(q0) if normal_dist else g_t_1(q0, N)}",
+        debug)
     debug_print(f"q's in {'first' if normal_dist else 'second'} test: {q}", debug)
     debug_print(
         f"Significance level reached in {'first' if normal_dist else 'second'} test: {g_norm(q) if normal_dist else g_t_1(q, N)}",
