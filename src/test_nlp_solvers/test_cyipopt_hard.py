@@ -1,6 +1,6 @@
 import numpy as np
 import scipy.stats
-import scipy.optimize
+import cyipopt
 
 if __name__ == "__main__":
     runtimes = [
@@ -479,7 +479,9 @@ if __name__ == "__main__":
             N_new[j] = ((q[j] * b[j]) / (a[j] + b[j_star] * q[j_star] / np.sqrt(N_initial))) ** 2
     N_new = np.clip(N_new, N, 8 * N)
     N_new = [int(x) for x in np.ceil(N_new)]
+    print(f"Initial N_new: {N_new}")
     print(f"Initial opt value: {means @ N_new}")
+    x0 = np.concatenate((N_new, [q[j_star]]))
 
     def is_valid(q):
         upper_j_star = min_mean + s[j_star] * q[j_star] / np.sqrt(N[j_star])
@@ -499,7 +501,7 @@ if __name__ == "__main__":
 
 
     def jac_obj(x):
-        res = np.zeros(2 * algorithms)
+        res = np.zeros(algorithms + 1)
         res[:algorithms] = means
         return res
 
@@ -507,29 +509,24 @@ if __name__ == "__main__":
     def g(x):
         if any(x[:algorithms] <= 2.):
             return 0.
-        res = np.prod(scipy.stats.t.cdf(x[algorithms:], df=x[:algorithms] - 1))
+        q = solve_qs(x)
+        res = np.prod(scipy.stats.t.cdf(q, df=x[:algorithms] - 1))
         return res
 
+    def solve_qs(x):
+        q_j_star = x[algorithms]
+        return [-(a[j]+b[j_star]*q_j_star/np.sqrt(x[j_star]))/b[j] * np.sqrt(x[j]) if j!=j_star else q_j_star for j in range(algorithms)]
 
-    def interval_constraints(j,x):
-        return a[j] + b[j_star] * x[algorithms + j_star] / np.sqrt(x[j_star]) + b[j] * x[algorithms +j] / np.sqrt(x[j])
 
-
+    C = 1e50
     constraints = []
-    index = np.array([j for j in range(algorithms) if j != j_star])
-    for index_j, j in enumerate(index):
-        constraints.append(
-            scipy.optimize.NonlinearConstraint(lambda x: interval_constraints(j,x), lb=0, ub=0)
-        )
-    constraints.append(scipy.optimize.NonlinearConstraint(g, 0.95, 0.95))
-    res = scipy.optimize.minimize(obj, np.concatenate((N_new, q)), jac=jac_obj, constraints=constraints,
-                                  method="trust-constr",
-                                  bounds=[(2, np.inf) for _ in range(algorithms)] + [(0, np.inf) for _ in
-                                                                                     range(algorithms)],
-                                  options={"maxiter":5000})
+    constraints.append({
+        "type": "eq",
+        "fun": lambda x: -(g(x)-0.95) * C
+    })
+    res = cyipopt.minimize_ipopt(obj, x0, jac=jac_obj, constraints=constraints,
+                                 bounds=[(2, np.inf) for _ in range(algorithms)] + [(-np.inf, np.inf)])
     N_res, q_res = res.x[:algorithms], res.x[algorithms:]
     print(N_res, q_res)
     print(f"g_J of res {g(res.x)}")
     print(f"obj of res: {obj(res.x)}")
-    for j in index:
-        print(interval_constraints(j, res.x))
