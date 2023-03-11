@@ -7,7 +7,7 @@ import sys
 import numpy as np
 from util import *
 from call_algorithm import call_algorithm
-from stochastics import is_significant_baseline
+from stochastics import is_significant
 
 
 # TODO:
@@ -23,6 +23,7 @@ def source():
 
 def run_task(task):
     id, data_command, run_features, run_runtimes = task
+    print(id)
     res = [id, None, None]
     instance_data = subprocess.run(data_command, capture_output=True).stdout
     if run_runtimes:
