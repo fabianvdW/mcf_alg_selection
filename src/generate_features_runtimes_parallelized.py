@@ -23,14 +23,12 @@ def source():
 
 def run_task(task):
     id, data_command, run_features, run_runtimes = task
-    print(id)
     res = [id, None, None]
     instance_data = subprocess.run(data_command, capture_output=True).stdout
     if run_runtimes:
         costs = []
-        invalid_or_error = None
         N = [1 for _ in range(4)]
-        while invalid_or_error is None and N is not None:
+        while N is not None:
             runtimes = [[] for _ in range(4)]
             # Setup the task list in terms of indices
             task_list = [j for j in range(4) for _ in range(N[j])]
@@ -47,28 +45,26 @@ def run_task(task):
                     runtimes[algo].append(time)
                 except:
                     invalid_or_error = "ERROR: " + " ".join(result.strip().split(" ")[0:])
+                    res[1] = f"Features not determined due to {invalid_or_error}"
+                    res[2] = invalid_or_error
                     print(f"Task with id {id} has {invalid_or_error}")
-                    break
-            if not invalid_or_error:
-                N = is_significant(runtimes)
-            if N is None and invalid_or_error is None:
+                    return res
+            if any(c != costs[0] for c in costs):
+                res[1] = "Features not determined as algorithms do not agree on one cost"
+                res[2] = "The algorithms do not agree on one cost."
+                return res
+            N = is_significant(runtimes)
+            if N is None:
                 print(f"Task with id {id}: Finished as runtimes {runtimes} proved significant.")
-                means = np.array([np.array(x).mean() for x in runtimes])
-                res[2] = f"{means[0]} {means[1]} {means[2]} {means[3]}"
-            elif invalid_or_error is None:
-                if sum(N) >= 10000:
-                    invalid_or_error = f"ERROR: Too many runs (N={N}) were requested, dropping instance"
-                    print(f"Task with id {id}: {invalid_or_error}")
-                else:
-                    print(f"Task with id {id}: Retrying with N={N} as runtimes {runtimes} proved insignificant.")
-        if invalid_or_error:
-            res[1] = "Features not determined as instance proved to be not feasible"
-            run_features = False
-            res[2] = invalid_or_error
-        elif any(c != costs[0] for c in costs):
-            res[1] = "Features not determined as algorithms do not agree on one cost"
-            run_features = False
-            res[2] = "The algorithms do not agree on one cost."
+                res[2] = f"{runtimes}"
+            elif sum(N) >= 20000:
+                invalid_or_error = f"ERROR: Too many runs (N={N}) were requested, dropping instance"
+                res[1] = f"Features not determined due to {invalid_or_error}"
+                res[2] = invalid_or_error
+                print(f"Task with id {id}: {invalid_or_error}")
+                return res
+            else:
+                print(f"Task with id {id}: Retrying with N={N} as runtimes {runtimes} proved insignificant.")
 
     if run_features:
         features_proc = subprocess.run("python generate_features.py", capture_output=True, input=instance_data)

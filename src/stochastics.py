@@ -57,6 +57,9 @@ def hypothesis_test(N, j_star, a, b, significance_level, debug, normal_dist=True
     debug_print(
         f"Significance level reached in {'first' if normal_dist else 'second'} test: {g_norm(q) if normal_dist else g_t_1(q, N)}",
         debug)
+    if normal_dist and g_norm(q) >= significance_level and g_norm(q0) < significance_level or not normal_dist and g_t_1(
+            q, N) >= significance_level and g_t_1(q0, N) < significance_level:
+        print("Happened")
     return normal_dist and g_norm(q) >= significance_level or not normal_dist and g_t_1(q, N) >= significance_level
 
 
@@ -226,7 +229,7 @@ def estimate_new_n(N, j_star, means, a, b, significance_level, debug):
     N_new = np.ones(ALGORITHMS) * 2
     N_new[non_zeros] = N_est
     N_new = return_handler(N_new)
-    debug_print(f"Obj. value of N-NLP: {means @ np.array(N_new)}", debug)
+    debug_print(f"Obj. value of N-NLP: {obj_n(N_new, means)}", debug)
     return N_new
 
 
