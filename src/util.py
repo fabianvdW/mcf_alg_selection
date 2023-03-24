@@ -1,9 +1,16 @@
 import os, json
 
-TIME_LIMIT = 1 * 10 ** 6  # 4s
+GRIDGRAPH, NETGEN, GRIDGEN, GOTO = 0, 1, 2, 3
+GENERATOR_NAMES = ["GRIDGRAPH", "NETGEN", "GRIDGEN", "GOTO"]
+NUM_GENERATORS = 4
+TARGET_INSTANCES = [25000, 25000, 25000, 25000]
 
-path_to_project = os.path.join("..")
-path_to_data = os.path.join(path_to_project, "data", "generated_data")
+NUM_ALGORITHMS = 4
+TIME_LIMIT = 1 * 10 ** 6  # 4s
+MAX_SAMPLES = 20000
+
+PATH_TO_PROJECT = os.path.join("..")
+PATH_TO_DATA = os.path.join(PATH_TO_PROJECT, "data", "generated_data")
 
 
 def algorithm_selection_metric(algorithm_list, df_section):

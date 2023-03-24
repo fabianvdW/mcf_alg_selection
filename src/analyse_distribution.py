@@ -8,7 +8,7 @@ from scipy.stats import dgamma, normaltest, skewnorm, kstest, norm, anderson_ksa
 
 fig, ax = plt.subplots(1, 1)
 
-runtimes_file = os.path.join(util.path_to_data, "runtimes.csv")
+runtimes_file = os.path.join(util.PATH_TO_DATA, "runtimes.csv")
 runtimes = pd.read_csv(runtimes_file, header=None, sep=" ")
 runtimes.drop(columns=[runtimes.columns[0]], axis=1, inplace=True)
 np_runtimes = np.array(runtimes).transpose()
