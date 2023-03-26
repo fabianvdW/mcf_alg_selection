@@ -16,29 +16,6 @@
 #include <stdio.h>
 #include <processthreadsapi.h>
 
-#ifdef _WIN32
-#include <Windows.h>
-double get_cpu_time(){
-    FILETIME a,b,c,d;
-    if (GetProcessTimes(GetCurrentProcess(),&a,&b,&c,&d) != 0){
-        //  Returns total user time.
-        //  Can be tweaked to include kernel times as well.
-        return
-            (double)(d.dwLowDateTime |
-            ((unsigned long long)d.dwHighDateTime << 32));
-    }else{
-        //  Handle error
-        return 0.0;
-    }
-}
-#else
-#include <time.h>
-#include <sys/time.h>
-double get_cpu_time(){
-    return (double)clock() / CLOCKS_PER_SEC;
-}
-#endif
-
 namespace fs = std::filesystem;
 using namespace lemon;
 using namespace std;
@@ -51,10 +28,7 @@ int main(int argc, char** argv)
   SmartDigraph::ArcMap<int> capacityMap(g);
   SmartDigraph::ArcMap<int> costMap(g);
   SmartDigraph::NodeMap<int> supplyMap(g);
-  double start_readin = get_cpu_time();
   readDimacsMin(std::cin, g, lowerMap, capacityMap, costMap, supplyMap);
-  double end_readin = get_cpu_time();
-  printf("%.0f ",(end_readin - start_readin) * 1000000.0);
   
   int acc = 0;
   for (SmartDigraph::NodeIt n(g); n != INVALID; ++n)

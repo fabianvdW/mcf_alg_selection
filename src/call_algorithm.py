@@ -20,6 +20,7 @@ def call_algorithm(algorithm, instance_data):
         try:
             res = subprocess.run(f'"../lemon/build/src/lemon-project" {algorithm}', capture_output=True,
                                  input=instance_data, timeout=int(TIME_LIMIT / 10 ** 6))
+
             stderr = res.stderr.decode("utf-8")
             if stderr:
                 output = "Encountered unkown lemon problem! Aborting: " + stderr

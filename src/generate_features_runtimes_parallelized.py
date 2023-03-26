@@ -7,7 +7,7 @@ import numpy as np
 from src.util import *
 from src.call_algorithm import call_algorithm
 from src.stochastics import is_significant
-from src.generate_data_commands import generate_netgen, generate_gridgraph
+from src.generate_data_commands import generate_netgen, generate_gridgraph, generate_goto, generate_gridgen
 
 
 def run_task(task):
@@ -126,6 +126,10 @@ if __name__ == "__main__":
                 command = generate_gridgraph()
             elif generator == NETGEN:
                 command = generate_netgen()
+            elif generator == GOTO:
+                command = generate_goto()
+            elif generator == GRIDGEN:
+                command = generate_gridgen()
             add_instance_by_id(id)
             return (id, command, True, True)
 

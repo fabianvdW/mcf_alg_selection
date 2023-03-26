@@ -25,6 +25,29 @@
 #include <limits>
 #include <lemon/maps.h>
 #include <lemon/error.h>
+#ifdef _WIN32
+#include <Windows.h>
+double get_cpu_time(){
+    FILETIME a,b,c,d;
+    if (GetProcessTimes(GetCurrentProcess(),&a,&b,&c,&d) != 0){
+        //  Returns total user time.
+        //  Can be tweaked to include kernel times as well.
+        return
+            (double)(d.dwLowDateTime |
+            ((unsigned long long)d.dwHighDateTime << 32));
+    }else{
+        //  Handle error
+        return 0.0;
+    }
+}
+#else
+#include <time.h>
+#include <sys/time.h>
+double get_cpu_time(){
+    return (double)clock() / CLOCKS_PER_SEC;
+}
+#endif
+
 /// \ingroup dimacs_group
 /// \file
 /// \brief DIMACS file format reader.
@@ -135,10 +158,13 @@ namespace lemon {
                      typename CapacityMap::Value infty = 0,
                      DimacsDescriptor desc=DimacsDescriptor())
   {
+    double start_readin = get_cpu_time();
+    double time_inc = 0.;
     g.clear();
     std::vector<typename Digraph::Node> nodes;
     typename Digraph::Arc e;
     std::string problem, str;
+    char in_line[100];
     char c;
     int i, j;
     if(desc.type==DimacsDescriptor::NONE) desc=dimacsType(is);
@@ -172,8 +198,11 @@ namespace lemon {
         supply.set(nodes[i], sup);
         break;
       case 'a': // arc definition line
-        is >> i >> j >> low >> cap >> co;
+        double start_inc = get_cpu_time();
         getline(is, str);
+        str.copy(in_line, str.size(), 0);
+        sscanf(in_line, "%*c %d %d %d %d %d", &i, &j, &low, &cap, &co);
+        time_inc += (get_cpu_time() - start_inc) * 1000000.0;
         e = g.addArc(nodes[i], nodes[j]);
         lower.set(e, low);
         if (cap >= low)
@@ -184,6 +213,9 @@ namespace lemon {
         break;
       }
     }
+    double end_readin = get_cpu_time();
+    printf("%.0f ",(end_readin - start_readin) * 1000000.0);
+    printf("%.0f\n",time_inc);
   }
 
   template<typename Digraph, typename CapacityMap>

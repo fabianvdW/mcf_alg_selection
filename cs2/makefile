@@ -11,7 +11,7 @@ CCOMP = g++
 #CCOMP = gcc-4
 #CFLAGS = -O4 -DNDEBUG
 #CFLAGS = -g -DCHECK_SOLUTION -Wall
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -march=native -O1
 #CFLAGS = -O4 -DNDEBUG -DNO_ZERO_CYCLES
 BIN=cs2
 
