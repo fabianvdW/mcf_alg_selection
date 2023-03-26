@@ -8,7 +8,7 @@ does not save the data (only implicitly saves command to generate data).
 import math
 import time
 import random
-from src.util import *
+from util import *
 
 
 def get_seed():
@@ -44,17 +44,16 @@ def generate_gridgraph():
 
 
 def generate_netgen():
-
     min_cost, max_cost = 1, 10 ** 4
     min_cap, max_cap = 1, 10 ** 3
-    min_nodes, max_nodes = [10, 10 ** 3]
+    min_nodes, max_nodes = [10, 10 ** 5]
     seed = get_seed()
     nodes = random.randint(min_nodes, max_nodes)
-    arcs = random.randint(nodes * 2, nodes * (nodes - 1))
+    arcs = min(random.randint(nodes * 2, nodes * (nodes - 1)), int(33554432/10))
     supply = random.randint(1, 100 * nodes)
     a, b, c = random.random(), random.random(), random.random()
-    supply_nodes = min(1, math.floor(nodes * a / (a + b + c)))
-    demand_nodes = min(1, math.floor(nodes * b / (a + b + c)))
+    supply_nodes = max(1, math.floor(nodes * a / (a + b + c)))
+    demand_nodes = max(1, math.floor(nodes * b / (a + b + c)))
 
     params = [seed, 1, nodes, supply_nodes, demand_nodes, arcs, min_cost, max_cost, supply, 0, 0, 100, 100,
               min_cap, max_cap]
@@ -63,9 +62,20 @@ def generate_netgen():
     command = f'"{path_to_netgen}{os.path.sep}netgen"'
     return command, params_str
 
+
 if __name__ == "__main__":
     import subprocess
+    from call_algorithm import call_algorithm
+
     command, input = generate_netgen()
     print(input)
     instance_data = subprocess.run(command, capture_output=True, input=input.encode("utf-8")).stdout
-    print(instance_data.decode("utf-8"))
+    print("Finished generating instance")
+    for algo in [0, 1, 2, 3]:
+        print(f"Calling {algo}")
+        import time
+        start = time.time()
+        timed_out, result = call_algorithm(algo, instance_data)
+        print(timed_out, result)
+        print(time.time() - start)
+

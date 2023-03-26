@@ -1,5 +1,5 @@
 import subprocess
-from src.util import TIME_LIMIT
+from util import TIME_LIMIT
 
 
 def call_algorithm(algorithm, instance_data):

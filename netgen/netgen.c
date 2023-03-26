@@ -498,79 +498,47 @@ void main()
 
 /*** Read problem parameters and generate networks */
 
-  while (1) {
-    READ(seed);
-    if (seed <= 0) exit(0);
-    READ(problem);
-    if (problem <= 0) exit(0);
-    for (i = 0; i < PROBLEM_PARMS; i++)
-      READ(parms[i]);
-    printf("c NETGEN flow network generator (C version)\n");
-    printf("c  Problem %2ld input parameters\n", problem);
-    printf("c  ---------------------------\n");
-    printf("c   Random seed:          %10ld\n",   seed);
-    printf("c   Number of nodes:      %10ld\n",   NODES);
-    printf("c   Source nodes:         %10ld\n",   SOURCES);
-    printf("c   Sink nodes:           %10ld\n",   SINKS);
-    printf("c   Number of arcs:       %10ld\n",   DENSITY);
-    printf("c   Minimum arc cost:     %10ld\n",   MINCOST);
-    printf("c   Maximum arc cost:     %10ld\n",   MAXCOST);
-    printf("c   Total supply:         %10ld\n",   SUPPLY);
-    printf("c   Transshipment -\n");
-    printf("c     Sources:            %10ld\n",   TSOURCES);
-    printf("c     Sinks:              %10ld\n",   TSINKS);
-    printf("c   Skeleton arcs -\n");
-    printf("c     With max cost:      %10ld%%\n", HICOST);
-    printf("c     Capacitated:        %10ld%%\n", CAPACITATED);
-    printf("c   Minimum arc capacity: %10ld\n",   MINCAP);
-    printf("c   Maximum arc capacity: %10ld\n",   MAXCAP);
+  READ(seed);
+  if (seed <= 0) exit(0);
+  READ(problem);
+  if (problem <= 0) exit(0);
+  for (i = 0; i < PROBLEM_PARMS; i++)
+    READ(parms[i]);
+  printf("c NETGEN flow network generator (C version)\n");
+  printf("c  Problem %2ld input parameters\n", problem);
+  printf("c  ---------------------------\n");
+  printf("c   Random seed:          %10ld\n",   seed);
+  printf("c   Number of nodes:      %10ld\n",   NODES);
+  printf("c   Source nodes:         %10ld\n",   SOURCES);
+  printf("c   Sink nodes:           %10ld\n",   SINKS);
+  printf("c   Number of arcs:       %10ld\n",   DENSITY);
+  printf("c   Minimum arc cost:     %10ld\n",   MINCOST);
+  printf("c   Maximum arc cost:     %10ld\n",   MAXCOST);
+  printf("c   Total supply:         %10ld\n",   SUPPLY);
+  printf("c   Transshipment -\n");
+  printf("c     Sources:            %10ld\n",   TSOURCES);
+  printf("c     Sinks:              %10ld\n",   TSINKS);
+  printf("c   Skeleton arcs -\n");
+  printf("c     With max cost:      %10ld%%\n", HICOST);
+  printf("c     Capacitated:        %10ld%%\n", CAPACITATED);
+  printf("c   Minimum arc capacity: %10ld\n",   MINCAP);
+  printf("c   Maximum arc capacity: %10ld\n",   MAXCAP);
 
-    if ((arcs = netgen(seed, parms)) < 0)
-      error_exit(arcs);
-    if ((SOURCES-TSOURCES)+(SINKS-TSINKS) == NODES &&
-	(SOURCES-TSOURCES) == (SINKS-TSINKS) &&
-	 SOURCES == SUPPLY) {
-      printf("c\n");
-      printf("c  *** Assignment ***\n");
-      printf("c\n");
-      printf("p asn %ld %ld\n", NODES, arcs);
-      for (i = 0; i < NODES; i++) {
-	if (B[i] > 0)
-	  printf("n %ld\n", i + 1);
-      }
-      for (i = 0; i < arcs; i++) {
-	printf("a %ld %ld %ld\n", FROM[i], TO[i], C[i]);
-      }
-    } else
-    if (MINCOST == 1 && MAXCOST == 1) {
-      printf("c\n");
-      printf("c  *** Maximum flow ***\n");
-      printf("c\n");
-      printf("p max %ld %ld\n", NODES, arcs);
-      for (i = 0; i < NODES; i++) {
-	if (B[i] > 0)
-	  printf("n %ld s\n", i + 1);
-	else
-	if (B[i] < 0)
-	  printf("n %ld t\n", i + 1);
-      }
-      for (i = 0; i < arcs; i++) {
-	printf("a %ld %ld %ld\n", FROM[i], TO[i], U[i]);
-      }
-    } else {
-      printf("c\n");
-      printf("c  *** Minimum cost flow ***\n");
-      printf("c\n");
-      printf("p min %ld %ld\n", NODES, arcs);
-      for (i = 0; i < NODES; i++) {
-	if (B[i] != 0)
-	  printf("n %ld %ld\n", i + 1, B[i]);
-      }
-      for (i = 0; i < arcs; i++) {
-	printf("a %ld %ld %ld %ld %ld\n", FROM[i], TO[i], 0, U[i], C[i]);
-      }
-    }
+  if ((arcs = netgen(seed, parms)) < 0)
+    error_exit(arcs);
+    printf("c\n");
+  printf("c  *** Minimum cost flow ***\n");
+  printf("c\n");
+  printf("p min %ld %ld\n", NODES, arcs);
+  for (i = 0; i < NODES; i++) {
+    if (B[i] != 0)
+      printf("n %ld %ld\n", i + 1, B[i]);
   }
+  for (i = 0; i < arcs; i++) {
+    printf("a %ld %ld %ld %ld %ld\n", FROM[i], TO[i], 0, U[i], C[i]);
+  }
+  
+  
 }
 
 #endif
