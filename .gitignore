@@ -9,3 +9,4 @@ lemon/build/*
 *.vs
 *.min
 src/__pycache__/
+.ipynb_checkpoints
