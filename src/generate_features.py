@@ -8,7 +8,6 @@ import sys
 import readdimacs as rd
 import numpy as np
 import networkx as nx
-import line_profiler
 
 
 # To node depth mst

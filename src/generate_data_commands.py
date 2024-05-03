@@ -6,14 +6,15 @@ and automatically calculates running times of algorithms and features. Saves run
 does not save the data (only implicitly saves command to generate data).
 """
 import os
+import time
 import math
 import random
 from util import *
 
 MIN_COST, MAX_COST = 1, 10 ** 4
 MIN_CAP, MAX_CAP = 1, 10 ** 3
-MIN_NODES, MAX_NODES = [15, 10 ** 5]
-MAX_ARCS = 5000000
+MIN_NODES, MAX_NODES = [15, 5 * 10 ** 3]
+MAX_ARCS = 200000
 
 
 def get_seed():

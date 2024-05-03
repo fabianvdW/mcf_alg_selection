@@ -1,6 +1,7 @@
 import numpy as np
 import scipy
 from src.stochastics import is_significant
+
 if __name__ == "__main__":
     X_1 = np.random.normal(loc=20, scale=10, size=60)
     X_2 = np.random.normal(loc=25, scale=9, size=80)

@@ -158,8 +158,8 @@ namespace lemon {
                      typename CapacityMap::Value infty = 0,
                      DimacsDescriptor desc=DimacsDescriptor())
   {
-    double start_readin = get_cpu_time();
-    double time_inc = 0.;
+    //double start_readin = get_cpu_time();
+    //double time_inc = 0.;
     g.clear();
     std::vector<typename Digraph::Node> nodes;
     typename Digraph::Arc e;
@@ -198,11 +198,11 @@ namespace lemon {
         supply.set(nodes[i], sup);
         break;
       case 'a': // arc definition line
-        double start_inc = get_cpu_time();
+        //double start_inc = get_cpu_time();
         getline(is, str);
         str.copy(in_line, str.size(), 0);
         sscanf(in_line, "%*c %d %d %d %d %d", &i, &j, &low, &cap, &co);
-        time_inc += (get_cpu_time() - start_inc) * 1000000.0;
+        //time_inc += (get_cpu_time() - start_inc) * 1000000.0;
         e = g.addArc(nodes[i], nodes[j]);
         lower.set(e, low);
         if (cap >= low)
@@ -213,9 +213,9 @@ namespace lemon {
         break;
       }
     }
-    double end_readin = get_cpu_time();
-    printf("%.0f ",(end_readin - start_readin) * 1000000.0);
-    printf("%.0f\n",time_inc);
+    //double end_readin = get_cpu_time();
+    //printf("%.0f ",(end_readin - start_readin) * 1000000.0);
+    //printf("%.0f\n",time_inc);
   }
 
   template<typename Digraph, typename CapacityMap>

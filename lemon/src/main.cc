@@ -29,7 +29,6 @@ int main(int argc, char** argv)
   SmartDigraph::ArcMap<int> costMap(g);
   SmartDigraph::NodeMap<int> supplyMap(g);
   readDimacsMin(std::cin, g, lowerMap, capacityMap, costMap, supplyMap);
-  
   int acc = 0;
   for (SmartDigraph::NodeIt n(g); n != INVALID; ++n)
     acc += supplyMap[n];
@@ -39,7 +38,6 @@ int main(int argc, char** argv)
   }
   double c_start;
   double c_end;
-
   int algo = stoi(argv[1]);
   long long cost = -1;
 

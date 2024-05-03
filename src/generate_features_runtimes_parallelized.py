@@ -1,19 +1,21 @@
+import ast
 import subprocess
 import queue
-from multiprocessing import Lock
-from multiprocessing.dummy import Pool as ThreadPool
 import sys
+from multiprocessing import Lock
+from multiprocessing.pool import ThreadPool
 import numpy as np
-from src.util import *
-from src.call_algorithm import call_algorithm
-from src.stochastics import is_significant
-from src.generate_data_commands import generate_netgen, generate_gridgraph, generate_goto, generate_gridgen
+from util import *
+from call_algorithm import call_algorithm
+from stochastics import is_significant
+from generate_data_commands import generate_netgen, generate_gridgraph, generate_goto, generate_gridgen
 
 
 def run_task(task):
     id, data_command, run_features, run_runtimes = task
-    res = [id, None, None]
-    instance_data = subprocess.run(data_command[0], capture_output=True, input=data_command[1].encode("utf-8")).stdout
+    res = [id, data_command, None, None]
+    instance_data = subprocess.run(data_command[0].replace("python", sys.executable), capture_output=True, text=True, shell=True, input=data_command[1]).stdout
+
     if run_runtimes:
         costs = []
         N = [1 for _ in range(NUM_ALGORITHMS)]
@@ -33,31 +35,44 @@ def run_task(task):
                         costs.append(cost)
                     runtimes[algo].append(time)
                 except:
-                    invalid_or_error = "ERROR: " + " ".join(result.strip().split(" ")[0:])
-                    res[1] = f"Features not determined due to {invalid_or_error}"
-                    res[2] = invalid_or_error
+                    invalid_or_error = "ERROR: Parsing not possible " + " ".join(result.strip().split(" ")[0:])
+                    res[2] = f"Features not determined due to {invalid_or_error}"
+                    res[3] = invalid_or_error
                     print(f"Task with id {id} has {invalid_or_error}")
                     return res
             if any(c != costs[0] for c in costs):
-                res[1] = "Features not determined as algorithms do not agree on one cost"
-                res[2] = "ERROR: The algorithms do not agree on one cost."
+                res[2] = "Features not determined as algorithms do not agree on one cost"
+                res[3] = "ERROR: The algorithms do not agree on one cost."
+                print(f"Task with id {id} has {res[3]}")
+                return res
+            if all(r == 0 for algo in runtimes for r in algo):
+                invalid_or_error = "ERROR: Skipping instance, runtimes are 0 across the board"
+                res[2] = f"Features not determined due to {invalid_or_error}"
+                res[3] = invalid_or_error
+                print(f"Task with id {id} has {invalid_or_error}")
+                return res
+            if all(r == TIME_LIMIT for algo in runtimes for r in algo):
+                invalid_or_error = "ERROR: Skipping instance, algorithms timed out across the board"
+                res[2] = f"Features not determined due to {invalid_or_error}"
+                res[3] = invalid_or_error
+                print(f"Task with id {id} has {invalid_or_error}")
                 return res
             N = is_significant(runtimes)
             if N is None:
                 print(f"Task with id {id}: Finished as runtimes {runtimes} proved significant.")
-                res[2] = f"{runtimes}"
+                res[3] = f"{runtimes}"
             elif sum(N) >= MAX_SAMPLES:
                 invalid_or_error = f"ERROR: Too many runs (N={N}) were requested, dropping instance"
-                res[1] = f"Features not determined due to {invalid_or_error}"
-                res[2] = invalid_or_error
+                res[2] = f"Features not determined due to {invalid_or_error}"
+                res[3] = invalid_or_error
                 print(f"Task with id {id}: {invalid_or_error}")
                 return res
             else:
                 print(f"Task with id {id}: Retrying with N={N} as runtimes {runtimes} proved insignificant.")
 
     if run_features:
-        features_proc = subprocess.run("python generate_features.py", capture_output=True, input=instance_data)
-        res[1] = features_proc.stdout.decode("utf-8").rstrip()
+        features_proc = subprocess.run("python generate_features.py", text=True, shell=True, capture_output=True, input=instance_data)
+        res[2] = features_proc.stdout.rstrip()
     return res
 
 
@@ -69,6 +84,7 @@ if __name__ == "__main__":
     commands_f = os.path.join(PATH_TO_DATA, "data_commands.csv")
     mutex = Lock()
     actual_instances = [0, 0, 0, 0]
+    finished_instances = [0, 0, 0, 0]
 
 
     def add_instance_by_id(id):
@@ -78,6 +94,12 @@ if __name__ == "__main__":
                 with mutex:
                     actual_instances[i] += 1
 
+    def finish_instance_by_id(id):
+        global mutex, finished_instances
+        for i in range(NUM_GENERATORS):
+            if GENERATOR_NAMES[i] in id:
+                with mutex:
+                    finished_instances[i] += 1
 
     data_commands = {}
     with open(features_f, "r") as in_features, open(runtimes_f, "r") as in_runtimes, open(commands_f,
@@ -87,14 +109,14 @@ if __name__ == "__main__":
         for line in in_runtimes:
             id = line.split(" ")[0]
             runtimes_evaluated.append(id)
-            if "ERROR" not in line:
-                add_instance_by_id(id)
-            else:
+            add_instance_by_id(id)
+            if "ERROR" in line:
                 runtimes_error.append(id)
+            else:
+                finish_instance_by_id(id)
         for line in in_commands:
             id, command = line.split(";")
-            data_commands[id] = command
-
+            data_commands[id] = ast.literal_eval(command)
     # Prepare remaining unfinished tasks
     tasks = queue.Queue()
     for key in data_commands.keys():
@@ -107,21 +129,22 @@ if __name__ == "__main__":
 
 
     def is_finished():
-        global tasks, actual_instances, mutex
+        global tasks, finished_instances, mutex
         with mutex:
             return tasks.empty() and any(
-                map(lambda i: actual_instances[i] >= TARGET_INSTANCES[i], range(NUM_GENERATORS)))
-
+                map(lambda i: finished_instances[i] >= TARGET_INSTANCES[i], range(NUM_GENERATORS)))
 
     def get_task():
-        global tasks
+        global tasks, actual_instances, mutex, finished_instances
         if not tasks.empty():
             return tasks.get()
         else:
-            unfinished_generators = np.arange(NUM_GENERATORS)[
-                map(lambda i: actual_instances[i] < TARGET_INSTANCES[i], range(NUM_GENERATORS))]
-            generator = np.random.choice(unfinished_generators)
-            id = f"{GENERATOR_NAMES[generator]}_{actual_instances[generator]}"
+            with mutex:
+                unfinished_generators = np.arange(NUM_GENERATORS)[
+                    list(map(lambda i: finished_instances[i] < TARGET_INSTANCES[i], range(NUM_GENERATORS)))]
+                generator = np.random.choice(unfinished_generators)
+                id = f"{GENERATOR_NAMES[generator]}_{actual_instances[generator]}"
+                actual_instances[generator] += 1
             if generator == GRIDGRAPH:
                 command = generate_gridgraph()
             elif generator == NETGEN:
@@ -130,25 +153,41 @@ if __name__ == "__main__":
                 command = generate_goto()
             elif generator == GRIDGEN:
                 command = generate_gridgen()
-            add_instance_by_id(id)
+
             return (id, command, True, True)
 
-
+    thread_count = 0
     def run_task_async(_):
-        global result_queue
-        while not is_finished():
-            result_queue.put(run_task(get_task()))
+        global result_queue, thread_count, mutex
 
+        with mutex:
+            thread_num = thread_count
+            thread_count += 1
+        print(f"Thread {thread_num} starting!")
+        while not is_finished():
+            try:
+                print(f"Thread {thread_num} getting task!")
+                task = get_task()
+                print(f"Thread {thread_num} running task!")
+                res = run_task(task)
+                print(f"Thread {thread_num} finished task!")
+                if not (task[3] and isinstance(res[3], str)):
+                    finish_instance_by_id(task[0])
+                result_queue.put(res)
+            except Exception as e:
+                print(f"Thread {thread_num} has error")
+                print(e)
+                assert False
 
     threads = int(sys.argv[1])
     pool = ThreadPool(threads)
     pool.map_async(run_task_async, range(threads))
-
     while not is_finished():
         with open(features_f, "a") as o_features, open(runtimes_f, "a") as o_runtimes, open(commands_f,
                                                                                             "a") as o_commands:
             id, command, res_features, res_runtimes = result_queue.get()
-            o_commands.write(f"{id};{command}\n")
+            if id not in data_commands:
+                o_commands.write(f"{id};{command}\n")
             if res_features:
                 o_features.write(f"{id} {res_features}\n")
             if res_runtimes:
