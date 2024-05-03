@@ -12,10 +12,11 @@ import networkx as nx
 
 # To node depth mst
 # features_of_graph = [number of nodes, number of arcs, min cost, max cost,
-#                      sum cost, mean cost, std cost, min cap, max cap, sum cap, 
+#                      sum cost, mean cost, std cost, min cap, max cap, sum cap,
 #                      mean cap, std cap, max of min of shortest path from supply to demand,
 #                      supply, num of supply nodes, number of arcs between source and sink]
 # features of mst = [sum cost, mean cost,std cost, sum cap, mean cap, std cap]
+
 
 def calculate_features(g, mst):
     features = []

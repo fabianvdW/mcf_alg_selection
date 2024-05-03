@@ -11,9 +11,9 @@ import math
 import random
 from util import *
 
-MIN_COST, MAX_COST = 1, 10 ** 4
-MIN_CAP, MAX_CAP = 1, 10 ** 3
-MIN_NODES, MAX_NODES = [15, 5 * 10 ** 3]
+MIN_COST, MAX_COST = 1, 10**4
+MIN_CAP, MAX_CAP = 1, 10**3
+MIN_NODES, MAX_NODES = [15, 5 * 10**3]
 MAX_ARCS = 200000
 
 
@@ -42,9 +42,8 @@ def generate_gridgen():
     arcs = random.randint(nodes * 2, min(MAX_ARCS, nodes * (nodes - 1)))
     average_degree = int(arcs / nodes)
 
-    params = [1, seed, nodes, width, supply_nodes, demand_nodes, average_degree, supply, 1, MIN_COST, MAX_COST, 1,
-              MIN_CAP, MAX_CAP]
-    params_str = ' '.join(map(str, params))
+    params = [1, seed, nodes, width, supply_nodes, demand_nodes, average_degree, supply, 1, MIN_COST, MAX_COST, 1, MIN_CAP, MAX_CAP]
+    params_str = " ".join(map(str, params))
     path_to_gridgen = os.path.join(PATH_TO_PROJECT, "gridgen")
     command = f'"{path_to_gridgen}{os.path.sep}gridgen"'
     return command, params_str
@@ -67,9 +66,8 @@ def generate_netgen():
     supply = random.randint(1, 100 * nodes)
     supply_nodes, demand_nodes = 1, 1
 
-    params = [seed, 1, nodes, supply_nodes, demand_nodes, arcs, MIN_COST, MAX_COST, supply, 0, 0, 100, 100,
-              MIN_CAP, MAX_CAP]
-    params_str = ' '.join(map(str, params))
+    params = [seed, 1, nodes, supply_nodes, demand_nodes, arcs, MIN_COST, MAX_COST, supply, 0, 0, 100, 100, MIN_CAP, MAX_CAP]
+    params_str = " ".join(map(str, params))
     path_to_netgen = os.path.join(PATH_TO_PROJECT, "netgen")
     command = f'"{path_to_netgen}{os.path.sep}netgen"'
     return command, params_str

@@ -10,6 +10,7 @@ import numpy as np
 
 from torch_geometric.data import Dataset, Data
 
+
 class MCFDataset(Dataset):
     def __init__(self, root):
         super().__init__(root)
@@ -26,7 +27,6 @@ class MCFDataset(Dataset):
                 if id in self.id_to_runtime:
                     self.idx_to_id.append((id, ast.literal_eval(command)))
 
-
     def len(self):
         return len(self.idx_to_id)
 
@@ -34,7 +34,9 @@ class MCFDataset(Dataset):
         # Code copied mainly from https://pytorch-geometric.readthedocs.io/en/latest/modules/utils.html#torch_geometric.utils.from_networkx
         # and our readdimacs.py
         graph_id, command = self.idx_to_id[idx]
-        instance_data = subprocess.run(command[0].replace("python", sys.executable), capture_output=True, text=True, shell=True, input=command[1]).stdout
+        instance_data = subprocess.run(
+            command[0].replace("python", sys.executable), capture_output=True, text=True, shell=True, input=command[1]
+        ).stdout
         lines = instance_data.split("\n")
         while lines[0].startswith("c"):
             del lines[0]
@@ -45,10 +47,10 @@ class MCFDataset(Dataset):
         mapping = dict(zip(range(1, num_nodes + 1), range(num_nodes)))
         edge_index = torch.empty((2, num_edges), dtype=torch.long)
         data_dict: Dict[str, Any] = defaultdict(list)
-        data_dict['edge_index'] = edge_index
+        data_dict["edge_index"] = edge_index
         data_dict["demand"] = [0 for _ in range(num_nodes)]
         edge_num = 0
-        for line in lines[1: ]:
+        for line in lines[1:]:
             if line.startswith("n "):
                 _, node_id, demand = line.split()
                 data_dict["demand"][mapping[int(node_id)]] = int(demand)
@@ -76,7 +78,3 @@ class MCFDataset(Dataset):
         del data["capacity"]
         del data["weight"]
         return data
-
-
-
-

@@ -22,23 +22,48 @@ path_to_time = os.path.join("lemon", "existingresults.txt")
 path_to_parent_dir = os.path.dirname(os.getcwd())
 
 # read features.txt
-names_features = ["seed", "g_number_of_nodes", "g_number_of_arcs", "g_min_cost", "g_max_cost", "g_sum_cost",
-                  "g_mean_cost", "g_std_cost", "g_min_cap",
-                  "g_max_cap", "g_sum_cap", "g_mean_cap", "g_std_cap", "g_supply",
-                  "g_number_of_supply_nodes", "g_arcs_source_sink", "mst_sum_cost",
-                  "mst_mean_cost", "mst_std_cost", "mst_sum_cap", "mst_mean_cap", "mst_std_cap"]
+names_features = [
+    "seed",
+    "g_number_of_nodes",
+    "g_number_of_arcs",
+    "g_min_cost",
+    "g_max_cost",
+    "g_sum_cost",
+    "g_mean_cost",
+    "g_std_cost",
+    "g_min_cap",
+    "g_max_cap",
+    "g_sum_cap",
+    "g_mean_cap",
+    "g_std_cap",
+    "g_supply",
+    "g_number_of_supply_nodes",
+    "g_arcs_source_sink",
+    "mst_sum_cost",
+    "mst_mean_cost",
+    "mst_std_cost",
+    "mst_sum_cap",
+    "mst_mean_cap",
+    "mst_std_cap",
+]
 
 names_output = ["NS", "CS2", "SSP", "CAS", "SCC", "MMCC", "CAT"]
 
 
 def get_data():
-    features_data = pd.read_csv(os.path.join(path_to_parent_dir, path_to_data, "features.txt"), sep=" ", header=None,
-                                index_col=0,
-                                names=names_features)
+    features_data = pd.read_csv(
+        os.path.join(path_to_parent_dir, path_to_data, "features.txt"), sep=" ", header=None, index_col=0, names=names_features
+    )
 
     # read output.txt
-    output_data = pd.read_csv(os.path.join(path_to_parent_dir, path_to_time), sep=" ", header=None, index_col=0,
-                              names=names_output, converters={0: lambda x: str(x.split("/")[-1])})
+    output_data = pd.read_csv(
+        os.path.join(path_to_parent_dir, path_to_time),
+        sep=" ",
+        header=None,
+        index_col=0,
+        names=names_output,
+        converters={0: lambda x: str(x.split("/")[-1])},
+    )
     # combine data according to seeds, and clean it up
     combined_data = features_data.join(output_data)
     combined_data = combined_data.dropna()
@@ -134,7 +159,7 @@ instances = len(combined_data)
 colour = dict(zip(names_output, ["red", "green", "blue", "yellow", "black", "orange", "purple"]))
 generators = ["GRIDGEN", "NETGEN", "GO_TO", "GRIDGRAPH"]
 
-plt.style.use('seaborn')
+plt.style.use("seaborn")
 sns.set_palette("pastel")
 
 nice_fonts = {
@@ -175,9 +200,9 @@ def plot_alg():
 
     names_output_modified = [names_output[i] for i in range(len(names_output)) if i in indices_where_not_0]
 
-    patches, _ = plt.pie(number_of_minimum[indices_where_not_0],
-                         colors=sns.color_palette("Set2", 7), labels=["NS", "CS2", "SSP", "CAS", "", "",
-                                                                      ""])  # wedgeprops = {'linewidth': 1, "edgecolor":"k"},
+    patches, _ = plt.pie(
+        number_of_minimum[indices_where_not_0], colors=sns.color_palette("Set2", 7), labels=["NS", "CS2", "SSP", "CAS", "", "", ""]
+    )  # wedgeprops = {'linewidth': 1, "edgecolor":"k"},
     # plt.legend(patches, names_output_modified, loc = "best",bbox_to_anchor=(0, 1.))
 
     # plt.title("Fastest algorithms on all instances (n=" + str(instances) + ")")
@@ -200,8 +225,7 @@ def plot_alg_generators():
     names_output_modified = [names_output[i] for i in range(len(names_output)) if i in indices_where_not_0]
 
     fig, axs = plt.subplots(2, 3, figsize=(7, 5))
-    patches, _ = axs[0, 0].pie(number_of_minimum_net[indices_where_not_0],
-                               colors=sns.color_palette("Set2", 7))
+    patches, _ = axs[0, 0].pie(number_of_minimum_net[indices_where_not_0], colors=sns.color_palette("Set2", 7))
 
     netgeninstances = len(datanet)
     axs[0, 0].set_title("Netgen")
@@ -212,8 +236,7 @@ def plot_alg_generators():
 
     names_output_modified = [names_output[i] for i in range(len(names_output)) if i in indices_where_not_0]
 
-    patches, _ = axs[0, 1].pie(number_of_minimum_ggen[indices_where_not_0],
-                               colors=sns.color_palette("Set2", 7))
+    patches, _ = axs[0, 1].pie(number_of_minimum_ggen[indices_where_not_0], colors=sns.color_palette("Set2", 7))
 
     gridgeninstances = len(dataggen)
     axs[0, 1].set_title("Gridgen")
@@ -224,8 +247,7 @@ def plot_alg_generators():
 
     names_output_modified = [names_output[i] for i in range(len(names_output)) if i in indices_where_not_0]
 
-    patches, _ = axs[1, 0].pie(number_of_minimum_ggraph[indices_where_not_0],
-                               colors=sns.color_palette("Set2", 7))
+    patches, _ = axs[1, 0].pie(number_of_minimum_ggraph[indices_where_not_0], colors=sns.color_palette("Set2", 7))
     fig.legend(patches[:-3], ["NS", "CS2", "SSP", "CAS"], loc="upper right")
 
     ggraphinstances = len(dataggraph)
@@ -237,8 +259,7 @@ def plot_alg_generators():
 
     names_output_modified = [names_output[i] for i in range(len(names_output)) if i in indices_where_not_0]
 
-    patches, _ = axs[1, 1].pie(number_of_minimum_goto[indices_where_not_0],
-                               colors=sns.color_palette("Set2", 7))
+    patches, _ = axs[1, 1].pie(number_of_minimum_goto[indices_where_not_0], colors=sns.color_palette("Set2", 7))
 
     gotoinstances = len(datagoto)
     axs[1, 1].set_title("Goto")
@@ -251,8 +272,7 @@ def plot_alg_generators():
 
     names_output_modified = [names_output[i] for i in range(len(names_output)) if i in indices_where_not_0]
 
-    patches, _ = axs[1, 2].pie(number_of_minimum[indices_where_not_0],
-                               colors=sns.color_palette("Set2", 7))
+    patches, _ = axs[1, 2].pie(number_of_minimum[indices_where_not_0], colors=sns.color_palette("Set2", 7))
 
     axs[1, 2].set_title("All")
 
@@ -276,8 +296,14 @@ def plot_results(alle=True):
 
     accuracies = [x["test_accuracy"] for x in results[:-1] if x["name"] != "GaussianNB"]
     plt.figure(dpi=1200)
-    plt.bar(classifiers, accuracies, color=[(0.4, 0.7607843137254902, 0.6470588235294118) if clf != "NS" else (
-    0.9882352941176471, 0.5529411764705883, 0.3843137254901961) for clf in classifiers])
+    plt.bar(
+        classifiers,
+        accuracies,
+        color=[
+            (0.4, 0.7607843137254902, 0.6470588235294118) if clf != "NS" else (0.9882352941176471, 0.5529411764705883, 0.3843137254901961)
+            for clf in classifiers
+        ],
+    )
     # if alle:
     #     plt.title("Accuracy of all classifiers on " + size_ds + " test instances")
     # else:
@@ -287,15 +313,24 @@ def plot_results(alle=True):
 
     if alle:
         # classifiers.remove("Gauss")
-        time = [x["test_time"] / 10 ** 6 for x in results if x["name"] != "GaussianNB"]
+        time = [x["test_time"] / 10**6 for x in results if x["name"] != "GaussianNB"]
     else:
         classifiers.remove("GaussP")
-        time = [x["test_time"] / 10 ** 6 for x in results if x["name"] != "GaussianProcessClassifier"]
+        time = [x["test_time"] / 10**6 for x in results if x["name"] != "GaussianProcessClassifier"]
 
     plt.figure(dpi=1200)
-    plt.bar(classifiers, time, color=[
-        (0.4, 0.7607843137254902, 0.6470588235294118) if clf != "NS" and clf != "GT" else (
-        0.9882352941176471, 0.5529411764705883, 0.3843137254901961) for clf in classifiers])
+    plt.bar(
+        classifiers,
+        time,
+        color=[
+            (
+                (0.4, 0.7607843137254902, 0.6470588235294118)
+                if clf != "NS" and clf != "GT"
+                else (0.9882352941176471, 0.5529411764705883, 0.3843137254901961)
+            )
+            for clf in classifiers
+        ],
+    )
     if alle:
         plt.yticks([10, 20, 30, 40, 50, 60, 70, 80], [10, 20, 30, 40, 50, 60, 70, 80])
         plt.ylabel("time in seconds")
@@ -306,12 +341,24 @@ def plot_results(alle=True):
         # plt.title("Time needed with algorithms predicted by classifier on " + size_ds + " Gridgraph test instances ")
 
     classifiers = ["DTree", "RForest", "NetworkSimplex", "GroundTruth"]
-    time = [x["test_time"] / 10 ** 6 for x in results if
-            x["name"] in ["DecisionTreeClassifier", "RandomForestClassifier", "baseline", "GroundTruth"]]
+    time = [
+        x["test_time"] / 10**6
+        for x in results
+        if x["name"] in ["DecisionTreeClassifier", "RandomForestClassifier", "baseline", "GroundTruth"]
+    ]
     plt.figure(dpi=1200)
-    barplot = plt.bar(classifiers, time, color=[
-        (0.4, 0.7607843137254902, 0.6470588235294118) if clf != "NetworkSimplex" and clf != "GroundTruth" else (
-        0.9882352941176471, 0.5529411764705883, 0.3843137254901961) for clf in classifiers])
+    barplot = plt.bar(
+        classifiers,
+        time,
+        color=[
+            (
+                (0.4, 0.7607843137254902, 0.6470588235294118)
+                if clf != "NetworkSimplex" and clf != "GroundTruth"
+                else (0.9882352941176471, 0.5529411764705883, 0.3843137254901961)
+            )
+            for clf in classifiers
+        ],
+    )
     if alle:
         plt.ylim(53.5, 60)
         # plt.title("Time needed with algorithms predicted by classifier on " + size_ds + " test instances")
@@ -328,9 +375,7 @@ def plot_results(alle=True):
     def autolabel(rects):
         for idx, rect in enumerate(barplot):
             height = rect.get_height()
-            plt.text(rect.get_x() + rect.get_width() / 2., height,
-                     bar_label[idx],
-                     ha='center', va='bottom', rotation=0)
+            plt.text(rect.get_x() + rect.get_width() / 2.0, height, bar_label[idx], ha="center", va="bottom", rotation=0)
 
     autolabel(barplot)
 

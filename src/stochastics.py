@@ -25,9 +25,9 @@ def solve_qs_1(j_star, a, b, q_j_star):
     def solve_single(j):
         if j == j_star:
             return q_j_star
-        elif b[j] == 0.:
+        elif b[j] == 0.0:
             return np.inf
-        elif b[j_star] == 0.:
+        elif b[j_star] == 0.0:
             return -a[j] / b[j]
         else:
             return -(a[j] + b[j_star] * q_j_star) / b[j]
@@ -40,11 +40,10 @@ def hypothesis_test(N, j_star, a, b, significance_level, debug, normal_dist=True
         q0 = solve_qs_1(j_star, a, b, scipy.stats.norm.ppf(significance_level ** (1 / ALGORITHMS)))
         g_onedim = lambda q_j_star: -g_norm(solve_qs_1(j_star, a, b, q_j_star[0]))
     else:
-        q0_j_star = scipy.stats.t.ppf(significance_level ** (1 / ALGORITHMS), df=N[j_star] - 1) if b[
-                                                                                                       j_star] > 0. else np.inf
+        q0_j_star = scipy.stats.t.ppf(significance_level ** (1 / ALGORITHMS), df=N[j_star] - 1) if b[j_star] > 0.0 else np.inf
         q0 = solve_qs_1(j_star, a, b, q0_j_star)
         g_onedim = lambda q_j_star: -g_t_1(solve_qs_1(j_star, a, b, q_j_star[0]), N)
-    if b[j_star] > 0.:
+    if b[j_star] > 0.0:
         q_j_star = mystic.solvers.fmin(g_onedim, [q0[j_star]], disp=debug)
         q = solve_qs_1(j_star, a, b, q_j_star[0])
     else:
@@ -52,26 +51,33 @@ def hypothesis_test(N, j_star, a, b, significance_level, debug, normal_dist=True
     debug_print(f"q0's in {'first' if normal_dist else 'second'} test: {q0}", debug)
     debug_print(
         f"Significance level of q0 reached in {'first' if normal_dist else 'second'} test: {g_norm(q0) if normal_dist else g_t_1(q0, N)}",
-        debug)
+        debug,
+    )
     debug_print(f"q's in {'first' if normal_dist else 'second'} test: {q}", debug)
     debug_print(
-        f"Significance level reached in {'first' if normal_dist else 'second'} test: {g_norm(q) if normal_dist else g_t_1(q, N)}",
-        debug)
-    if normal_dist and g_norm(q) >= significance_level and g_norm(q0) < significance_level or not normal_dist and g_t_1(
-            q, N) >= significance_level and g_t_1(q0, N) < significance_level:
+        f"Significance level reached in {'first' if normal_dist else 'second'} test: {g_norm(q) if normal_dist else g_t_1(q, N)}", debug
+    )
+    if (
+        normal_dist
+        and g_norm(q) >= significance_level
+        and g_norm(q0) < significance_level
+        or not normal_dist
+        and g_t_1(q, N) >= significance_level
+        and g_t_1(q0, N) < significance_level
+    ):
         print("Happened")
     return normal_dist and g_norm(q) >= significance_level or not normal_dist and g_t_1(q, N) >= significance_level
 
 
 def obj_n(x, means, process_creation_time=200000):
-    return (means + process_creation_time) @ x[:len(means)]
+    return (means + process_creation_time) @ x[: len(means)]
 
 
 # Where b[j_star] was 0. earlier
 def solve_qs_2_case1(N, a, b):
     algorithms = len(a)
     # Equation comes from (8) solved for q_j in the equality case
-    return np.array([- a[j] / b[j] * np.sqrt(N[j]) if N[j] >= 0. else -np.inf for j in range(algorithms)])
+    return np.array([-a[j] / b[j] * np.sqrt(N[j]) if N[j] >= 0.0 else -np.inf for j in range(algorithms)])
 
 
 def solve_ns_case1(q, a, b):
@@ -80,7 +86,7 @@ def solve_ns_case1(q, a, b):
 
 
 def g_t_2_case1(N, a, b, significance_level):
-    if any(np.array(N) < 2.):
+    if any(np.array(N) < 2.0):
         return significance_level
     qs = solve_qs_2_case1(N, a, b)
     # Write side constraint as basis for penalty function
@@ -105,8 +111,7 @@ def estimate_new_n_case1(N, means, a, b, significance_level, debug):
         return 0.0
 
     bounds = [(2, 100000) for _ in range(algorithms)]
-    solution = mystic.solvers.diffev(lambda x: obj_n(x, means), x0, penalty=penalty, bounds=bounds,
-                                     maxfun=1000, npop=40, disp=debug)
+    solution = mystic.solvers.diffev(lambda x: obj_n(x, means), x0, penalty=penalty, bounds=bounds, maxfun=1000, npop=40, disp=debug)
     # Have a look at the solution
     debug_print(f"Case 1: estimation received N={solution}", debug)
     q = solve_qs_2_case1(solution, a, b)
@@ -114,7 +119,8 @@ def estimate_new_n_case1(N, means, a, b, significance_level, debug):
     debug_print(f"Case 1: side constraint g_t_1={g_t_1(q, solution)}", debug)
     debug_print(
         f"Case 1: Objective solution={obj_n(solution, means)} vs Objective x0: {obj_n(x0, means)} (ratio = {obj_n(solution, means) / obj_n(x0, means)})",
-        debug)
+        debug,
+    )
     return solution
 
 
@@ -158,8 +164,8 @@ def solve_n_jstar(q, a, b, j_star, j_prime):
 
 def g_t_2_case2(x, a, b, j_star, significance_level):
     # x is of the form [N, q_j_star]
-    N = np.array(x)[:len(a)]
-    if any(N < 2.):
+    N = np.array(x)[: len(a)]
+    if any(N < 2.0):
         return significance_level
     # Write side constraint as basis for penalty function
     qs = solve_qs_2_case2(x, a, b, j_star)
@@ -190,9 +196,9 @@ def estimate_new_n_case2(N, means, a, b, significance_level, debug):
         return 0.0
 
     bounds = [(2, 100000) for _ in index] + [(-100000, 100000)]
-    solution = mystic.solvers.diffev(lambda x: obj_n(x, means), np.concatenate((x0, [q0[j_star]])), penalty=penalty,
-                                     bounds=bounds,
-                                     maxfun=1000, npop=40, disp=debug)
+    solution = mystic.solvers.diffev(
+        lambda x: obj_n(x, means), np.concatenate((x0, [q0[j_star]])), penalty=penalty, bounds=bounds, maxfun=1000, npop=40, disp=debug
+    )
     # Have a look at the solution
     q = solve_qs_2_case2(solution, a, b, j_star)
     solution = np.array(solution)[:algorithms]
@@ -201,7 +207,8 @@ def estimate_new_n_case2(N, means, a, b, significance_level, debug):
     debug_print(f"Case 2: side constraint g_t_1={g_t_1(q, solution)}", debug)
     debug_print(
         f"Case 2: Objective solution={obj_n(solution, means)} vs Objective x0: {obj_n(x0, means)} (ratio = {obj_n(solution, means) / obj_n(x0, means)})",
-        debug)
+        debug,
+    )
     return solution
 
 
@@ -219,13 +226,11 @@ def estimate_new_n(N, j_star, means, a, b, significance_level, debug):
     if np.isclose(a[j_prime], 0):
         return return_handler(4 * N)
 
-    non_zeros = index[b > 0.]
+    non_zeros = index[b > 0.0]
     if b[j_star] == 0:
-        N_est = estimate_new_n_case1(N[non_zeros], means[non_zeros], a[non_zeros], b[non_zeros], significance_level,
-                                     debug)
+        N_est = estimate_new_n_case1(N[non_zeros], means[non_zeros], a[non_zeros], b[non_zeros], significance_level, debug)
     else:
-        N_est = estimate_new_n_case2(N[non_zeros], means[non_zeros], a[non_zeros], b[non_zeros], significance_level,
-                                     debug)
+        N_est = estimate_new_n_case2(N[non_zeros], means[non_zeros], a[non_zeros], b[non_zeros], significance_level, debug)
     N_new = np.ones(ALGORITHMS) * 2
     N_new[non_zeros] = N_est
     N_new = return_handler(N_new)
@@ -283,8 +288,7 @@ def is_significant_baseline(runtimes, sigma_upper=200000, significance_level=0.9
         s = np.array([np.sqrt(np.var(x, ddof=1)) for x in runtimes])
         debug_print(f"Est. |S|: {s}", debug)
         b = s / np.sqrt(N)
-        q_j_star = scipy.stats.t.ppf(significance_level ** (1 / ALGORITHMS), df=N[j_star] - 1) if b[
-                                                                                                      j_star] > 0. else np.inf
+        q_j_star = scipy.stats.t.ppf(significance_level ** (1 / ALGORITHMS), df=N[j_star] - 1) if b[j_star] > 0.0 else np.inf
         q = solve_qs_1(j_star, a, b, q_j_star)
         debug_print(f"q's in second test: {q}", debug)
         debug_print(f"Significance level reached in second test: {g_t_1(q, N)}", debug)
@@ -300,14 +304,13 @@ def is_significant_baseline(runtimes, sigma_upper=200000, significance_level=0.9
                 j_prime += 1
             if np.isclose(a[j_prime], 0):
                 return 4 * N
-            non_zeros = index[b > 0.]
-            if b[j_star] == 0.:
+            non_zeros = index[b > 0.0]
+            if b[j_star] == 0.0:
                 a, b, N, means = a[non_zeros], b[non_zeros], N[non_zeros], means[non_zeros]
                 algorithms = len(a)
 
                 # Calculate almost-feasible solution x0
-                q0 = np.array(
-                    [scipy.stats.t.ppf(significance_level ** (1 / algorithms), df=N[j] - 1) for j in range(algorithms)])
+                q0 = np.array([scipy.stats.t.ppf(significance_level ** (1 / algorithms), df=N[j] - 1) for j in range(algorithms)])
                 x0 = np.maximum(N, solve_ns_case1(q0, a, b))
             else:
                 a, b, N, means = a[non_zeros], b[non_zeros], N[non_zeros], means[non_zeros]

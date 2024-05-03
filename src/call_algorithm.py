@@ -5,8 +5,7 @@ from util import TIME_LIMIT
 def call_algorithm(algorithm, instance_data):
     if algorithm == 1:  # Internal code for CS2 algorithm, which does not run over lemon
         try:
-            res = subprocess.run(f'"../cs2/cs2"', text=True, capture_output=True, input=instance_data,
-                                 timeout=int(TIME_LIMIT / 10 ** 6))
+            res = subprocess.run(f'"../cs2/cs2"', text=True, capture_output=True, input=instance_data, timeout=int(TIME_LIMIT / 10**6))
             stderr = res.stderr
             if "Error 2" in stderr:
                 output = "There is no feasible solution! Jumping to next file."
@@ -18,8 +17,13 @@ def call_algorithm(algorithm, instance_data):
             return True, ""
     else:
         try:
-            res = subprocess.run(f'"../lemon/build/src/lemon-project" {algorithm}', text=True, capture_output=True,
-                                 input=instance_data, timeout=int(TIME_LIMIT / 10 ** 6))
+            res = subprocess.run(
+                f'"../lemon/build/src/lemon-project" {algorithm}',
+                text=True,
+                capture_output=True,
+                input=instance_data,
+                timeout=int(TIME_LIMIT / 10**6),
+            )
 
             stderr = res.stderr
             if stderr:

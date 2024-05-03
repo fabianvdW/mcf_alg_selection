@@ -14,7 +14,9 @@ from generate_data_commands import generate_netgen, generate_gridgraph, generate
 def run_task(task):
     id, data_command, run_features, run_runtimes = task
     res = [id, data_command, None, None]
-    instance_data = subprocess.run(data_command[0].replace("python", sys.executable), capture_output=True, text=True, shell=True, input=data_command[1]).stdout
+    instance_data = subprocess.run(
+        data_command[0].replace("python", sys.executable), capture_output=True, text=True, shell=True, input=data_command[1]
+    ).stdout
 
     if run_runtimes:
         costs = []
@@ -86,7 +88,6 @@ if __name__ == "__main__":
     actual_instances = [0, 0, 0, 0]
     finished_instances = [0, 0, 0, 0]
 
-
     def add_instance_by_id(id):
         global actual_instances, mutex
         for i in range(NUM_GENERATORS):
@@ -102,8 +103,7 @@ if __name__ == "__main__":
                     finished_instances[i] += 1
 
     data_commands = {}
-    with open(features_f, "r") as in_features, open(runtimes_f, "r") as in_runtimes, open(commands_f,
-                                                                                          "r") as in_commands:
+    with open(features_f, "r") as in_features, open(runtimes_f, "r") as in_runtimes, open(commands_f, "r") as in_commands:
         for line in in_features:
             existing_features.append(line.split(" ")[0])
         for line in in_runtimes:
@@ -127,12 +127,10 @@ if __name__ == "__main__":
             tasks.put((key, data_commands[key], not in_features and not in_runtimes_error, not in_runtimes))
     result_queue = queue.Queue()
 
-
     def is_finished():
         global tasks, finished_instances, mutex
         with mutex:
-            return tasks.empty() and any(
-                map(lambda i: finished_instances[i] >= TARGET_INSTANCES[i], range(NUM_GENERATORS)))
+            return tasks.empty() and any(map(lambda i: finished_instances[i] >= TARGET_INSTANCES[i], range(NUM_GENERATORS)))
 
     def get_task():
         global tasks, actual_instances, mutex, finished_instances
@@ -141,7 +139,8 @@ if __name__ == "__main__":
         else:
             with mutex:
                 unfinished_generators = np.arange(NUM_GENERATORS)[
-                    list(map(lambda i: finished_instances[i] < TARGET_INSTANCES[i], range(NUM_GENERATORS)))]
+                    list(map(lambda i: finished_instances[i] < TARGET_INSTANCES[i], range(NUM_GENERATORS)))
+                ]
                 generator = np.random.choice(unfinished_generators)
                 id = f"{GENERATOR_NAMES[generator]}_{actual_instances[generator]}"
                 actual_instances[generator] += 1
@@ -157,6 +156,7 @@ if __name__ == "__main__":
             return (id, command, True, True)
 
     thread_count = 0
+
     def run_task_async(_):
         global result_queue, thread_count, mutex
 
@@ -183,8 +183,7 @@ if __name__ == "__main__":
     pool = ThreadPool(threads)
     pool.map_async(run_task_async, range(threads))
     while not is_finished():
-        with open(features_f, "a") as o_features, open(runtimes_f, "a") as o_runtimes, open(commands_f,
-                                                                                            "a") as o_commands:
+        with open(features_f, "a") as o_features, open(runtimes_f, "a") as o_runtimes, open(commands_f, "a") as o_commands:
             id, command, res_features, res_runtimes = result_queue.get()
             if id not in data_commands:
                 o_commands.write(f"{id};{command}\n")

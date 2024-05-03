@@ -28,6 +28,7 @@ def read(flo):
 
     return g
 
+
 # path_to_data = r"../data/generated_data"
 # g = read(path_to_data+r"/0_GRIDGRAPH-31006323.min")
 # for v in g.nodes:
