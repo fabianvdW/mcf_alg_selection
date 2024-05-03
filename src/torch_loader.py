@@ -32,6 +32,7 @@ class MCFDataset(Dataset):
         return len(self._indices)
 
     def get(self, idx):
+        print(idx, self._indices)
         idx = self._indices[idx]
         # Code copied mainly from https://pytorch-geometric.readthedocs.io/en/latest/modules/utils.html#torch_geometric.utils.from_networkx
         # and our readdimacs.py
@@ -65,6 +66,8 @@ class MCFDataset(Dataset):
                 data_dict["weight"].append(int(cost))
                 edge_num += 1
         data_dict["label"] = self.id_to_runtime[graph_id]
+        data_dict["y"] = np.zeros(4)
+        data_dict["y"][np.argmin(data_dict["label"])] = 1
         for key, value in data_dict.items():
             try:
                 data_dict[key] = torch.as_tensor(value)
