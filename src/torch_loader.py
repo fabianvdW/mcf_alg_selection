@@ -26,11 +26,13 @@ class MCFDataset(Dataset):
                 id, command = line.split(";")
                 if id in self.id_to_runtime:
                     self.idx_to_id.append((id, ast.literal_eval(command)))
+        self._indices = list(range(len(self.idx_to_id)))
 
     def len(self):
-        return len(self.idx_to_id)
+        return len(self._indices)
 
     def get(self, idx):
+        idx = self._indices[idx]
         # Code copied mainly from https://pytorch-geometric.readthedocs.io/en/latest/modules/utils.html#torch_geometric.utils.from_networkx
         # and our readdimacs.py
         graph_id, command = self.idx_to_id[idx]
