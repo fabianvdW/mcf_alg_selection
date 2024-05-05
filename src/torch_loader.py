@@ -32,8 +32,7 @@ class MCFDataset(Dataset):
         return len(self._indices)
 
     def get(self, idx):
-        print(idx, self._indices)
-        idx = self._indices[idx]
+        assert idx in self._indices
         # Code copied mainly from https://pytorch-geometric.readthedocs.io/en/latest/modules/utils.html#torch_geometric.utils.from_networkx
         # and our readdimacs.py
         graph_id, command = self.idx_to_id[idx]
@@ -51,23 +50,22 @@ class MCFDataset(Dataset):
         edge_index = torch.empty((2, num_edges), dtype=torch.long)
         data_dict: Dict[str, Any] = defaultdict(list)
         data_dict["edge_index"] = edge_index
-        data_dict["demand"] = [0 for _ in range(num_nodes)]
+        data_dict["demand"] = [0. for _ in range(num_nodes)]
         edge_num = 0
         for line in lines[1:]:
             if line.startswith("n "):
                 _, node_id, demand = line.split()
-                data_dict["demand"][mapping[int(node_id)]] = int(demand)
+                data_dict["demand"][mapping[int(node_id)]] = float(demand)
             elif line.startswith("a "):
                 _, src, dst, low, cap, cost = line.split()
                 assert int(low) == 0
                 data_dict["edge_index"][0, edge_num] = mapping[int(src)]
                 data_dict["edge_index"][1, edge_num] = mapping[int(dst)]
-                data_dict["capacity"].append(int(cap))
-                data_dict["weight"].append(int(cost))
+                data_dict["capacity"].append(float(cap))
+                data_dict["weight"].append(float(cost))
                 edge_num += 1
         data_dict["label"] = self.id_to_runtime[graph_id]
-        data_dict["y"] = np.zeros(4)
-        data_dict["y"][np.argmin(data_dict["label"])] = 1
+        data_dict["y"] = np.argmin(data_dict["label"])
         for key, value in data_dict.items():
             try:
                 data_dict[key] = torch.as_tensor(value)

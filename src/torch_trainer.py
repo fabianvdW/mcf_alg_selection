@@ -18,7 +18,7 @@ path = osp.dirname(osp.realpath(__file__))
 path = osp.join(path, '..', 'data', 'generated_data')
 dataset = MCFDataset(path).shuffle()
 
-BATCH_SIZE = 16
+BATCH_SIZE = 4
 train_loader = DataLoader(dataset[:0.9], batch_size=BATCH_SIZE, shuffle=True)
 test_loader = DataLoader(dataset[0.9:], batch_size=BATCH_SIZE)
 
@@ -36,9 +36,9 @@ class GIN(torch.nn.Module):
         self.mlp = MLP([hidden_channels, hidden_channels, out_channels],
                        norm=None, dropout=0.5)
 
-    def forward(self, x, edge_index, batch, batch_size):
+    def forward(self, x, edge_index, edge_attr, batch, batch_size):
         for conv in self.convs:
-            x = conv(x, edge_index).relu()
+            x = conv(x, edge_index, edge_attr).relu()
         # Pass the batch size to avoid CPU communication/graph breaks:
         x = global_add_pool(x, batch, size=batch_size)
         return self.mlp(x)
@@ -52,7 +52,7 @@ model = GIN(
 ).to(device)
 
 # Compile the model into an optimized version:
-model = torch.compile(model, dynamic=True)
+#model = torch.compile(model, dynamic=False)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
@@ -64,7 +64,7 @@ def train():
     for data in train_loader:
         data = data.to(device)
         optimizer.zero_grad()
-        out = model(data.x, data.edge_index, data.batch, data.batch_size)
+        out = model(data.x, data.edge_index, data.edge_attr, data.batch, data.batch_size)
         loss = F.cross_entropy(out, data.y)
         loss.backward()
         optimizer.step()
@@ -79,7 +79,7 @@ def test(loader):
     total_correct = 0
     for data in loader:
         data = data.to(device)
-        out = model(data.x, data.edge_index, data.batch, data.batch_size)
+        out = model(data.x, data.edge_index, data.edge_attr, data.batch, data.batch_size)
         pred = out.argmax(dim=-1)
         total_correct += int((pred == data.y).sum())
     return total_correct / len(loader.dataset)
@@ -92,6 +92,7 @@ for epoch in range(1, 101):
     train_acc = test(train_loader)
     test_acc = test(test_loader)
     times.append(time.time() - start)
+    print(times[-1])
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
           f'Test: {test_acc:.4f}')
 print(f'Median time per epoch: {torch.tensor(times).median():.4f}s')
