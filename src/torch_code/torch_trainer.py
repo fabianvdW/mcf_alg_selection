@@ -4,7 +4,7 @@ import time
 import torch
 import torch.nn.functional as F
 from gin import GIN
-from torch_loader import MCFDataset
+from torch_in_memory_loader import MCFDataset
 import torch_geometric
 from torch_geometric.loader import DataLoader
 
@@ -57,6 +57,10 @@ def train(loader, epoch):
             correct_per_class[data.y[i]] += int(pred[i] == data.y[i])
             runtime_sum += data.label[i, pred[i]]
             minruntime_sum += min(data.label[i])
+
+        #weights = 1/torch.min(data.label, dim=1)[0][:, None] * data.label
+        #weights = torch.nan_to_num(input=weights, nan=1.0, posinf=1000)
+        #loss = (weights * F.softmax(out, dim=1)).sum() / data.num_graphs
         loss = F.cross_entropy(out, data.y)
         loss.backward()
         optimizer.step()
