@@ -50,7 +50,7 @@ class MCFDataset(Dataset):
             num_nodes, num_edges = int(n), int(m)
             assert mode == "min"
             mapping = dict(zip(range(1, num_nodes + 1), range(num_nodes)))
-            edge_index = torch.empty((2, num_edges), dtype=torch.long)
+            edge_index = torch.empty((2, num_edges), dtype=torch.short)
             data_dict: dict[str, Any] = defaultdict(list)
             data_dict["edge_index"] = edge_index
             data_dict["demand"] = [0.0 for _ in range(num_nodes)]

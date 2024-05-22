@@ -50,7 +50,7 @@ def train(loader, epoch):
     for data in loader:
         data = data.to(device)
         optimizer.zero_grad()
-        out = model(data.x, data.edge_index, data.edge_attr, data.batch)
+        out = model(data.x, data.edge_index.type(torch.int64), data.edge_attr, data.batch)
         pred = out.argmax(dim=-1)
         for i in range(len(data.y)):
             samples_per_class[data.y[i]] += 1
@@ -91,7 +91,7 @@ def eval(loader, epoch):
     minruntime_sum = 0.0
     for data in loader:
         data = data.to(device)
-        out = model(data.x, data.edge_index, data.edge_attr, data.batch)
+        out = model(data.x, data.edge_index.type(torch.int64), data.edge_attr, data.batch)
         pred = out.argmax(dim=-1)
         for i in range(len(data.y)):
             samples_per_class[data.y[i]] += 1
