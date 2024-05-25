@@ -537,6 +537,7 @@ void main()
   for (i = 0; i < arcs; i++) {
     printf("a %ld %ld %ld %ld %ld\n", FROM[i], TO[i], 0, U[i], C[i]);
   }
+  fflush(stdout);
   
   
 }

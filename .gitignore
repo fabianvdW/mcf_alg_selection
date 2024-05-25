@@ -12,3 +12,4 @@ src/__pycache__/
 .ipynb_checkpoints
 *.pt
 __pycache__/
+.idea
