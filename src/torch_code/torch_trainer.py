@@ -5,14 +5,10 @@ import copy
 import numpy as np
 import random
 from optimization import optimize
-from sklearn.model_selection import StratifiedKFold, KFold
+
 from skopt.space import Real, Integer, Categorical
 from constants import *
 from torch_in_memory_loader import MCFDataset
-
-dataset = MCFDataset(DATA_PATH).shuffle()
-BATCH_SIZE = 5
-
 
 def setup_parser():
     out = argparse.ArgumentParser()
@@ -34,8 +30,10 @@ def setup_parser():
                      help='The minimum and maximum logarithmic weight decay.')
     out.add_argument('-hidden_channels', default=[16, 128], type=int, nargs=2,
                      help='The minimum and maximum number of hidden_channels used in the GNN.')
-    out.add_argument('-layers', default=[2, 10], type=int, nargs=2,
+    out.add_argument('-num_gin_layers', default=[2, 7], type=int, nargs=2,
                      help='The minimum and maximum number of layers used in the GNN.')
+    out.add_argument('-num_mlp_layers', default=[2, 7], type=int, nargs=2,
+                     help='The minimum and maximum number of layers used for the MLP used in the GNN.')
     out.add_argument('-step_size', default=[0.01, 1.0], type=float, nargs=2,
                      help='The minimum and maximum step_size used for the learning rate to drop relative to the number '
                           'of epochs.')
@@ -57,29 +55,21 @@ def get_space(name, tuple):
 def main(args, seed):
     torch.manual_seed(seed)
     random.seed(seed)
-
+    dataset = MCFDataset(DATA_PATH).shuffle()
     search_space = [get_space(name='batch_size', tuple=args.batch_size),
                     get_space(name='epochs', tuple=args.epochs),
                     get_space(name='lr', tuple=args.lr),
                     get_space(name='weight_decay', tuple=args.weight_decay),
                     get_space(name='step_size', tuple=args.step_size),
+                    get_space(name="hidden_channels", tuple=args.hidden_channels),
+                    get_space(name="num_gin_layers", tuple=args.num_gin_layers),
+                    get_space(name="num_mlp_layers", tuple=args.num_gin_layers),
+
                     ]
     start = time.time()
-        else:
-            kf = KFold(n_splits=10, random_state=seed, shuffle=True)
-            gen = kf.split(list(range(len(datasets.choices[args.dataset][4]()))))
-            train_eval = []
-            for _ in range(args.num_train_eval_samples):
-                train, val = next(gen)
-                train = train.astype(np.int64)
-                val = val.astype(np.int64)
-                train_eval += [(train, val)]
-            test = np.array(range(len(datasets.choices[args.dataset][5]())), dtype=np.int64)
-            trainset = datasets.choices[args.dataset][4]
-            evalset = copy.deepcopy(datasets.choices[args.dataset][4])
-            testset = datasets.choices[args.dataset][5]
-    result = optimize(train_set=train_set, eval_set=eval_set, device=device, search_space=search_space, num_workers=args.num_workers, num_bayes_samples=args.num_bayes_samples, seed=seed)
-
+    result = optimize(dataset=dataset, device=device, search_space=search_space, num_workers=args.num_workers, num_bayes_samples=args.num_bayes_samples, seed=seed)
+    end = time.time()
+    print(end-start, 's')
     print(result)
 
 

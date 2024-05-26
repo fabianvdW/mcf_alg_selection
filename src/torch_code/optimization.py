@@ -1,6 +1,8 @@
+import numpy as np
 import torch
 import torch.nn.functional as F
 from torch_geometric.loader import DataLoader
+from sklearn.model_selection import KFold
 import skopt
 from skopt.utils import use_named_args
 import time
@@ -9,20 +11,19 @@ from gin import GIN
 
 
 class Objective:
-    def __init__(self, train_set, eval_set, device, **kwargs):
-        self.train_set = train_set
-        self.eval_set = eval_set
+    def __init__(self, dataset, seed, device, **kwargs):
+        self.dataset = dataset
+        self.seed = seed
         self.device = device
         self.kwargs=kwargs
 
-    def train(self, lr, weight_decay, epochs, step_size, batch_size, num_workers):
+    def train(self, train_loader, eval_loader, lr, weight_decay, epochs, step_size):
         self.model.train()
         model = self.model.to(self.device)
         optimizer = torch.optim.Adam(model.parameters(), lr=10**lr, weight_decay=10**weight_decay)
         scheduler = torch.optim.lr_scheduler.StepLR(
             optimizer, gamma=0.5, step_size=int(step_size * epochs) if int(step_size * epochs) >= 1 else 1
         )
-        train_loader = DataLoader(self.train_set, batch_size=batch_size, shuffle=True, num_workers=num_workers)
         for epoch in range(epochs):
             samples_per_class = [0 for _ in range(NUM_CLASSES)]
             correct_per_class = [0 for _ in range(NUM_CLASSES)]
@@ -60,18 +61,17 @@ class Objective:
             print(
                 f"Training in epoch {epoch}: Total pred runtimes: {runtime_sum} vs total true runtimes {minruntime_sum} (Ratio: {runtime_sum / minruntime_sum:.2f})"
             )
-            self.eval(epoch, batch_size, num_workers)
+            self.eval(eval_loader, epoch)
             print(epoch, end="\r")
         print(epochs, end=" ")
 
-    def eval(self, epoch, batch_size, num_workers):
+    def eval(self, eval_loader, epoch):
         self.model.eval()
 
         samples_per_class = [0 for _ in range(NUM_CLASSES)]
         correct_per_class = [0 for _ in range(NUM_CLASSES)]
         runtime_sum = 0.0
         minruntime_sum = 0.0
-        eval_loader = DataLoader(self.eval_set, batch_size=batch_size, shuffle=True, num_workers=num_workers)
         with torch.no_grad():
             for data in eval_loader:
                 data = data.to(self.device)
@@ -95,9 +95,9 @@ class Objective:
         )
         return -runtime_sum / minruntime_sum + total_acc
 
-    def train_eval(self, total_kwargs):
-        self.train(**total_kwargs)
-        return self.eval(total_kwargs["epochs"], total_kwargs["batch_size"], total_kwargs["num_workers"])
+    def train_eval(self, train_loader, eval_loader, total_kwargs):
+        self.train(train_loader, eval_loader, **total_kwargs)
+        return self.eval(eval_loader, total_kwargs["epochs"])
 
     def __call__(self, **kwargs):
         total_kwargs = kwargs | self.kwargs
@@ -112,7 +112,15 @@ class Objective:
             train_eps=total_kwargs["train_eps"],
         )
         start = time.time()
-        objective = self.train_eval(total_kwargs)
+        objective_values = []
+        kf = KFold(n_splits=5, random_state=self.seed)
+        gen = kf.split(list(range(len(self.dataset))))
+        for (train_indices, eval_indices) in gen:
+            train_loader = DataLoader(self.dataset[train_indices], batch_size=total_kwargs["batch_size"], num_workers=total_kwargs["num_workers"])
+            eval_loader = DataLoader(self.dataset[eval_indices], batch_size=total_kwargs["batch_size"], num_workers=total_kwargs["num_workers"])
+            objective_values.append(self.train_eval(train_loader, eval_loader, total_kwargs))
+            print(f"Finished split with value {objective_values[-1]}")
+        objective = np.mean(objective_values)
         end = time.time()
         calc_factor = 0
         # calc_factor += 1 - (self.kwargs['batch_size'] / 256)
@@ -126,8 +134,8 @@ class Objective:
         return -objective + calc_factor
 
 
-def optimize(train_set, eval_set, device, search_space, num_bayes_samples, seed, **kwargs):
-    obj = Objective(train_set, eval_set, device, **kwargs)
+def optimize(dataset, device, search_space, num_bayes_samples, seed, **kwargs):
+    obj = Objective(dataset, seed, device, **kwargs )
 
     @use_named_args(dimensions=search_space)
     def objective(**kwargs):
