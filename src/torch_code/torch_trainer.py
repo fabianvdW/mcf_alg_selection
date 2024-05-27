@@ -1,8 +1,6 @@
 import time
 import argparse
 import torch
-import copy
-import numpy as np
 import random
 from optimization import optimize
 
@@ -14,13 +12,13 @@ def setup_parser():
     out = argparse.ArgumentParser()
     out.add_argument('-num_workers', default=1, type=int,
                      help='The number of workers used for training and evaluation.')
-    out.add_argument('-num_bayes_samples', default=50, type=int,
+    out.add_argument('-num_bayes_samples', default=100, type=int,
                      help='The number of samples used to estimate the optimal hyperparameters.')
-    out.add_argument('-seeds', default=[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], type=int, nargs='+',
+    out.add_argument('-seeds', default=[42], type=int, nargs='+',
                      help='The seeds used, one after the other, to determine the splits as well as the baysian'
                           'sampling.')
     out.add_argument('-cuda', default=-1, type=int, help='The cuda device used.')
-    out.add_argument('-batch_size', default=[8, 256], type=int, nargs=2, help='The minimum and maximum batch size.')
+    out.add_argument('-batch_size', default=[8, 64], type=int, nargs=2, help='The minimum and maximum batch size.')
     out.add_argument('-epochs', default=[32, 512], type=int, nargs=2,
                      help='The minimum and maximum amount of epochs.')
     out.add_argument('-lr', default=[-6.0, -2.0], type=float, nargs=2,
@@ -32,7 +30,9 @@ def setup_parser():
                      help='The minimum and maximum number of hidden_channels used in the GNN.')
     out.add_argument('-num_gin_layers', default=[2, 7], type=int, nargs=2,
                      help='The minimum and maximum number of layers used in the GNN.')
-    out.add_argument('-num_mlp_layers', default=[2, 7], type=int, nargs=2,
+    out.add_argument('-num_mlp_layers', default=[0, 5], type=int, nargs=2,
+                     help='The minimum and maximum number of layers used for the MLP used in the GNN.')
+    out.add_argument('-num_mlp_readout_layers', default=[1, 5], type=int, nargs=2,
                      help='The minimum and maximum number of layers used for the MLP used in the GNN.')
     out.add_argument('-step_size', default=[0.01, 1.0], type=float, nargs=2,
                      help='The minimum and maximum step_size used for the learning rate to drop relative to the number '
@@ -41,15 +41,12 @@ def setup_parser():
 
 
 def get_space(name, tuple):
-    if len(tuple) == 2:
-        if tuple[0] == tuple[1]:
-            return Categorical(name=name, categories=[tuple[0]])
-        else:
-            if isinstance(tuple[0], int):
-                return Integer(name=name, low=tuple[0], high=tuple[1])
-            elif isinstance(tuple[0], float):
-                return Real(name=name, low=tuple[0], high=tuple[1])
-    return Categorical(name=name, categories=tuple)
+    assert len(tuple) == 2
+    if isinstance(tuple[0], int):
+        return Integer(name=name, low=tuple[0], high=tuple[1])
+    elif isinstance(tuple[0], float):
+        return Real(name=name, low=tuple[0], high=tuple[1])
+    assert False
 
 
 def main(args, seed):
@@ -64,10 +61,15 @@ def main(args, seed):
                     get_space(name="hidden_channels", tuple=args.hidden_channels),
                     get_space(name="num_gin_layers", tuple=args.num_gin_layers),
                     get_space(name="num_mlp_layers", tuple=args.num_gin_layers),
-
+                    get_space(name="num_mlp_readout_layers", tuple=args.num_gin_layers),
+                    Categorical([True, False], name="skip_connections"),
+                    Categorical([True, False], name="train_eps"),
+                    Categorical([True, False], name="vpa"),
+                    Categorical(['batch_norm', None], name="norm"),
+                    Real(low=0.0, high=1.0, name="dropout")
                     ]
     start = time.time()
-    result = optimize(dataset=dataset, device=device, search_space=search_space, num_workers=args.num_workers, num_bayes_samples=args.num_bayes_samples, seed=seed)
+    result = optimize(dataset=dataset, device=device, search_space=search_space, num_bayes_samples=args.num_bayes_samples, num_workers=args.num_workers , seed=seed)
     end = time.time()
     print(end-start, 's')
     print(result)
@@ -81,6 +83,7 @@ if __name__ == "__main__":
         device = _args.cuda
     else:
         device = "cpu"
+    device = torch.device(device)
     for seed in _args.seeds:
-        with torch.cuda.device(device):
+        with device:
             main(_args, seed)

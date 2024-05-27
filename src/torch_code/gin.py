@@ -14,8 +14,8 @@ class GIN(torch.nn.Module):
         dropout=0.5,
         norm=None,
         skip_connections=True,
-        vpa=True,
         train_eps=True,
+        vpa=True,
     ):
         super().__init__()
         # TODO ? VPA on GINEConv layers? GNN-VPA only has implementation for GINConv layer.

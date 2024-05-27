@@ -8,14 +8,14 @@ from skopt.utils import use_named_args
 import time
 from constants import NUM_CLASSES
 from gin import GIN
-
+import random
 
 class Objective:
-    def __init__(self, dataset, seed, device, **kwargs):
+    def __init__(self, dataset, seed, device, num_workers):
         self.dataset = dataset
         self.seed = seed
         self.device = device
-        self.kwargs=kwargs
+        self.num_workers=num_workers
 
     def train(self, train_loader, eval_loader, lr, weight_decay, epochs, step_size):
         self.model.train()
@@ -100,25 +100,25 @@ class Objective:
         return self.eval(eval_loader, total_kwargs["epochs"])
 
     def __call__(self, **kwargs):
-        total_kwargs = kwargs | self.kwargs
+        print(kwargs)
         self.model = GIN(
             in_channels=1,
-            hidden_channels=total_kwargs["hidden_channels"],
+            hidden_channels=kwargs["hidden_channels"],
             out_channels=NUM_CLASSES,
-            num_gin_layers=total_kwargs["num_gin_layers"],
-            num_mlp_layers=total_kwargs["num_mlp_layers"],
-            num_mlp_readout_layers=total_kwargs["num_mlp_readout_layers"],
-            skip_connections=total_kwargs["skip_connections"],
-            train_eps=total_kwargs["train_eps"],
+            num_gin_layers=kwargs["num_gin_layers"],
+            num_mlp_layers=kwargs["num_mlp_layers"],
+            num_mlp_readout_layers=kwargs["num_mlp_readout_layers"],
+            skip_connections=kwargs["skip_connections"],
+            train_eps=kwargs["train_eps"],
         )
         start = time.time()
         objective_values = []
-        kf = KFold(n_splits=5, random_state=self.seed)
+        kf = KFold(n_splits=5, random_state=self.seed, shuffle=True)
         gen = kf.split(list(range(len(self.dataset))))
         for (train_indices, eval_indices) in gen:
-            train_loader = DataLoader(self.dataset[train_indices], batch_size=total_kwargs["batch_size"], num_workers=total_kwargs["num_workers"])
-            eval_loader = DataLoader(self.dataset[eval_indices], batch_size=total_kwargs["batch_size"], num_workers=total_kwargs["num_workers"])
-            objective_values.append(self.train_eval(train_loader, eval_loader, total_kwargs))
+            train_loader = DataLoader(self.dataset[list(train_indices)], batch_size=int(kwargs["batch_size"]), num_workers=self.num_workers)
+            eval_loader = DataLoader(self.dataset[list(eval_indices)], batch_size=int(kwargs["batch_size"]), num_workers=self.num_workers)
+            objective_values.append(self.train_eval(train_loader, eval_loader, kwargs))
             print(f"Finished split with value {objective_values[-1]}")
         objective = np.mean(objective_values)
         end = time.time()
@@ -134,8 +134,8 @@ class Objective:
         return -objective + calc_factor
 
 
-def optimize(dataset, device, search_space, num_bayes_samples, seed, **kwargs):
-    obj = Objective(dataset, seed, device, **kwargs )
+def optimize(dataset, device, search_space, num_bayes_samples, num_workers, seed):
+    obj = Objective(dataset, seed, device, num_workers)
 
     @use_named_args(dimensions=search_space)
     def objective(**kwargs):
