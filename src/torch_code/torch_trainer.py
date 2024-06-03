@@ -1,3 +1,4 @@
+import os
 import time
 import argparse
 import torch
@@ -76,6 +77,7 @@ def main(args, seed):
 
 
 if __name__ == "__main__":
+    os.chdir("..")
     parser = setup_parser()
 
     _args = parser.parse_args()
@@ -83,7 +85,5 @@ if __name__ == "__main__":
         device = _args.cuda
     else:
         device = "cpu"
-    device = torch.device(device)
     for seed in _args.seeds:
-        with device:
-            main(_args, seed)
+        main(_args, seed)

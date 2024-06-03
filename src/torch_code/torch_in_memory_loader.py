@@ -1,14 +1,10 @@
 import ast
 import os.path as osp
-import subprocess
-from collections import defaultdict
-from typing import Any
-import sys
 import torch
 
 import numpy as np
 
-from torch_geometric.data import InMemoryDataset, Data
+from torch_geometric.data import InMemoryDataset
 
 
 class MCFDataset(InMemoryDataset):

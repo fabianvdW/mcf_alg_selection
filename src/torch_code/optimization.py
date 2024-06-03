@@ -19,8 +19,7 @@ class Objective:
 
     def train(self, train_loader, eval_loader, lr, weight_decay, epochs, step_size):
         self.model.train()
-        model = self.model.to(self.device)
-        optimizer = torch.optim.Adam(model.parameters(), lr=10**lr, weight_decay=10**weight_decay)
+        optimizer = torch.optim.Adam(self.model.parameters(), lr=10**lr, weight_decay=10**weight_decay)
         scheduler = torch.optim.lr_scheduler.StepLR(
             optimizer, gamma=0.5, step_size=int(step_size * epochs) if int(step_size * epochs) >= 1 else 1
         )
@@ -30,10 +29,11 @@ class Objective:
             runtime_sum = 0.0
             minruntime_sum = 0.0
             total_loss = 0
+            start = time.time()
             for data in train_loader:
                 data = data.to(self.device)
                 optimizer.zero_grad()
-                out = self.model(data.x, data.edge_index.type(torch.int64), data.edge_attr, data.batch)
+                out = self.model(data.x, data.edge_index, data.edge_attr, data.batch)
                 pred = out.argmax(dim=-1)
                 for i in range(len(data.y)):
                     samples_per_class[data.y[i]] += 1
@@ -56,11 +56,12 @@ class Objective:
             )
             total_acc = sum(correct_per_class) / sum(samples_per_class)
             print(
-                f"Training in epoch {epoch}: Total Accuracy: {total_acc:.2f}, Accuracy per class: {acc_per_class}, Loss: {total_loss / len(self.train_loader.dataset)}"
+                f"Training in epoch {epoch}: Total Accuracy: {total_acc:.2f}, Accuracy per class: {acc_per_class}, Loss: {total_loss / len(train_loader.dataset)}"
             )
             print(
                 f"Training in epoch {epoch}: Total pred runtimes: {runtime_sum} vs total true runtimes {minruntime_sum} (Ratio: {runtime_sum / minruntime_sum:.2f})"
             )
+            print(f"Training in epoch {epoch}, time: {time.time() - start}")
             self.eval(eval_loader, epoch)
             print(epoch, end="\r")
         print(epochs, end=" ")
@@ -75,7 +76,7 @@ class Objective:
         with torch.no_grad():
             for data in eval_loader:
                 data = data.to(self.device)
-                out = self.model(data.x, data.edge_index.type(torch.int64), data.edge_attr, data.batch)
+                out = self.model(data.x, data.edge_index, data.edge_attr, data.batch)
                 pred = out.argmax(dim=-1)
                 for i in range(len(data.y)):
                     samples_per_class[data.y[i]] += 1
@@ -96,12 +97,13 @@ class Objective:
         return -runtime_sum / minruntime_sum + total_acc
 
     def train_eval(self, train_loader, eval_loader, total_kwargs):
-        self.train(train_loader, eval_loader, **total_kwargs)
+        self.train(train_loader, eval_loader, total_kwargs["lr"], total_kwargs["weight_decay"], total_kwargs["epochs"], total_kwargs["step_size"])
         return self.eval(eval_loader, total_kwargs["epochs"])
 
     def __call__(self, **kwargs):
         print(kwargs)
         self.model = GIN(
+            device=self.device,
             in_channels=1,
             hidden_channels=kwargs["hidden_channels"],
             out_channels=NUM_CLASSES,
@@ -110,14 +112,14 @@ class Objective:
             num_mlp_readout_layers=kwargs["num_mlp_readout_layers"],
             skip_connections=kwargs["skip_connections"],
             train_eps=kwargs["train_eps"],
-        )
+        ).to(self.device)
         start = time.time()
         objective_values = []
         kf = KFold(n_splits=5, random_state=self.seed, shuffle=True)
         gen = kf.split(list(range(len(self.dataset))))
         for (train_indices, eval_indices) in gen:
-            train_loader = DataLoader(self.dataset[list(train_indices)], batch_size=int(kwargs["batch_size"]), num_workers=self.num_workers)
-            eval_loader = DataLoader(self.dataset[list(eval_indices)], batch_size=int(kwargs["batch_size"]), num_workers=self.num_workers)
+            train_loader = DataLoader(self.dataset[list(train_indices)], batch_size=int(kwargs["batch_size"]))
+            eval_loader = DataLoader(self.dataset[list(eval_indices)], batch_size=int(kwargs["batch_size"]))
             objective_values.append(self.train_eval(train_loader, eval_loader, kwargs))
             print(f"Finished split with value {objective_values[-1]}")
         objective = np.mean(objective_values)

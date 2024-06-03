@@ -5,6 +5,7 @@ from torch_geometric.nn import MLP, GINEConv
 class GIN(torch.nn.Module):
     def __init__(
         self,
+        device,
         in_channels,
         hidden_channels,
         out_channels,
@@ -18,6 +19,7 @@ class GIN(torch.nn.Module):
         vpa=True,
     ):
         super().__init__()
+        self.device = device
         # TODO ? VPA on GINEConv layers? GNN-VPA only has implementation for GINConv layer.
         self.skip_connections = skip_connections
         self.vpa = vpa
@@ -78,7 +80,7 @@ class GIN(torch.nn.Module):
         sum_pool = None
         assert len(representations) == len(self.linears)
         for i in range(len(representations)):
-            z = self.linears[i](torch.spmm(graphpool, representations[i]))
+            z = self.linears[i](torch.spmm(graphpool.to(self.device), representations[i]))
             if sum_pool is None:
                 sum_pool = z
             else:
