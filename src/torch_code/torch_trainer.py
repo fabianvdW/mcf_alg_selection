@@ -66,7 +66,6 @@ def main(args, seed):
                     get_space(name="num_mlp_layers", tuple=args.num_gin_layers),
                     get_space(name="num_mlp_readout_layers", tuple=args.num_gin_layers),
                     Categorical([True, False], name="skip_connections"), #Part of evaluation
-                    Categorical([False], name="vpa")
                     ]
     start = time.time()
     result = optimize(dataset=dataset, device=device, search_space=search_space, num_bayes_samples=args.num_bayes_samples, num_workers=args.num_workers , seed=seed)

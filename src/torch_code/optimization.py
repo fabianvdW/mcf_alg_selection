@@ -109,8 +109,7 @@ class Objective:
             num_gin_layers=kwargs["num_gin_layers"],
             num_mlp_layers=kwargs["num_mlp_layers"],
             num_mlp_readout_layers=kwargs["num_mlp_readout_layers"],
-            skip_connections=kwargs["skip_connections"],
-            vpa=kwargs["vpa"]
+            skip_connections=kwargs["skip_connections"]
         ).to(self.device)
 
         start = time.time()
