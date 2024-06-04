@@ -31,7 +31,6 @@ class Objective:
             total_loss = 0
             start = time.time()
             for data in train_loader:
-                data = data.to(self.device)
                 optimizer.zero_grad()
                 out = self.model(data.x, data.edge_index, data.edge_attr, data.batch)
                 pred = out.argmax(dim=-1)
@@ -75,7 +74,6 @@ class Objective:
         minruntime_sum = 0.0
         with torch.no_grad():
             for data in eval_loader:
-                data = data.to(self.device)
                 out = self.model(data.x, data.edge_index, data.edge_attr, data.batch)
                 pred = out.argmax(dim=-1)
                 for i in range(len(data.y)):
@@ -96,6 +94,7 @@ class Objective:
         )
         return -runtime_sum / minruntime_sum + total_acc
 
+    #TODO:  LOG-Runtimes loss, Runtime loss rescale runtimes
     def train_eval(self, train_loader, eval_loader, total_kwargs):
         self.train(train_loader, eval_loader, total_kwargs["lr"], total_kwargs["weight_decay"], total_kwargs["epochs"], total_kwargs["step_size"])
         return self.eval(eval_loader, total_kwargs["epochs"])
@@ -111,8 +110,9 @@ class Objective:
             num_mlp_layers=kwargs["num_mlp_layers"],
             num_mlp_readout_layers=kwargs["num_mlp_readout_layers"],
             skip_connections=kwargs["skip_connections"],
-            train_eps=kwargs["train_eps"],
+            vpa=kwargs["vpa"]
         ).to(self.device)
+
         start = time.time()
         objective_values = []
         kf = KFold(n_splits=5, random_state=self.seed, shuffle=True)
@@ -120,17 +120,11 @@ class Objective:
         for (train_indices, eval_indices) in gen:
             train_loader = DataLoader(self.dataset[list(train_indices)], batch_size=int(kwargs["batch_size"]))
             eval_loader = DataLoader(self.dataset[list(eval_indices)], batch_size=int(kwargs["batch_size"]))
-            objective_values.append(self.train_eval(train_loader, eval_loader, kwargs))
+            objective_values.append(self.train_eval(train_loader, eval_loader, kwargs).item())
             print(f"Finished split with value {objective_values[-1]}")
         objective = np.mean(objective_values)
         end = time.time()
         calc_factor = 0
-        # calc_factor += 1 - (self.kwargs['batch_size'] / 256)
-        # calc_factor += self.kwargs['epochs'] / 512
-        # calc_factor += kwargs['features'] / 128
-        # calc_factor += kwargs['layers'] / 10
-        # calc_factor += kwargs['ensembling'] / 64
-        # calc_factor /= 100
         print(-objective + calc_factor, end=" ")
         print(end - start, "s")
         return -objective + calc_factor

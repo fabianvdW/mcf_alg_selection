@@ -12,15 +12,11 @@ class GIN(torch.nn.Module):
         num_gin_layers,
         num_mlp_layers,
         num_mlp_readout_layers,
-        dropout=0.5,
-        norm=None,
         skip_connections=True,
-        train_eps=True,
         vpa=True,
     ):
         super().__init__()
         self.device = device
-        # TODO ? VPA on GINEConv layers? GNN-VPA only has implementation for GINConv layer.
         self.skip_connections = skip_connections
         self.vpa = vpa
         self.convs = torch.nn.ModuleList()
@@ -28,20 +24,20 @@ class GIN(torch.nn.Module):
         for i in range(num_gin_layers):
             mlp = MLP(
                 [in_channels if i == 0 else hidden_channels] + [hidden_channels for _ in range(num_mlp_layers)] + [hidden_channels],
-                norm=norm,
-                dropout=dropout,
+                norm="batch_norm",
+                dropout=0.5,
             )
-            self.convs.append(GINEConv(nn=mlp, train_eps=train_eps, edge_dim=2))
+            self.convs.append(GINEConv(nn=mlp, train_eps=True, edge_dim=2))
 
         self.linears.append(
-            MLP([in_channels] + [hidden_channels for _ in range(num_mlp_readout_layers)] + [out_channels], norm=norm, dropout=dropout)
+            MLP([in_channels] + [hidden_channels for _ in range(num_mlp_readout_layers)] + [out_channels], norm="batch_norm", dropout=0.5)
         )
         for _ in range(num_gin_layers):
             self.linears.append(
                 MLP(
                     [hidden_channels] + [hidden_channels for _ in range(num_mlp_readout_layers)] + [out_channels],
-                    norm=norm,
-                    dropout=dropout,
+                    norm="batch_norm",
+                    dropout=0.5,
                 )
             )
 
@@ -62,12 +58,12 @@ class GIN(torch.nn.Module):
         elem = torch.FloatTensor(elem)
         idx = torch.LongTensor(idx).transpose(0, 1)
 
-        graph_pool = torch.sparse_coo_tensor(idx, elem, torch.Size([len(len_list), len(batch)]))
+        graph_pool = torch.sparse_coo_tensor(idx, elem, torch.Size([len(len_list), len(batch)]), device=self.device)
         return graph_pool
 
     def forward(self, x, edge_index, edge_attr, batch):
         graphpool = self.preprocess_graphpool(batch)  # Used for VPA on readout layers, if enabled
-
+        #Test vpa utilization
         representations = [x]
         x = self.convs[0](x, edge_index, edge_attr).relu()
         representations += [x]
@@ -78,9 +74,8 @@ class GIN(torch.nn.Module):
                 x = conv(x, edge_index, edge_attr).relu()
             representations += [x]
         sum_pool = None
-        assert len(representations) == len(self.linears)
         for i in range(len(representations)):
-            z = self.linears[i](torch.spmm(graphpool.to(self.device), representations[i]))
+            z = self.linears[i](torch.spmm(graphpool, representations[i]))
             if sum_pool is None:
                 sum_pool = z
             else:

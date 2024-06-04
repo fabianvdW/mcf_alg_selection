@@ -18,9 +18,9 @@ def setup_parser():
     out.add_argument('-seeds', default=[42], type=int, nargs='+',
                      help='The seeds used, one after the other, to determine the splits as well as the baysian'
                           'sampling.')
-    out.add_argument('-cuda', default=-1, type=int, help='The cuda device used.')
+    out.add_argument('-cuda', default=0, type=int, help='The cuda device used.')
     out.add_argument('-batch_size', default=[8, 64], type=int, nargs=2, help='The minimum and maximum batch size.')
-    out.add_argument('-epochs', default=[32, 512], type=int, nargs=2,
+    out.add_argument('-epochs', default=[2, 100], type=int, nargs=2,
                      help='The minimum and maximum amount of epochs.')
     out.add_argument('-lr', default=[-6.0, -2.0], type=float, nargs=2,
                      help='The minimum and maximum logarithmic learning '
@@ -49,11 +49,13 @@ def get_space(name, tuple):
         return Real(name=name, low=tuple[0], high=tuple[1])
     assert False
 
-
+# TODO: Data normalization
+# TODO: Elwetritsch
 def main(args, seed):
     torch.manual_seed(seed)
     random.seed(seed)
-    dataset = MCFDataset(DATA_PATH).shuffle()
+    dataset = MCFDataset(DATA_PATH).to(device).shuffle()
+
     search_space = [get_space(name='batch_size', tuple=args.batch_size),
                     get_space(name='epochs', tuple=args.epochs),
                     get_space(name='lr', tuple=args.lr),
@@ -63,11 +65,8 @@ def main(args, seed):
                     get_space(name="num_gin_layers", tuple=args.num_gin_layers),
                     get_space(name="num_mlp_layers", tuple=args.num_gin_layers),
                     get_space(name="num_mlp_readout_layers", tuple=args.num_gin_layers),
-                    Categorical([True, False], name="skip_connections"),
-                    Categorical([True, False], name="train_eps"),
-                    Categorical([True, False], name="vpa"),
-                    Categorical(['batch_norm', None], name="norm"),
-                    Real(low=0.0, high=1.0, name="dropout")
+                    Categorical([True, False], name="skip_connections"), #Part of evaluation
+                    Categorical([False], name="vpa")
                     ]
     start = time.time()
     result = optimize(dataset=dataset, device=device, search_space=search_space, num_bayes_samples=args.num_bayes_samples, num_workers=args.num_workers , seed=seed)
