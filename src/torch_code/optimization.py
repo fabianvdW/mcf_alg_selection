@@ -8,7 +8,6 @@ from skopt.utils import use_named_args
 import time
 from constants import NUM_CLASSES
 from gin import GIN
-import random
 
 class Objective:
     def __init__(self, dataset, seed, device, num_workers):
@@ -17,7 +16,7 @@ class Objective:
         self.device = device
         self.num_workers=num_workers
 
-    def train(self, train_loader, eval_loader, lr, weight_decay, epochs, step_size):
+    def train(self, train_loader, eval_loader, lr, weight_decay, epochs, step_size, loss_fn):
         self.model.train()
         optimizer = torch.optim.Adam(self.model.parameters(), lr=10**lr, weight_decay=10**weight_decay)
         scheduler = torch.optim.lr_scheduler.StepLR(
@@ -39,10 +38,10 @@ class Objective:
                     correct_per_class[data.y[i]] += int(pred[i] == data.y[i])
                     runtime_sum += data.label[i, pred[i]]
                     minruntime_sum += min(data.label[i])
-                # weights = 1/torch.min(data.label, dim=1)[0][:, None] * data.label
-                # weights = torch.nan_to_num(input=weights, nan=1.0, posinf=1000)
-                # loss = (weights * F.softmax(out, dim=1)).sum() / data.num_graphs
-                loss = F.cross_entropy(out, data.y)
+                if loss_fn == "expected_runtime":
+                    loss = torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.num_graphs
+                elif loss_fn == "cross_entropy":
+                    loss = F.cross_entropy(out, data.y)
                 loss.backward()
                 optimizer.step()
                 total_loss += float(loss) * data.num_graphs
@@ -95,7 +94,7 @@ class Objective:
         return -runtime_sum / minruntime_sum + total_acc
 
     def train_eval(self, train_loader, eval_loader, total_kwargs):
-        self.train(train_loader, eval_loader, total_kwargs["lr"], total_kwargs["weight_decay"], total_kwargs["epochs"], total_kwargs["step_size"])
+        self.train(train_loader, eval_loader, total_kwargs["lr"], total_kwargs["weight_decay"], total_kwargs["epochs"], total_kwargs["step_size"], total_kwargs["loss"])
         return self.eval(eval_loader, total_kwargs["epochs"])
 
     def __call__(self, **kwargs):
@@ -123,7 +122,7 @@ class Objective:
         objective = np.mean(objective_values)
         end = time.time()
         calc_factor = 0
-        print(f"Finished current parameter set with {-objective + calc_factor} in {end-start}s", end=" ")
+        print(f"Finished current parameter set with {-objective + calc_factor} in {end-start}s")
         return -objective + calc_factor
 
 

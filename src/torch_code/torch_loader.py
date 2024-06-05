@@ -5,14 +5,14 @@ from collections import defaultdict
 from typing import Any
 import sys
 import torch
-
+from constants import transform_fn
 import numpy as np
 
 from torch_geometric.data import Dataset, Data
 
 
 class MCFDataset(Dataset):
-    def __init__(self, root):
+    def __init__(self, root, transform=transform_fn):
         self.id_to_runtime = {}
         self.id_to_cmd = {}
         self.idx_to_id = []
@@ -27,7 +27,7 @@ class MCFDataset(Dataset):
                 if id in self.id_to_runtime:
                     self.idx_to_id.append(id)
                     self.id_to_cmd[id] = ast.literal_eval(command)
-        super().__init__(root)
+        super().__init__(root, transform)
         self._indices = list(range(len(self.idx_to_id)))
 
     @property
@@ -75,13 +75,15 @@ class MCFDataset(Dataset):
                 except Exception as e:
                     print(e)
             data = Data.from_dict(data_dict)
+            max_weight = torch.max(data["weight"])
+            max_supply = torch.max(torch.abs(data["demand"]))
             data.num_nodes = num_nodes
             # Prepare node attributes
             data.label = data["label"].view(1, -1)
-            data.x = data["demand"].view(-1, 1)
+            data.x = data["demand"].view(-1, 1) / max_supply
             del data["demand"]
             # Prepare edge attributes
-            data.edge_attr = torch.cat([data["capacity"].view(-1, 1), data["weight"].view(-1, 1)], dim=-1)
+            data.edge_attr = torch.cat([data["capacity"].view(-1, 1) / max_supply, data["weight"].view(-1, 1) / max_weight], dim=-1)
             del data["capacity"]
             del data["weight"]
             torch.save(data, osp.join(self.processed_dir, graph_id + ".pt"))

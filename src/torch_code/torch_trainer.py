@@ -2,7 +2,6 @@ import os
 import time
 import argparse
 import torch
-import random
 import torch_geometric
 from optimization import optimize
 
@@ -23,7 +22,7 @@ def setup_parser():
     out.add_argument('-batch_size', default=[8, 64], type=int, nargs=2, help='The minimum and maximum batch size.')
     out.add_argument('-epochs', default=[10, 100], type=int, nargs=2,
                      help='The minimum and maximum amount of epochs.')
-    out.add_argument('-lr', default=[-6.0, -2.0], type=float, nargs=2,
+    out.add_argument('-lr', default=[-5.0, -2.0], type=float, nargs=2,
                      help='The minimum and maximum logarithmic learning '
                           'rate, i.e. 10**lr is used for training.')
     out.add_argument('-weight_decay', default=[-10.0, -0.3], type=float, nargs=2,
@@ -50,8 +49,6 @@ def get_space(name, tuple):
         return Real(name=name, low=tuple[0], high=tuple[1])
     assert False
 
-# TODO: Data normalization
-#TODO:  LOG-Runtimes loss, Runtime loss rescale runtimes
 # TODO: Elwetritsch
 def main(args, seed):
     torch_geometric.seed_everything(seed)
@@ -65,7 +62,11 @@ def main(args, seed):
                     get_space(name="num_gin_layers", tuple=args.num_gin_layers),
                     get_space(name="num_mlp_layers", tuple=args.num_gin_layers),
                     get_space(name="num_mlp_readout_layers", tuple=args.num_gin_layers),
-                    Categorical([True, False], name="skip_connections"), #Part of evaluation, i.e. make this constant
+                    Categorical([True, False], name="skip_connections"), #Part of evaluation, i.e. make this constant,
+                    Categorical([
+                        "cross_entropy",
+                        #"expected_runtime"
+                    ], name="loss") # Part of evaluation, i.e. make this constant
                     ]
     start = time.time()
     result = optimize(dataset=dataset, device=device, search_space=search_space, num_bayes_samples=args.num_bayes_samples, num_workers=args.num_workers , seed=seed)

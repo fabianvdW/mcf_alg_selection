@@ -1,3 +1,4 @@
+from constants import transform_fn
 import ast
 import os.path as osp
 import torch
@@ -8,7 +9,7 @@ from torch_geometric.data import InMemoryDataset
 
 
 class MCFDataset(InMemoryDataset):
-    def __init__(self, root):
+    def __init__(self, root, transform=transform_fn):
         self.id_to_runtime = {}
         self.id_to_cmd = {}
         self.idx_to_id = []
@@ -23,7 +24,7 @@ class MCFDataset(InMemoryDataset):
                 if id in self.id_to_runtime:
                     self.idx_to_id.append(id)
                     self.id_to_cmd[id] = ast.literal_eval(command)
-        super().__init__(root)
+        super().__init__(root, transform)
         self.load(self.processed_paths[0])
 
     @property
