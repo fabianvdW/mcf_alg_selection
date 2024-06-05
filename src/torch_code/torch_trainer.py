@@ -3,6 +3,7 @@ import time
 import argparse
 import torch
 import random
+import torch_geometric
 from optimization import optimize
 
 from skopt.space import Real, Integer, Categorical
@@ -20,20 +21,20 @@ def setup_parser():
                           'sampling.')
     out.add_argument('-cuda', default=0, type=int, help='The cuda device used.')
     out.add_argument('-batch_size', default=[8, 64], type=int, nargs=2, help='The minimum and maximum batch size.')
-    out.add_argument('-epochs', default=[2, 100], type=int, nargs=2,
+    out.add_argument('-epochs', default=[10, 100], type=int, nargs=2,
                      help='The minimum and maximum amount of epochs.')
     out.add_argument('-lr', default=[-6.0, -2.0], type=float, nargs=2,
                      help='The minimum and maximum logarithmic learning '
                           'rate, i.e. 10**lr is used for training.')
     out.add_argument('-weight_decay', default=[-10.0, -0.3], type=float, nargs=2,
                      help='The minimum and maximum logarithmic weight decay.')
-    out.add_argument('-hidden_channels', default=[16, 128], type=int, nargs=2,
+    out.add_argument('-hidden_channels', default=[16, 100], type=int, nargs=2,
                      help='The minimum and maximum number of hidden_channels used in the GNN.')
-    out.add_argument('-num_gin_layers', default=[2, 7], type=int, nargs=2,
+    out.add_argument('-num_gin_layers', default=[2, 6], type=int, nargs=2,
                      help='The minimum and maximum number of layers used in the GNN.')
-    out.add_argument('-num_mlp_layers', default=[0, 5], type=int, nargs=2,
+    out.add_argument('-num_mlp_layers', default=[0, 3], type=int, nargs=2,
                      help='The minimum and maximum number of layers used for the MLP used in the GNN.')
-    out.add_argument('-num_mlp_readout_layers', default=[1, 5], type=int, nargs=2,
+    out.add_argument('-num_mlp_readout_layers', default=[1, 3], type=int, nargs=2,
                      help='The minimum and maximum number of layers used for the MLP used in the GNN.')
     out.add_argument('-step_size', default=[0.01, 1.0], type=float, nargs=2,
                      help='The minimum and maximum step_size used for the learning rate to drop relative to the number '
@@ -50,12 +51,11 @@ def get_space(name, tuple):
     assert False
 
 # TODO: Data normalization
+#TODO:  LOG-Runtimes loss, Runtime loss rescale runtimes
 # TODO: Elwetritsch
 def main(args, seed):
-    torch.manual_seed(seed)
-    random.seed(seed)
+    torch_geometric.seed_everything(seed)
     dataset = MCFDataset(DATA_PATH).to(device).shuffle()
-
     search_space = [get_space(name='batch_size', tuple=args.batch_size),
                     get_space(name='epochs', tuple=args.epochs),
                     get_space(name='lr', tuple=args.lr),
@@ -65,7 +65,7 @@ def main(args, seed):
                     get_space(name="num_gin_layers", tuple=args.num_gin_layers),
                     get_space(name="num_mlp_layers", tuple=args.num_gin_layers),
                     get_space(name="num_mlp_readout_layers", tuple=args.num_gin_layers),
-                    Categorical([True, False], name="skip_connections"), #Part of evaluation
+                    Categorical([True, False], name="skip_connections"), #Part of evaluation, i.e. make this constant
                     ]
     start = time.time()
     result = optimize(dataset=dataset, device=device, search_space=search_space, num_bayes_samples=args.num_bayes_samples, num_workers=args.num_workers , seed=seed)

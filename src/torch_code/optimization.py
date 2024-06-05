@@ -94,29 +94,28 @@ class Objective:
         )
         return -runtime_sum / minruntime_sum + total_acc
 
-    #TODO:  LOG-Runtimes loss, Runtime loss rescale runtimes
     def train_eval(self, train_loader, eval_loader, total_kwargs):
         self.train(train_loader, eval_loader, total_kwargs["lr"], total_kwargs["weight_decay"], total_kwargs["epochs"], total_kwargs["step_size"])
         return self.eval(eval_loader, total_kwargs["epochs"])
 
     def __call__(self, **kwargs):
         print(kwargs)
-        self.model = GIN(
-            device=self.device,
-            in_channels=1,
-            hidden_channels=kwargs["hidden_channels"],
-            out_channels=NUM_CLASSES,
-            num_gin_layers=kwargs["num_gin_layers"],
-            num_mlp_layers=kwargs["num_mlp_layers"],
-            num_mlp_readout_layers=kwargs["num_mlp_readout_layers"],
-            skip_connections=kwargs["skip_connections"]
-        ).to(self.device)
 
         start = time.time()
         objective_values = []
         kf = KFold(n_splits=5, random_state=self.seed, shuffle=True)
         gen = kf.split(list(range(len(self.dataset))))
         for (train_indices, eval_indices) in gen:
+            self.model = GIN(
+                device=self.device,
+                in_channels=1,
+                hidden_channels=kwargs["hidden_channels"],
+                out_channels=NUM_CLASSES,
+                num_gin_layers=kwargs["num_gin_layers"],
+                num_mlp_layers=kwargs["num_mlp_layers"],
+                num_mlp_readout_layers=kwargs["num_mlp_readout_layers"],
+                skip_connections=kwargs["skip_connections"]
+            ).to(self.device)
             train_loader = DataLoader(self.dataset[list(train_indices)], batch_size=int(kwargs["batch_size"]))
             eval_loader = DataLoader(self.dataset[list(eval_indices)], batch_size=int(kwargs["batch_size"]))
             objective_values.append(self.train_eval(train_loader, eval_loader, kwargs).item())
@@ -124,8 +123,7 @@ class Objective:
         objective = np.mean(objective_values)
         end = time.time()
         calc_factor = 0
-        print(-objective + calc_factor, end=" ")
-        print(end - start, "s")
+        print(f"Finished current parameter set with {-objective + calc_factor} in {end-start}s", end=" ")
         return -objective + calc_factor
 
 
