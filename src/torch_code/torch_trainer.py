@@ -7,7 +7,8 @@ from optimization import optimize
 
 from skopt.space import Real, Integer, Categorical
 from constants import *
-from torch_in_memory_loader import MCFDataset
+from torch_in_memory_loader import MCFDatasetInMemory
+
 
 def setup_parser():
     out = argparse.ArgumentParser()
@@ -49,10 +50,11 @@ def get_space(name, tuple):
         return Real(name=name, low=tuple[0], high=tuple[1])
     assert False
 
+
 # TODO: Elwetritsch
 def main(args, seed):
     torch_geometric.seed_everything(seed)
-    dataset = MCFDataset(DATA_PATH).to(device).shuffle()
+    dataset = MCFDatasetInMemory(DATA_PATH).to(device).shuffle()
     search_space = [get_space(name='batch_size', tuple=args.batch_size),
                     get_space(name='epochs', tuple=args.epochs),
                     get_space(name='lr', tuple=args.lr),
@@ -62,16 +64,17 @@ def main(args, seed):
                     get_space(name="num_gin_layers", tuple=args.num_gin_layers),
                     get_space(name="num_mlp_layers", tuple=args.num_gin_layers),
                     get_space(name="num_mlp_readout_layers", tuple=args.num_gin_layers),
-                    Categorical([True, False], name="skip_connections"), #Part of evaluation, i.e. make this constant,
+                    Categorical([True, False], name="skip_connections"),  # Part of evaluation, i.e. make this constant,
                     Categorical([
                         "cross_entropy",
-                        #"expected_runtime"
-                    ], name="loss") # Part of evaluation, i.e. make this constant
+                        # "expected_runtime"
+                    ], name="loss")  # Part of evaluation, i.e. make this constant
                     ]
     start = time.time()
-    result = optimize(dataset=dataset, device=device, search_space=search_space, num_bayes_samples=args.num_bayes_samples, num_workers=args.num_workers , seed=seed)
+    result = optimize(dataset=dataset, device=device, search_space=search_space,
+                      num_bayes_samples=args.num_bayes_samples, num_workers=args.num_workers, seed=seed)
     end = time.time()
-    print(end-start, 's')
+    print(end - start, 's')
     print(result)
 
 
