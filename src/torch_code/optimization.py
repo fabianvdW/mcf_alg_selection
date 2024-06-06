@@ -137,7 +137,8 @@ class Objective:
                 num_mlp_readout_layers=kwargs["num_mlp_readout_layers"],
                 skip_connections=kwargs["skip_connections"]
             ).to(self.device)
-            train_loader = DataLoader(self.dataset[list(train_indices)], batch_size=int(kwargs["batch_size"]))
+            train_loader = DataLoader(self.dataset[list(train_indices)], batch_size=int(kwargs["batch_size"]), shuffle=True, drop_last=True)
+            # Need to enable drop_last so that there are no batches of size 1, which would error the batch norm layers.
             eval_loader = DataLoader(self.dataset[list(eval_indices)], batch_size=int(kwargs["batch_size"]))
             epochs_info = self.train_eval(train_loader, eval_loader, kwargs)
             objective_values.append(epochs_info[-1]['eval_obj'])

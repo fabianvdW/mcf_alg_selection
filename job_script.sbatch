@@ -7,7 +7,7 @@
 #SBATCH --cpus-per-task=8                # use 8 thread per taks
 #SBATCH -N 1                             # request slots on 1 node
 #SBATCH --gpus=A40:1                    # request 1 Volta V100 GPU
-#SBATCH --partition=gpu      # run on one of our DGX servers
+#SBATCH --partition=gpuidle
 #SBATCH --output=test_%j_out.txt         # capture output
 #SBATCH --error=test_%j_err.txt          # and error streams
 
