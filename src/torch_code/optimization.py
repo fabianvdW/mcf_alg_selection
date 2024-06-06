@@ -9,17 +9,19 @@ import time
 from constants import NUM_CLASSES
 from gin import GIN
 
+
 class Objective:
-    def __init__(self, dataset, seed, device, num_workers):
+    def __init__(self, dataset, seed, device, num_workers, compile_model):
         self.dataset = dataset
         self.seed = seed
         self.device = device
-        self.num_workers=num_workers
+        self.num_workers = num_workers
+        self.compile_model = compile_model
         self.log_info = []
 
     def train(self, train_loader, eval_loader, lr, weight_decay, epochs, step_size, loss_fn):
         self.model.train()
-        optimizer = torch.optim.Adam(self.model.parameters(), lr=10**lr, weight_decay=10**weight_decay)
+        optimizer = torch.optim.Adam(self.model.parameters(), lr=10 ** lr, weight_decay=10 ** weight_decay)
         scheduler = torch.optim.lr_scheduler.StepLR(
             optimizer, gamma=0.5, step_size=int(step_size * epochs) if int(step_size * epochs) >= 1 else 1
         )
@@ -33,7 +35,7 @@ class Objective:
             start = time.time()
             for data in train_loader:
                 optimizer.zero_grad()
-                out = self.model(data.x, data.edge_index, data.edge_attr, data.batch)
+                out = self.model(data.x, data.edge_index, data.edge_attr, data.batch, data.batch_size)
                 pred = out.argmax(dim=-1)
                 for i in range(len(data.y)):
                     samples_per_class[data.y[i]] += 1
@@ -41,12 +43,12 @@ class Objective:
                     runtime_sum += data.label[i, pred[i]]
                     minruntime_sum += min(data.label[i])
                 if loss_fn == "expected_runtime":
-                    loss = torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.num_graphs
+                    loss = torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
                 elif loss_fn == "cross_entropy":
                     loss = F.cross_entropy(out, data.y)
                 loss.backward()
                 optimizer.step()
-                total_loss += float(loss) * data.num_graphs
+                total_loss += float(loss) * data.batch_size
             scheduler.step()
             acc_per_class = " ".join(
                 [
@@ -84,7 +86,7 @@ class Objective:
         total_loss = 0.0
         with torch.no_grad():
             for data in eval_loader:
-                out = self.model(data.x, data.edge_index, data.edge_attr, data.batch)
+                out = self.model(data.x, data.edge_index, data.edge_attr, data.batch, data.batch_size)
                 pred = out.argmax(dim=-1)
                 for i in range(len(data.y)):
                     samples_per_class[data.y[i]] += 1
@@ -92,10 +94,10 @@ class Objective:
                     runtime_sum += data.label[i, pred[i]]
                     minruntime_sum += min(data.label[i])
                 if loss_fn == "expected_runtime":
-                    loss = torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.num_graphs
+                    loss = torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
                 elif loss_fn == "cross_entropy":
                     loss = F.cross_entropy(out, data.y)
-                total_loss += float(loss) * data.num_graphs
+                total_loss += float(loss) * data.batch_size
         acc_per_class = " ".join(
             [
                 f"{correct}/{num_samples}={1 if num_samples == 0 else correct / num_samples:.2f}"
@@ -109,13 +111,15 @@ class Objective:
         epoch_info['eval_minruntime_sum'] = minruntime_sum
         epoch_info['eval_total_loss'] = total_loss
         epoch_info['eval_obj'] = float(-runtime_sum / minruntime_sum + total_acc)
-        print(f"Testing in epoch {epoch}: Total Accuracy: {total_acc:.2f}, Accuracy per class: {acc_per_class}, Loss: {total_loss / len(eval_loader.dataset)}")
+        print(
+            f"Testing in epoch {epoch}: Total Accuracy: {total_acc:.2f}, Accuracy per class: {acc_per_class}, Loss: {total_loss / len(eval_loader.dataset)}")
         print(
             f"Testing in epoch {epoch}: Total pred runtimes: {runtime_sum} vs total true runtimes {minruntime_sum} (Ratio: {runtime_sum / minruntime_sum:.2f})"
         )
 
     def train_eval(self, train_loader, eval_loader, total_kwargs):
-        epochs_info = self.train(train_loader, eval_loader, total_kwargs["lr"], total_kwargs["weight_decay"], total_kwargs["epochs"], total_kwargs["step_size"], total_kwargs["loss"])
+        epochs_info = self.train(train_loader, eval_loader, total_kwargs["lr"], total_kwargs["weight_decay"],
+                                 total_kwargs["epochs"], total_kwargs["step_size"], total_kwargs["loss"])
         return epochs_info
 
     def __call__(self, **kwargs):
@@ -137,7 +141,10 @@ class Objective:
                 num_mlp_readout_layers=kwargs["num_mlp_readout_layers"],
                 skip_connections=kwargs["skip_connections"]
             ).to(self.device)
-            train_loader = DataLoader(self.dataset[list(train_indices)], batch_size=int(kwargs["batch_size"]), shuffle=True, drop_last=True)
+            if self.compile_model:
+                self.model = torch.compile(self.model, dynamic=True, fullgraph=True)
+            train_loader = DataLoader(self.dataset[list(train_indices)], batch_size=int(kwargs["batch_size"]),
+                                      shuffle=True, drop_last=True)
             # Need to enable drop_last so that there are no batches of size 1, which would error the batch norm layers.
             eval_loader = DataLoader(self.dataset[list(eval_indices)], batch_size=int(kwargs["batch_size"]))
             epochs_info = self.train_eval(train_loader, eval_loader, kwargs)
@@ -148,19 +155,19 @@ class Objective:
         objective = np.mean(objective_values)
         end = time.time()
         calc_factor = 0
-        print(f"Finished current parameter set with {-objective + calc_factor} in {end-start}s")
+        print(f"Finished current parameter set with {-objective + calc_factor} in {end - start}s")
         self.log_info.append((kwargs, train_infos, objective_values))
         return -objective + calc_factor
 
 
-def optimize(dataset, device, search_space, num_bayes_samples, num_workers, seed):
-    obj = Objective(dataset, seed, device, num_workers)
+def optimize(dataset, device, search_space, num_bayes_samples, num_workers, seed, compile_model):
+    obj = Objective(dataset, seed, device, num_workers, compile_model)
 
     @use_named_args(dimensions=search_space)
     def objective(**kwargs):
         return obj(**kwargs)
 
-    res =  skopt.gp_minimize(
+    res = skopt.gp_minimize(
         objective,
         search_space,
         n_calls=num_bayes_samples,

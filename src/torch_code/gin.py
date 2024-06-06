@@ -40,7 +40,7 @@ class GIN(torch.nn.Module):
                 )
             )
 
-    def forward(self, x, edge_index, edge_attr, batch):
+    def forward(self, x, edge_index, edge_attr, batch, batch_size):
         representations = [x]
         x = self.convs[0](x, edge_index, edge_attr).relu()
         representations += [x]
@@ -53,7 +53,7 @@ class GIN(torch.nn.Module):
         sum_pool = None
         for i in range(len(representations)):
 
-            z = self.linears[i](torch_geometric.nn.global_add_pool(representations[i], batch))
+            z = self.linears[i](torch_geometric.nn.global_add_pool(representations[i], batch, batch_size))
             if sum_pool is None:
                 sum_pool = z
             else:
