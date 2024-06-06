@@ -15,6 +15,7 @@ class Objective:
         self.seed = seed
         self.device = device
         self.num_workers=num_workers
+        self.log_info = []
 
     def train(self, train_loader, eval_loader, lr, weight_decay, epochs, step_size, loss_fn):
         self.model.train()
@@ -22,6 +23,7 @@ class Objective:
         scheduler = torch.optim.lr_scheduler.StepLR(
             optimizer, gamma=0.5, step_size=int(step_size * epochs) if int(step_size * epochs) >= 1 else 1
         )
+        epochs_info = []
         for epoch in range(epochs):
             samples_per_class = [0 for _ in range(NUM_CLASSES)]
             correct_per_class = [0 for _ in range(NUM_CLASSES)]
@@ -53,6 +55,13 @@ class Objective:
                 ]
             )
             total_acc = sum(correct_per_class) / sum(samples_per_class)
+            epoch_info = {}
+            epoch_info['train_acc_per_class'] = acc_per_class
+            epoch_info['train_total_acc'] = total_acc
+            epoch_info['train_runtime_sum'] = runtime_sum
+            epoch_info['train_minruntime_sum'] = minruntime_sum
+            epoch_info['train_total_loss'] = total_loss
+
             print(
                 f"Training in epoch {epoch}: Total Accuracy: {total_acc:.2f}, Accuracy per class: {acc_per_class}, Loss: {total_loss / len(train_loader.dataset)}"
             )
@@ -60,17 +69,19 @@ class Objective:
                 f"Training in epoch {epoch}: Total pred runtimes: {runtime_sum} vs total true runtimes {minruntime_sum} (Ratio: {runtime_sum / minruntime_sum:.2f})"
             )
             print(f"Training in epoch {epoch}, time: {time.time() - start}")
-            self.eval(eval_loader, epoch)
+            self.eval(eval_loader, epoch, epoch_info, loss_fn)
             print(epoch, end="\r")
-        print(epochs, end=" ")
+            epochs_info.append(epoch_info)
+        return epochs_info
 
-    def eval(self, eval_loader, epoch):
+    def eval(self, eval_loader, epoch, epoch_info, loss_fn):
         self.model.eval()
 
         samples_per_class = [0 for _ in range(NUM_CLASSES)]
         correct_per_class = [0 for _ in range(NUM_CLASSES)]
         runtime_sum = 0.0
         minruntime_sum = 0.0
+        total_loss = 0.0
         with torch.no_grad():
             for data in eval_loader:
                 out = self.model(data.x, data.edge_index, data.edge_attr, data.batch)
@@ -80,6 +91,11 @@ class Objective:
                     correct_per_class[data.y[i]] += int(pred[i] == data.y[i])
                     runtime_sum += data.label[i, pred[i]]
                     minruntime_sum += min(data.label[i])
+                if loss_fn == "expected_runtime":
+                    loss = torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.num_graphs
+                elif loss_fn == "cross_entropy":
+                    loss = F.cross_entropy(out, data.y)
+                total_loss += float(loss) * data.num_graphs
         acc_per_class = " ".join(
             [
                 f"{correct}/{num_samples}={1 if num_samples == 0 else correct / num_samples:.2f}"
@@ -87,15 +103,20 @@ class Objective:
             ]
         )
         total_acc = sum(correct_per_class) / sum(samples_per_class)
-        print(f"Testing in epoch {epoch}: Total Accuracy: {total_acc:.2f}, Accuracy per class: {acc_per_class}")
+        epoch_info['eval_acc_per_class'] = acc_per_class
+        epoch_info['eval_total_acc'] = total_acc
+        epoch_info['eval_runtime_sum'] = runtime_sum
+        epoch_info['eval_minruntime_sum'] = minruntime_sum
+        epoch_info['eval_total_loss'] = total_loss
+        epoch_info['eval_obj'] = float(-runtime_sum / minruntime_sum + total_acc)
+        print(f"Testing in epoch {epoch}: Total Accuracy: {total_acc:.2f}, Accuracy per class: {acc_per_class}, Loss: {total_loss / len(eval_loader.dataset)}")
         print(
             f"Testing in epoch {epoch}: Total pred runtimes: {runtime_sum} vs total true runtimes {minruntime_sum} (Ratio: {runtime_sum / minruntime_sum:.2f})"
         )
-        return -runtime_sum / minruntime_sum + total_acc
 
     def train_eval(self, train_loader, eval_loader, total_kwargs):
-        self.train(train_loader, eval_loader, total_kwargs["lr"], total_kwargs["weight_decay"], total_kwargs["epochs"], total_kwargs["step_size"], total_kwargs["loss"])
-        return self.eval(eval_loader, total_kwargs["epochs"])
+        epochs_info = self.train(train_loader, eval_loader, total_kwargs["lr"], total_kwargs["weight_decay"], total_kwargs["epochs"], total_kwargs["step_size"], total_kwargs["loss"])
+        return epochs_info
 
     def __call__(self, **kwargs):
         print(kwargs)
@@ -104,6 +125,7 @@ class Objective:
         objective_values = []
         kf = KFold(n_splits=5, random_state=self.seed, shuffle=True)
         gen = kf.split(list(range(len(self.dataset))))
+        train_infos = []
         for (train_indices, eval_indices) in gen:
             self.model = GIN(
                 device=self.device,
@@ -117,12 +139,16 @@ class Objective:
             ).to(self.device)
             train_loader = DataLoader(self.dataset[list(train_indices)], batch_size=int(kwargs["batch_size"]))
             eval_loader = DataLoader(self.dataset[list(eval_indices)], batch_size=int(kwargs["batch_size"]))
-            objective_values.append(self.train_eval(train_loader, eval_loader, kwargs).item())
+            epochs_info = self.train_eval(train_loader, eval_loader, kwargs)
+            objective_values.append(epochs_info[-1]['eval_obj'])
             print(f"Finished split with value {objective_values[-1]}")
+            train_infos.append(epochs_info)
+            del self.model
         objective = np.mean(objective_values)
         end = time.time()
         calc_factor = 0
         print(f"Finished current parameter set with {-objective + calc_factor} in {end-start}s")
+        self.log_info.append((kwargs, train_infos, objective_values))
         return -objective + calc_factor
 
 
@@ -133,10 +159,11 @@ def optimize(dataset, device, search_space, num_bayes_samples, num_workers, seed
     def objective(**kwargs):
         return obj(**kwargs)
 
-    return skopt.gp_minimize(
+    res =  skopt.gp_minimize(
         objective,
         search_space,
         n_calls=num_bayes_samples,
         random_state=seed,
         n_initial_points=int(num_bayes_samples / 5) if num_bayes_samples / 5 >= 1 else 1,
     )
+    return res, obj.log_info
