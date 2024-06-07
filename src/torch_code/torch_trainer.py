@@ -6,6 +6,7 @@ import torch_geometric
 from optimization import optimize
 import pickle
 
+from skopt.utils import use_named_args
 from skopt.space import Real, Integer, Categorical
 from constants import *
 from torch_in_memory_loader import MCFDatasetInMemory
@@ -72,6 +73,7 @@ def main(args, seed):
                         # "expected_runtime"
                     ], name="loss")  # Part of evaluation, i.e. make this constant
                     ]
+
     start = time.time()
     result, log_info = optimize(dataset=dataset, device=device, search_space=search_space,
                                 num_bayes_samples=args.num_bayes_samples, num_workers=args.num_workers, seed=seed,
@@ -83,8 +85,12 @@ def main(args, seed):
         os.mkdir(os.path.join(args.dsroot, 'result'))
     except FileExistsError:
         pass
+
+    @use_named_args(dimensions=search_space)
+    def to_kwargs(**kwargs):
+        return kwargs
     with open(os.path.join(args.dsroot, 'result', 'skopt_result.pkl'), 'wb') as f:
-        pickle.dump(result.x, f)
+        pickle.dump(to_kwargs(result.x), f)
     with open(os.path.join(args.dsroot, 'result', 'log_info_result.pkl'), 'wb') as f:
         pickle.dump(log_info, f)
 

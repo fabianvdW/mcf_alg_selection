@@ -4,7 +4,7 @@
 #SBATCH -J MCF_SMALL_DS_GNN                      # the job name
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT  # send notification emails
 #SBATCH -n 1                             # use 1 tasks
-#SBATCH --cpus-per-task=8                # use 8 thread per taks
+#SBATCH --cpus-per-task=2                # use 8 thread per taks
 #SBATCH -N 1                             # request slots on 1 node
 #SBATCH --gpus=A40:1                    # request 1 Volta V100 GPU
 #SBATCH --partition=gpuidle

@@ -60,8 +60,8 @@ class Objective:
             epoch_info = {}
             epoch_info['train_acc_per_class'] = acc_per_class
             epoch_info['train_total_acc'] = total_acc
-            epoch_info['train_runtime_sum'] = runtime_sum
-            epoch_info['train_minruntime_sum'] = minruntime_sum
+            epoch_info['train_runtime_sum'] = float(runtime_sum)
+            epoch_info['train_minruntime_sum'] = float(minruntime_sum)
             epoch_info['train_total_loss'] = total_loss
 
             print(
@@ -107,8 +107,8 @@ class Objective:
         total_acc = sum(correct_per_class) / sum(samples_per_class)
         epoch_info['eval_acc_per_class'] = acc_per_class
         epoch_info['eval_total_acc'] = total_acc
-        epoch_info['eval_runtime_sum'] = runtime_sum
-        epoch_info['eval_minruntime_sum'] = minruntime_sum
+        epoch_info['eval_runtime_sum'] = float(runtime_sum)
+        epoch_info['eval_minruntime_sum'] = float(minruntime_sum)
         epoch_info['eval_total_loss'] = total_loss
         epoch_info['eval_obj'] = float(-runtime_sum / minruntime_sum + total_acc)
         print(
