@@ -7,7 +7,7 @@ import skopt
 from skopt.utils import use_named_args
 import time
 from constants import NUM_CLASSES
-from gin import GIN
+from gin import GIN, GINRes
 
 
 class Objective:
@@ -129,15 +129,18 @@ class Objective:
         kf = KFold(n_splits=5, random_state=self.seed, shuffle=True)
         gen = kf.split(list(range(len(self.dataset))))
         train_infos = []
-        self.model = GIN(
+        if kwargs["skip_connections"]:
+            model_class = GINRes
+        else:
+            model_class = GIN
+        self.model = model_class(
             device=self.device,
             in_channels=1,
             hidden_channels=kwargs["hidden_channels"],
             out_channels=NUM_CLASSES,
             num_gin_layers=kwargs["num_gin_layers"],
             num_mlp_layers=kwargs["num_mlp_layers"],
-            num_mlp_readout_layers=kwargs["num_mlp_readout_layers"],
-            skip_connections=kwargs["skip_connections"]
+            num_mlp_readout_layers=kwargs["num_mlp_readout_layers"]
         ).to(self.device)
         if self.compile_model:
             self.model = torch.compile(self.model, dynamic=True, fullgraph=True)
@@ -155,7 +158,7 @@ class Objective:
         end = time.time()
         calc_factor = 0
         print(f"Finished current parameter set with {-objective + calc_factor} in {end - start}s")
-        self.log_info.append((kwargs, train_infos, objective_values))
+        self.log_info.append((kwargs, train_infos, objective_values, end-start))
         return -objective + calc_factor
 
 
