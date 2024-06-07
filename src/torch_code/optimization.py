@@ -57,6 +57,7 @@ class Objective:
                 ]
             )
             total_acc = sum(correct_per_class) / sum(samples_per_class)
+            total_loss /= len(train_loader.dataset)
             epoch_info = {}
             epoch_info['train_acc_per_class'] = acc_per_class
             epoch_info['train_total_acc'] = total_acc
@@ -65,7 +66,7 @@ class Objective:
             epoch_info['train_total_loss'] = total_loss
 
             print(
-                f"Training in epoch {epoch}: Total Accuracy: {total_acc:.2f}, Accuracy per class: {acc_per_class}, Loss: {total_loss / len(train_loader.dataset)}"
+                f"Training in epoch {epoch}: Total Accuracy: {total_acc:.2f}, Accuracy per class: {acc_per_class}, Loss: {total_loss}"
             )
             print(
                 f"Training in epoch {epoch}: Total pred runtimes: {runtime_sum} vs total true runtimes {minruntime_sum} (Ratio: {runtime_sum / minruntime_sum:.2f})"
@@ -105,6 +106,7 @@ class Objective:
             ]
         )
         total_acc = sum(correct_per_class) / sum(samples_per_class)
+        total_loss /= len(eval_loader.dataset)
         epoch_info['eval_acc_per_class'] = acc_per_class
         epoch_info['eval_total_acc'] = total_acc
         epoch_info['eval_runtime_sum'] = float(runtime_sum)
@@ -112,7 +114,7 @@ class Objective:
         epoch_info['eval_total_loss'] = total_loss
         epoch_info['eval_obj'] = float(-runtime_sum / minruntime_sum + total_acc)
         print(
-            f"Testing in epoch {epoch}: Total Accuracy: {total_acc:.2f}, Accuracy per class: {acc_per_class}, Loss: {total_loss / len(eval_loader.dataset)}")
+            f"Testing in epoch {epoch}: Total Accuracy: {total_acc:.2f}, Accuracy per class: {acc_per_class}, Loss: {total_loss}")
         print(
             f"Testing in epoch {epoch}: Total pred runtimes: {runtime_sum} vs total true runtimes {minruntime_sum} (Ratio: {runtime_sum / minruntime_sum:.2f})"
         )
