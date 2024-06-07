@@ -16,5 +16,5 @@ module load anaconda3/latest
 
 conda activate cuda
 cd src/torch_code
-python torch_trainer.py -dsroot $SCRATCH/small_ds_mcf/ -cuda 0 "$@"
+python torch_trainer.py -dsroot $SCRATCH/small_ds_mcf/ -cuda 0 -compile_model True "$@"
 conda deactivate
