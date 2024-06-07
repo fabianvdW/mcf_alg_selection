@@ -124,25 +124,24 @@ class Objective:
 
     def __call__(self, **kwargs):
         print(kwargs)
-
         start = time.time()
         objective_values = []
         kf = KFold(n_splits=5, random_state=self.seed, shuffle=True)
         gen = kf.split(list(range(len(self.dataset))))
         train_infos = []
+        self.model = GIN(
+            device=self.device,
+            in_channels=1,
+            hidden_channels=kwargs["hidden_channels"],
+            out_channels=NUM_CLASSES,
+            num_gin_layers=kwargs["num_gin_layers"],
+            num_mlp_layers=kwargs["num_mlp_layers"],
+            num_mlp_readout_layers=kwargs["num_mlp_readout_layers"],
+            skip_connections=kwargs["skip_connections"]
+        ).to(self.device)
+        if self.compile_model:
+            self.model = torch.compile(self.model, dynamic=True, fullgraph=True)
         for (train_indices, eval_indices) in gen:
-            self.model = GIN(
-                device=self.device,
-                in_channels=1,
-                hidden_channels=kwargs["hidden_channels"],
-                out_channels=NUM_CLASSES,
-                num_gin_layers=kwargs["num_gin_layers"],
-                num_mlp_layers=kwargs["num_mlp_layers"],
-                num_mlp_readout_layers=kwargs["num_mlp_readout_layers"],
-                skip_connections=kwargs["skip_connections"]
-            ).to(self.device)
-            if self.compile_model:
-                self.model = torch.compile(self.model, dynamic=True, fullgraph=True)
             train_loader = DataLoader(self.dataset[list(train_indices)], batch_size=int(kwargs["batch_size"]),
                                       shuffle=True, drop_last=True)
             # Need to enable drop_last so that there are no batches of size 1, which would error the batch norm layers.
@@ -151,7 +150,7 @@ class Objective:
             objective_values.append(epochs_info[-1]['eval_obj'])
             print(f"Finished split with value {objective_values[-1]}")
             train_infos.append(epochs_info)
-            del self.model
+            self.model.reset_parameters()
         objective = np.mean(objective_values)
         end = time.time()
         calc_factor = 0

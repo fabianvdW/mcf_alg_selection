@@ -22,7 +22,7 @@ def setup_parser():
                      help='The seeds used, one after the other, to determine the splits as well as the baysian'
                           'sampling.')
     out.add_argument("-dsroot", default=DATA_PATH, type=str, help="Root folder of ds")
-    out.add_argument('-cuda', default=0, type=int, help='The cuda device used.', nargs=1)
+    out.add_argument('-cuda', default=0, type=int, help='The cuda device used.')
     out.add_argument('-batch_size', default=[8, 64], type=int, nargs=2, help='The minimum and maximum batch size.')
     out.add_argument('-epochs', default=[10, 80], type=int, nargs=2,
                      help='The minimum and maximum amount of epochs.')
@@ -42,7 +42,7 @@ def setup_parser():
     out.add_argument('-step_size', default=[0.01, 1.0], type=float, nargs=2,
                      help='The minimum and maximum step_size used for the learning rate to drop relative to the number '
                           'of epochs.')
-    out.add_argument("-compile_model", default=False, type=bool, nargs=1)
+    out.add_argument("-compile_model", default=False, type=bool)
     return out
 
 

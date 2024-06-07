@@ -5,15 +5,15 @@ from torch_geometric.nn import MLP, GINEConv
 
 class GIN(torch.nn.Module):
     def __init__(
-        self,
-        device,
-        in_channels,
-        hidden_channels,
-        out_channels,
-        num_gin_layers,
-        num_mlp_layers,
-        num_mlp_readout_layers,
-        skip_connections=True
+            self,
+            device,
+            in_channels,
+            hidden_channels,
+            out_channels,
+            num_gin_layers,
+            num_mlp_layers,
+            num_mlp_readout_layers,
+            skip_connections=True
     ):
         super().__init__()
         self.device = device
@@ -22,14 +22,16 @@ class GIN(torch.nn.Module):
         self.linears = torch.nn.ModuleList()
         for i in range(num_gin_layers):
             mlp = MLP(
-                [in_channels if i == 0 else hidden_channels] + [hidden_channels for _ in range(num_mlp_layers)] + [hidden_channels],
+                [in_channels if i == 0 else hidden_channels] + [hidden_channels for _ in range(num_mlp_layers)] + [
+                    hidden_channels],
                 norm="batch_norm",
                 dropout=0.5,
             )
             self.convs.append(GINEConv(nn=mlp, train_eps=True, edge_dim=2))
 
         self.linears.append(
-            MLP([in_channels] + [hidden_channels for _ in range(num_mlp_readout_layers)] + [out_channels], norm="batch_norm", dropout=0.5)
+            MLP([in_channels] + [hidden_channels for _ in range(num_mlp_readout_layers)] + [out_channels],
+                norm="batch_norm", dropout=0.5)
         )
         for _ in range(num_gin_layers):
             self.linears.append(
@@ -59,3 +61,10 @@ class GIN(torch.nn.Module):
             else:
                 sum_pool += z
         return sum_pool
+
+    def reset_parameters(self):
+        for conv in self.convs:
+            conv.reset_parameters()
+            conv.nn.reset_parameters()
+        for linear in self.linears:
+            linear.reset_parameters()
