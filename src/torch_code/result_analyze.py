@@ -13,7 +13,7 @@ def setup_parser():
     return out
 
 
-result_folder = "result_skip=False_loss=ce"
+result_folder = "result_skip=False_loss=er"
 
 
 def main(args):
@@ -52,8 +52,7 @@ def main(args):
         return value
 
     for i, configuration in enumerate(log_info_result):
-        parameters, cv_epoch_info, obj_values = configuration
-        runtime = 0.  # TODO
+        parameters, cv_epoch_info, obj_values, runtime = configuration
 
         fig, (ax1, ax2, ax3) = plt.subplots(nrows=3, ncols=1, sharex=True, dpi=180, figsize=(10, 10))
         final_obj = -np.mean(obj_values)
@@ -68,6 +67,7 @@ def main(args):
         ax2.set_xlabel("Epochs")
         ax2.set_ylim([1.0, 1.3])
         ax3.set_xlabel("Epochs")
+        ax3.set_ylim([0.0, 7.0])
 
         cv_runs = len(cv_epoch_info)
         assert cv_runs == 5
@@ -88,8 +88,8 @@ def main(args):
             epochs_info = cv_epoch_info[cv_run]
             train_accs, eval_accs = [info['train_total_acc'] for info in epochs_info], [info['eval_total_acc'] for info
                                                                                         in epochs_info]
-            train_ratios = [float(info['train_runtime_sum'] / info['train_minruntime_sum']) for info in epochs_info]
-            eval_ratios = [float(info['eval_runtime_sum'] / info['eval_minruntime_sum']) for info in epochs_info]
+            train_ratios = [info['train_runtime_sum'] / info['train_minruntime_sum'] for info in epochs_info]
+            eval_ratios = [info['eval_runtime_sum'] / info['eval_minruntime_sum'] for info in epochs_info]
             train_losses, eval_losses = [info['train_total_loss'] for info in epochs_info], [info['eval_total_loss'] for
                                                                                              info in epochs_info]
 
