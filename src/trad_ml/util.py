@@ -1,25 +1,36 @@
-import os, json
+import os
+import json
 
-GRIDGRAPH, NETGEN, GRIDGEN, GOTO = 0, 1, 2, 3
-GENERATOR_NAMES = ["GRIDGRAPH", "NETGEN", "GRIDGEN", "GOTO"]
-NUM_GENERATORS = 4
-TARGET_INSTANCES = [25000, 25000, 25000, 25000]
-
-NUM_ALGORITHMS = 4
-TIME_LIMIT = 10 * 10**6
-MAX_SAMPLES = 20000
-
-PATH_TO_PROJECT = os.path.join("..")
-PATH_TO_DATA = os.path.join(PATH_TO_PROJECT, "data", "generated_data")
+FEATURE_NAMES = [
+    "id",
+    "g_number_of_nodes",
+    "g_number_of_arcs",
+    "g_min_cost",
+    "g_max_cost",
+    "g_sum_cost",
+    "g_mean_cost",
+    "g_std_cost",
+    "g_min_cap",
+    "g_max_cap",
+    "g_sum_cap",
+    "g_mean_cap",
+    "g_std_cap",
+    "g_supply",
+    "g_number_of_supply_nodes",
+    "g_arcs_source_sink",
+    "mst_sum_cost",
+    "mst_mean_cost",
+    "mst_std_cost",
+    "mst_sum_cap",
+    "mst_mean_cap",
+    "mst_std_cap",
+]
+ALGO_NAMES = ["NS", "CS2", "SSP", "CAS"]
 
 
 def algorithm_selection_metric(algorithm_list, df_section):
     # Maybe one can vectorize this(cf. https://stackoverflow.com/questions/24833130/how-can-i-select-a-specific-column-from-each-row-in-a-pandas-dataframe)
     return int(sum(df_section.iloc[i][algo] for i, algo in enumerate(algorithm_list)))
-
-
-def algorithm_selection_scorer(estimator, X, times):
-    return algorithm_selection_metric(estimator.predict(X), times)
 
 
 def simple_grid_search(options, curr_selection):

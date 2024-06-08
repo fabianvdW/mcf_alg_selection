@@ -1,78 +1,20 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Nov 22 11:29:14 2021
 
-@author: Philipp
-"""
-# features_of_graph = [seed, number of nodes, number of arcs, min cost, max cost, sum cost, mean cost, std cost, min cap, max cap,
-#                 sum cap, mean cap, std cap, max of min of shortest path from supply to demand, supply, num of supply nodes]
-# features of mst = [sum cost, mean cost,std cost, sum cap, mean cap, std cap]
 
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-import util
+from src.gen_data import util
 import matplotlib as mpl
 import seaborn as sns
 
-# Path to features.txt
-path_to_data = os.path.join("data", "generated_data")
-path_to_time = os.path.join("lemon", "existingresults.txt")
-path_to_parent_dir = os.path.dirname(os.getcwd())
-
-# read features.txt
-names_features = [
-    "seed",
-    "g_number_of_nodes",
-    "g_number_of_arcs",
-    "g_min_cost",
-    "g_max_cost",
-    "g_sum_cost",
-    "g_mean_cost",
-    "g_std_cost",
-    "g_min_cap",
-    "g_max_cap",
-    "g_sum_cap",
-    "g_mean_cap",
-    "g_std_cap",
-    "g_supply",
-    "g_number_of_supply_nodes",
-    "g_arcs_source_sink",
-    "mst_sum_cost",
-    "mst_mean_cost",
-    "mst_std_cost",
-    "mst_sum_cap",
-    "mst_mean_cap",
-    "mst_std_cap",
-]
-
-names_output = ["NS", "CS2", "SSP", "CAS", "SCC", "MMCC", "CAT"]
 
 
-def get_data():
-    features_data = pd.read_csv(
-        os.path.join(path_to_parent_dir, path_to_data, "features.txt"), sep=" ", header=None, index_col=0, names=names_features
-    )
 
-    # read output.txt
-    output_data = pd.read_csv(
-        os.path.join(path_to_parent_dir, path_to_time),
-        sep=" ",
-        header=None,
-        index_col=0,
-        names=names_output,
-        converters={0: lambda x: str(x.split("/")[-1])},
-    )
-    # combine data according to seeds, and clean it up
-    combined_data = features_data.join(output_data)
-    combined_data = combined_data.dropna()
-    combined_data = combined_data[combined_data["NS"] != "There"]
-    for n in names_output:
-        combined_data[n] = pd.to_numeric(combined_data[n])
-    combined_data["Minimum"] = combined_data.loc[:, names_output].idxmin(axis=1)
 
-    return combined_data
+
+
 
 
 combined_data = get_data()
@@ -286,11 +228,11 @@ plot_alg_generators()
 
 def plot_results(alle=True):
     if alle:
-        results = util.load_dict("../experiments/basic_sklearn_classifiers/6/production_training_runs.json")
+        results = util.load_dict("../../experiments/basic_sklearn_classifiers/6/production_training_runs.json")
         classifiers = ["KNN", "SVC", "DTree", "RForest", "NN", "Ada", "NS"]
         size_ds = str(73130 // 5)
     else:
-        results = util.load_dict("../experiments/basic_sklearn_classifiers/2/production_training_runs.json")
+        results = util.load_dict("../../experiments/basic_sklearn_classifiers/2/production_training_runs.json")
         classifiers = ["KNN", "SVC", "GaussP", "Tree", "Forest", "NN", "Ada", "Gauss", "QDA", "NS"]
         size_ds = str(3119 // 5)
 

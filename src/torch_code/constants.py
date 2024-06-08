@@ -1,5 +1,4 @@
 import os.path as osp
-import torch
 
 NUM_CLASSES = 4
 NUM_WORKERS = 1

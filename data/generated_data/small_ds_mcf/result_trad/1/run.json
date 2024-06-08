@@ -1,0 +1,100 @@
+{
+  "artifacts": [
+    "raw_data.csv",
+    "training_cv_runs.json",
+    "production_training_runs.json"
+  ],
+  "command": "main",
+  "experiment": {
+    "base_dir": "C:\\cygwin64\\home\\Fabian\\mcf_alg_selection\\src\\trad_ml",
+    "dependencies": [
+      "numpy==1.26.3",
+      "sacred==0.8.5"
+    ],
+    "mainfile": "basic_sklearn_classifiers.py",
+    "name": "result_trad",
+    "repositories": [
+      {
+        "commit": "45aa0b9b976f8a45532e5b154cb8d6cf01612b39",
+        "dirty": true,
+        "url": "git@github.com:fabianvdW/mcf_alg_selection.git"
+      },
+      {
+        "commit": "45aa0b9b976f8a45532e5b154cb8d6cf01612b39",
+        "dirty": true,
+        "url": "git@github.com:fabianvdW/mcf_alg_selection.git"
+      },
+      {
+        "commit": "45aa0b9b976f8a45532e5b154cb8d6cf01612b39",
+        "dirty": true,
+        "url": "git@github.com:fabianvdW/mcf_alg_selection.git"
+      }
+    ],
+    "sources": [
+      [
+        "basic_sklearn_classifiers.py",
+        "_sources\\basic_sklearn_classifiers_57282c213ccc7675fe9703d6f79b8584.py"
+      ],
+      [
+        "data_loader_trad.py",
+        "_sources\\data_loader_trad_8ac5e2f12012d0254fc31712d631d179.py"
+      ],
+      [
+        "util.py",
+        "_sources\\util_fadb90e542055b006cb61d16eac88860.py"
+      ]
+    ]
+  },
+  "heartbeat": "2024-06-08T20:09:09.648789",
+  "host": {
+    "ENV": {},
+    "cpu": "AMD Ryzen 7 7700X 8-Core Processor",
+    "gpus": {
+      "driver_version": "555.99",
+      "gpus": [
+        {
+          "model": "NVIDIA GeForce RTX 4070",
+          "persistence_mode": false,
+          "total_memory": 12282
+        }
+      ]
+    },
+    "hostname": "DESKTOP-9PROO0V",
+    "os": [
+      "Windows",
+      "Windows-10-10.0.22631-SP0"
+    ],
+    "python_version": "3.11.0"
+  },
+  "meta": {
+    "command": "main",
+    "named_configs": [],
+    "options": {
+      "--beat-interval": null,
+      "--capture": null,
+      "--comment": null,
+      "--debug": false,
+      "--enforce_clean": false,
+      "--file_storage": null,
+      "--force": false,
+      "--help": false,
+      "--id": null,
+      "--loglevel": null,
+      "--mongo_db": null,
+      "--name": null,
+      "--pdb": false,
+      "--print-config": false,
+      "--priority": null,
+      "--queue": false,
+      "--s3": null,
+      "--sql": null,
+      "--tiny_db": null,
+      "--unobserved": false
+    }
+  },
+  "resources": [],
+  "result": null,
+  "start_time": "2024-06-08T20:08:37.611712",
+  "status": "COMPLETED",
+  "stop_time": "2024-06-08T20:09:09.647726"
+}
