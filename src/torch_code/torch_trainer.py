@@ -70,8 +70,9 @@ def main(args, seed):
                     get_space(name="num_mlp_readout_layers", tuple=args.num_mlp_readout_layers),
                     Categorical([False], name="skip_connections"),  # Part of evaluation, i.e. make this constant,
                     Categorical([
-                        "cross_entropy",
+                        #"cross_entropy",
                         # "expected_runtime"
+                        "mix_expected_runtime"
                     ], name="loss")  # Part of evaluation, i.e. make this constant
                     ]
 

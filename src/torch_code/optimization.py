@@ -37,6 +37,10 @@ class Objective:
                 optimizer.zero_grad()
                 out = self.model(data.x, data.edge_index, data.edge_attr, data.batch, data.batch_size)
                 pred = out.argmax(dim=-1)
+                #TODO:
+                # Test with expected_runtime + cross_entropy (unweighted)
+                # Test with expected_runtime + cross_entropy (weights=HPO)
+
                 for i in range(len(data.y)):
                     samples_per_class[data.y[i]] += 1
                     correct_per_class[data.y[i]] += int(pred[i] == data.y[i])
@@ -44,6 +48,8 @@ class Objective:
                     minruntime_sum += min(data.label[i])
                 if loss_fn == "expected_runtime":
                     loss = torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
+                elif loss_fn == "mix_expected_runtime":
+                    loss = F.cross_entropy(out, data.y) + torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
                 elif loss_fn == "cross_entropy":
                     loss = F.cross_entropy(out, data.y)
                 loss.backward()
@@ -96,6 +102,8 @@ class Objective:
                     minruntime_sum += min(data.label[i])
                 if loss_fn == "expected_runtime":
                     loss = torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
+                elif loss_fn == "mix_expected_runtime":
+                    loss = F.cross_entropy(out, data.y) + torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
                 elif loss_fn == "cross_entropy":
                     loss = F.cross_entropy(out, data.y)
                 total_loss += float(loss) * data.batch_size
