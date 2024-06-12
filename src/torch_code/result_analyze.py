@@ -13,7 +13,7 @@ def setup_parser():
     return out
 
 
-result_folder = "result_skip=False_loss=ermixHPO"
+result_folder = "result_skip=False_loss=ermixHPO2"
 
 
 def main(args):
