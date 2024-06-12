@@ -14,7 +14,7 @@ from torch_in_memory_loader import MCFDatasetInMemory
 
 def setup_parser():
     out = argparse.ArgumentParser()
-    out.add_argument('-num_workers', default=1, type=int,
+    out.add_argument('-num_workers', default=0, type=int,
                      help='The number of workers used for training and evaluation.')
     out.add_argument('-num_bayes_samples', default=50, type=int,
                      help='The number of samples used to estimate the optimal hyperparameters.')
@@ -26,7 +26,7 @@ def setup_parser():
     out.add_argument('-batch_size', default=[8, 64], type=int, nargs=2, help='The minimum and maximum batch size.')
     out.add_argument('-epochs', default=[10, 80], type=int, nargs=2,
                      help='The minimum and maximum amount of epochs.')
-    out.add_argument('-lr', default=[-5.0, -2.0], type=float, nargs=2,
+    out.add_argument('-lr', default=[-4.0, -1.5], type=float, nargs=2,
                      help='The minimum and maximum logarithmic learning '
                           'rate, i.e. 10**lr is used for training.')
     out.add_argument('-weight_decay', default=[-10.0, -0.3], type=float, nargs=2,
@@ -73,7 +73,8 @@ def main(args, seed):
                         #"cross_entropy",
                         # "expected_runtime"
                         "mix_expected_runtime"
-                    ], name="loss")  # Part of evaluation, i.e. make this constant
+                    ], name="loss"),  # Part of evaluation, i.e. make this constant
+                    get_space(name="loss_weight", tuple=(0., 1.))
                     ]
 
     start = time.time()

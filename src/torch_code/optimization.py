@@ -19,7 +19,7 @@ class Objective:
         self.compile_model = compile_model
         self.log_info = []
 
-    def train(self, train_loader, eval_loader, lr, weight_decay, epochs, step_size, loss_fn):
+    def train(self, train_loader, eval_loader, lr, weight_decay, epochs, step_size, loss_fn, loss_weight):
         self.model.train()
         optimizer = torch.optim.Adam(self.model.parameters(), lr=10 ** lr, weight_decay=10 ** weight_decay)
         scheduler = torch.optim.lr_scheduler.StepLR(
@@ -37,9 +37,6 @@ class Objective:
                 optimizer.zero_grad()
                 out = self.model(data.x, data.edge_index, data.edge_attr, data.batch, data.batch_size)
                 pred = out.argmax(dim=-1)
-                #TODO:
-                # Test with expected_runtime + cross_entropy (unweighted)
-                # Test with expected_runtime + cross_entropy (weights=HPO)
 
                 for i in range(len(data.y)):
                     samples_per_class[data.y[i]] += 1
@@ -49,7 +46,8 @@ class Objective:
                 if loss_fn == "expected_runtime":
                     loss = torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
                 elif loss_fn == "mix_expected_runtime":
-                    loss = F.cross_entropy(out, data.y) + torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
+                    loss = loss_weight * F.cross_entropy(out, data.y) + (1. - loss_weight) * torch.sum(
+                        F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
                 elif loss_fn == "cross_entropy":
                     loss = F.cross_entropy(out, data.y)
                 loss.backward()
@@ -78,12 +76,12 @@ class Objective:
                 f"Training in epoch {epoch}: Total pred runtimes: {runtime_sum} vs total true runtimes {minruntime_sum} (Ratio: {runtime_sum / minruntime_sum:.2f})"
             )
             print(f"Training in epoch {epoch}, time: {time.time() - start}")
-            self.eval(eval_loader, epoch, epoch_info, loss_fn)
+            self.eval(eval_loader, epoch, epoch_info, loss_fn, loss_weight)
             print(epoch, end="\r")
             epochs_info.append(epoch_info)
         return epochs_info
 
-    def eval(self, eval_loader, epoch, epoch_info, loss_fn):
+    def eval(self, eval_loader, epoch, epoch_info, loss_fn, loss_weight):
         self.model.eval()
 
         samples_per_class = [0 for _ in range(NUM_CLASSES)]
@@ -103,7 +101,8 @@ class Objective:
                 if loss_fn == "expected_runtime":
                     loss = torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
                 elif loss_fn == "mix_expected_runtime":
-                    loss = F.cross_entropy(out, data.y) + torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
+                    loss = loss_weight * F.cross_entropy(out, data.y) + (1. - loss_weight) * torch.sum(
+                        F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
                 elif loss_fn == "cross_entropy":
                     loss = F.cross_entropy(out, data.y)
                 total_loss += float(loss) * data.batch_size
@@ -129,7 +128,8 @@ class Objective:
 
     def train_eval(self, train_loader, eval_loader, total_kwargs):
         epochs_info = self.train(train_loader, eval_loader, total_kwargs["lr"], total_kwargs["weight_decay"],
-                                 total_kwargs["epochs"], total_kwargs["step_size"], total_kwargs["loss"])
+                                 total_kwargs["epochs"], total_kwargs["step_size"], total_kwargs["loss"],
+                                 total_kwargs.get("loss_weight", None))
         return epochs_info
 
     def __call__(self, **kwargs):
@@ -156,9 +156,9 @@ class Objective:
             self.model = torch.compile(self.model, dynamic=True, fullgraph=True)
         for (train_indices, eval_indices) in gen:
             train_loader = DataLoader(self.dataset[list(train_indices)], batch_size=int(kwargs["batch_size"]),
-                                      shuffle=True, drop_last=True)
+                                      shuffle=True, drop_last=True, num_workers=self.num_workers)
             # Need to enable drop_last so that there are no batches of size 1, which would error the batch norm layers.
-            eval_loader = DataLoader(self.dataset[list(eval_indices)], batch_size=int(kwargs["batch_size"]))
+            eval_loader = DataLoader(self.dataset[list(eval_indices)], batch_size=int(kwargs["batch_size"]), num_workers=self.num_workers)
             epochs_info = self.train_eval(train_loader, eval_loader, kwargs)
             objective_values.append(epochs_info[-1]['eval_obj'])
             print(f"Finished split with value {objective_values[-1]}")
@@ -168,7 +168,7 @@ class Objective:
         end = time.time()
         calc_factor = 0
         print(f"Finished current parameter set with {-objective + calc_factor} in {end - start}s")
-        self.log_info.append((kwargs, train_infos, objective_values, end-start))
+        self.log_info.append((kwargs, train_infos, objective_values, end - start))
         return -objective + calc_factor
 
 
