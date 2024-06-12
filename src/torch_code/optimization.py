@@ -46,8 +46,8 @@ class Objective:
                 if loss_fn == "expected_runtime":
                     loss = torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
                 elif loss_fn == "mix_expected_runtime":
-                    loss = loss_weight * F.cross_entropy(out, data.y) + (1. - loss_weight) * torch.sum(
-                        F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
+                    er_loss = (torch.sum(F.softmax(out, dim=1) * data.label, dim=1) -torch.min(data.label, dim=1)[0])/ 10 ** 4
+                    loss = loss_weight * F.cross_entropy(out, data.y) + (1. - loss_weight) * torch.sum(er_loss) / data.batch_size
                 elif loss_fn == "cross_entropy":
                     loss = F.cross_entropy(out, data.y)
                 loss.backward()
