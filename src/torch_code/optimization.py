@@ -101,8 +101,8 @@ class Objective:
                 if loss_fn == "expected_runtime":
                     loss = torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
                 elif loss_fn == "mix_expected_runtime":
-                    loss = loss_weight * F.cross_entropy(out, data.y) + (1. - loss_weight) * torch.sum(
-                        F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
+                    er_loss = (torch.sum(F.softmax(out, dim=1) * data.label, dim=1) -torch.min(data.label, dim=1)[0])/ 10 ** 4
+                    loss = loss_weight * F.cross_entropy(out, data.y) + (1. - loss_weight) * torch.sum(er_loss) / data.batch_size
                 elif loss_fn == "cross_entropy":
                     loss = F.cross_entropy(out, data.y)
                 total_loss += float(loss) * data.batch_size
@@ -157,7 +157,7 @@ class Objective:
         for (train_indices, eval_indices) in gen:
             train_loader = DataLoader(self.dataset[list(train_indices)], batch_size=int(kwargs["batch_size"]),
                                       shuffle=True, drop_last=True, num_workers=self.num_workers)
-            # Need to enable drop_last so that there are no batches of size 1, which would error the batch norm layers.
+            # Need to enable drop_last so that there are no batches of size 1, which would error the batch norm layers.(No need during evaluation)
             eval_loader = DataLoader(self.dataset[list(eval_indices)], batch_size=int(kwargs["batch_size"]), num_workers=self.num_workers)
             epochs_info = self.train_eval(train_loader, eval_loader, kwargs)
             objective_values.append(epochs_info[-1]['eval_obj'])
