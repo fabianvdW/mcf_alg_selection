@@ -53,7 +53,7 @@ class SequentialProcedure:
             return False
         tau_i_j = self.n / self.sample_variances[i][j]
         z_i_j = tau_i_j * (self.means[i] - self.means[j])
-        print(z_i_j, -boundary_g_c(self.c, tau_i_j))
+        print(i, j, z_i_j, -boundary_g_c(self.c, tau_i_j))
         return z_i_j <= - boundary_g_c(self.c, tau_i_j)
 
     def screen(self):

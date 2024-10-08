@@ -7,7 +7,7 @@ TARGET_INSTANCES = [15000, 15000, 15000, 15000]
 
 NUM_ALGORITHMS = 4
 TIME_LIMIT = 10 * 10 ** 6
-MAX_SAMPLES = 20000
+MAX_SAMPLES = 60000
 
 PATH_TO_PROJECT = os.path.join("../..")
 PATH_TO_DATA = os.path.join(PATH_TO_PROJECT, "data", "generated_data")
