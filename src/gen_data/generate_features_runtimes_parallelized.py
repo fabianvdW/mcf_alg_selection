@@ -71,7 +71,6 @@ def run_task(task):
                 return res
             else:
                 print(f"Task with id {id}: Retrying with N={N} as runtimes {runtimes} proved insignificant.")
-
     if run_features:
         features_proc = subprocess.run("python generate_features.py", text=True, shell=True, capture_output=True, input=instance_data)
         res[2] = features_proc.stdout.rstrip()
