@@ -171,7 +171,7 @@ if __name__ == "__main__":
                 print(f"Thread {thread_num} running task!")
                 res = run_task(task)
                 print(f"Thread {thread_num} finished task!")
-                if not (task[3] and isinstance(res[3], str)):
+                if not (task[3] and "ERROR" in res[3]):
                     finish_instance_by_id(task[0])
                 result_queue.put(res)
             except Exception as e:

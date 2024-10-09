@@ -45,16 +45,16 @@ def hoeffding(*arg):
                 y = y[::factor]
 
             # bining if too much "definition"
-            if len(np.unique(x)) > 50:
-                est = KBinsDiscretizer(n_bins=50, encode='ordinal',
+            if len(np.unique(x)) > 60:
+                est = KBinsDiscretizer(n_bins=60, encode='ordinal',
                                        strategy='quantile')  # faster strategy='quantile' but less accurate
                 est.fit(x.reshape(-1, 1))
                 Rtemp = est.transform(x.reshape(-1, 1))
                 R = rankdata(Rtemp)
             else:
                 R = rankdata(x)
-            if len(np.unique(y)) > 50:
-                est1 = KBinsDiscretizer(n_bins=50, encode='ordinal',
+            if len(np.unique(y)) > 60:
+                est1 = KBinsDiscretizer(n_bins=60, encode='ordinal',
                                         strategy='quantile')  # faster strategy='quantile' but less accurate
                 est1.fit(y.reshape(-1, 1))
                 Stemp = est1.transform(y.reshape(-1, 1))
