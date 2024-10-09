@@ -129,7 +129,8 @@ if __name__ == "__main__":
     def is_finished():
         global tasks, finished_instances, mutex
         with mutex:
-            return tasks.empty() and any(map(lambda i: finished_instances[i] >= TARGET_INSTANCES[i], range(NUM_GENERATORS)))
+            print(finished_instances, TARGET_INSTANCES)
+            return tasks.empty() and all(map(lambda i: finished_instances[i] >= TARGET_INSTANCES[i], range(NUM_GENERATORS)))
 
     def get_task():
         global tasks, actual_instances, mutex, finished_instances
