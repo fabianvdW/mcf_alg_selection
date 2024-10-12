@@ -7,7 +7,7 @@ from multiprocessing.pool import ThreadPool
 import numpy as np
 from util import *
 from call_algorithm import call_algorithm
-from stochastics import is_significant
+from stochastics import is_significant_new
 from generate_data_commands import generate_netgen, generate_gridgraph, generate_goto, generate_gridgen
 
 
@@ -59,7 +59,7 @@ def run_task(task):
                 res[3] = invalid_or_error
                 print(f"Task with id {id} has {invalid_or_error}")
                 return res
-            N = is_significant(runtimes)
+            N = is_significant_new(runtimes, debug=True)
             if N is None:
                 print(f"Task with id {id}: Finished as runtimes {runtimes} proved significant.")
                 res[3] = f"{runtimes}"
