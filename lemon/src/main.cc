@@ -14,7 +14,6 @@
 #include <lemon/cycle_canceling.h>
 #include <lemon/dimacs.h>
 #include <stdio.h>
-#include <processthreadsapi.h>
 
 namespace fs = std::filesystem;
 using namespace lemon;

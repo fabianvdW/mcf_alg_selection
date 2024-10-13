@@ -10,4 +10,5 @@ if __name__ == "__main__":
     print([len(runtimes) for runtimes in runtimes])
     print("Baseline: ")
     print("##########################\nWith new PROCEDURE's:\n################################")
-    print(is_significant_new(runtimes, debug=True))
+    for _ in range(1000000):
+        print(is_significant_new(runtimes, debug=True))

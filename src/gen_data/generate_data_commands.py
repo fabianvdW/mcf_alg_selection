@@ -77,11 +77,12 @@ if __name__ == "__main__":
     import subprocess
     from call_algorithm import call_algorithm
 
-    command, input = generate_gridgraph()
+    #command, input = generate_gridgraph()
+    command, input = ('"../..\\goto\\goto"', '2352 67078 1000 10000 6151601945213')
     print(command, input)
-    instance_data = subprocess.run(command, capture_output=True, input=input.encode("utf-8")).stdout
+    instance_data = subprocess.run(command, capture_output=True, text=True, input=input).stdout
     print("Finished generating instance")
-    for algo in [0, 1]:
+    for algo in [0]:
         print(f"Calling {algo}")
         import time
 

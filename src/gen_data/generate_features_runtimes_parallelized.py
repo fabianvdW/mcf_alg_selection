@@ -15,7 +15,8 @@ def run_task(task):
     id, data_command, run_features, run_runtimes = task
     res = [id, data_command, None, None]
     instance_data = subprocess.run(
-        data_command[0].replace("python", sys.executable), capture_output=True, text=True, shell=True, input=data_command[1]
+        data_command[0].replace("python", sys.executable), capture_output=True, text=True, shell=True,
+        input=data_command[1]
     ).stdout
 
     if run_runtimes:
@@ -59,7 +60,8 @@ def run_task(task):
                 res[3] = invalid_or_error
                 print(f"Task with id {id} has {invalid_or_error}")
                 return res
-            N = is_significant_new(runtimes, debug=True)
+            # N = is_significant_new(runtimes, debug=True)
+            N = None
             if N is None:
                 print(f"Task with id {id}: Finished as runtimes {runtimes} proved significant.")
                 res[3] = f"{runtimes}"
@@ -72,7 +74,8 @@ def run_task(task):
             else:
                 print(f"Task with id {id}: Retrying with N={N} as runtimes {runtimes} proved insignificant.")
     if run_features:
-        features_proc = subprocess.run("python generate_features.py", text=True, shell=True, capture_output=True, input=instance_data)
+        features_proc = subprocess.run("python generate_features.py", text=True, shell=True, capture_output=True,
+                                       input=instance_data)
         res[2] = features_proc.stdout.rstrip()
     return res
 
@@ -87,12 +90,14 @@ if __name__ == "__main__":
     actual_instances = [0, 0, 0, 0]
     finished_instances = [0, 0, 0, 0]
 
+
     def add_instance_by_id(id):
         global actual_instances, mutex
         for i in range(NUM_GENERATORS):
             if GENERATOR_NAMES[i] in id:
                 with mutex:
                     actual_instances[i] += 1
+
 
     def finish_instance_by_id(id):
         global mutex, finished_instances
@@ -101,8 +106,10 @@ if __name__ == "__main__":
                 with mutex:
                     finished_instances[i] += 1
 
+
     data_commands = {}
-    with open(features_f, "r") as in_features, open(runtimes_f, "r") as in_runtimes, open(commands_f, "r") as in_commands:
+    with open(features_f, "r") as in_features, open(runtimes_f, "r") as in_runtimes, open(commands_f,
+                                                                                          "r") as in_commands:
         for line in in_features:
             existing_features.append(line.split(" ")[0])
         for line in in_runtimes:
@@ -126,11 +133,14 @@ if __name__ == "__main__":
             tasks.put((key, data_commands[key], not in_features and not in_runtimes_error, not in_runtimes))
     result_queue = queue.Queue()
 
+
     def is_finished():
         global tasks, finished_instances, mutex
         with mutex:
             print(finished_instances, TARGET_INSTANCES)
-            return tasks.empty() and all(map(lambda i: finished_instances[i] >= TARGET_INSTANCES[i], range(NUM_GENERATORS)))
+            return tasks.empty() and all(
+                map(lambda i: finished_instances[i] >= TARGET_INSTANCES[i], range(NUM_GENERATORS)))
+
 
     def get_task():
         global tasks, actual_instances, mutex, finished_instances
@@ -155,7 +165,9 @@ if __name__ == "__main__":
 
             return (id, command, True, True)
 
+
     thread_count = 0
+
 
     def run_task_async(_):
         global result_queue, thread_count, mutex
@@ -179,11 +191,13 @@ if __name__ == "__main__":
                 print(e)
                 assert False
 
+
     threads = int(sys.argv[1])
     pool = ThreadPool(threads)
     pool.map_async(run_task_async, range(threads))
     while not is_finished():
-        with open(features_f, "a") as o_features, open(runtimes_f, "a") as o_runtimes, open(commands_f, "a") as o_commands:
+        with open(features_f, "a") as o_features, open(runtimes_f, "a") as o_runtimes, open(commands_f,
+                                                                                            "a") as o_commands:
             id, command, res_features, res_runtimes = result_queue.get()
             if id not in data_commands:
                 o_commands.write(f"{id};{command}\n")
