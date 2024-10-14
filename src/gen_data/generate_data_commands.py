@@ -77,7 +77,7 @@ if __name__ == "__main__":
     import subprocess
     from call_algorithm import call_algorithm
 
-    command, input = ('"../..\\gridgen\\gridgen"', '1 1392345719982 2291 28 307 951 2 113703 1 1 10000 1 1 1000')
+    command, input = ('../../gridgen/gridgen', '1 1392345719982 2291 28 307 951 2 113703 1 1 10000 1 1 1000')
     print(command, input)
     instance_data = subprocess.run(command, capture_output=True, text=True, input=input).stdout
     print("Finished generating instance")
