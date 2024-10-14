@@ -2,6 +2,7 @@ import ast
 import subprocess
 import queue
 import sys
+import argparse
 from multiprocessing import Lock
 from multiprocessing.pool import ThreadPool
 import numpy as np
@@ -11,8 +12,21 @@ from stochastics import is_significant_new
 from generate_data_commands import generate_netgen, generate_gridgraph, generate_goto, generate_gridgen
 
 
+def setup_parser():
+    out = argparse.ArgumentParser()
+    out.add_argument('-n', default=1, type=int,
+                     help='The number of workers used for training and evaluation.')
+    out.add_argument("-dsroot", default=PATH_TO_DATA, type=str, help="Root folder of ds")
+    out.add_argument("-cs2path", default=os.path.join(PATH_TO_PROJECT, "cs2"), type=str, help="Root folder of cs2")
+    out.add_argument("-lemonpath", default=os.path.join(PATH_TO_PROJECT, "lemon"), type=str,
+                     help="Root folder of lemon")
+    out.add_argument('-targetinstances', default=[150, 150, 150, 150], type=int, nargs=4,
+                     help='The number of instances targeted.')
+    return out
+
+
 def run_task(task):
-    id, data_command, run_features, run_runtimes = task
+    id, data_command, run_features, run_runtimes, cs2_path, lemon_path = task
     res = [id, data_command, None, None]
     instance_data = subprocess.run(
         data_command[0].replace("python", sys.executable), capture_output=True, text=True, shell=True,
@@ -28,7 +42,7 @@ def run_task(task):
             task_list = [j for j in range(NUM_ALGORITHMS) for _ in range(N[j])]
             task_list = np.random.permutation(task_list)
             for algo in task_list:
-                timed_out, result = call_algorithm(algo, instance_data)
+                timed_out, result = call_algorithm(algo, instance_data, cs2_path=cs2_path, lemon_path=lemon_path)
                 try:
                     if timed_out:
                         time = TIME_LIMIT
@@ -80,11 +94,15 @@ def run_task(task):
 
 
 if __name__ == "__main__":
+    parser = setup_parser()
+
+    _args = parser.parse_args()
+
     # Read existing results for features
     existing_features, runtimes_evaluated, runtimes_error = [], [], []
-    features_f = os.path.join(PATH_TO_DATA, "features.csv")
-    runtimes_f = os.path.join(PATH_TO_DATA, "runtimes.csv")
-    commands_f = os.path.join(PATH_TO_DATA, "data_commands.csv")
+    features_f = os.path.join(_args.dsroot, "features.csv")
+    runtimes_f = os.path.join(_args.dsroot, "runtimes.csv")
+    commands_f = os.path.join(_args.dsroot, "data_commands.csv")
     mutex = Lock()
     actual_instances = [0, 0, 0, 0]
     finished_instances = [0, 0, 0, 0]
@@ -136,9 +154,9 @@ if __name__ == "__main__":
     def is_finished():
         global tasks, finished_instances, mutex
         with mutex:
-            print(finished_instances, TARGET_INSTANCES)
+            print(finished_instances, _args.targetinstances)
             return tasks.empty() and all(
-                map(lambda i: finished_instances[i] >= TARGET_INSTANCES[i], range(NUM_GENERATORS)))
+                map(lambda i: finished_instances[i] >= _args.targetinstances[i], range(NUM_GENERATORS)))
 
 
     def get_task():
@@ -148,7 +166,7 @@ if __name__ == "__main__":
         else:
             with mutex:
                 unfinished_generators = np.arange(NUM_GENERATORS)[
-                    list(map(lambda i: finished_instances[i] < TARGET_INSTANCES[i], range(NUM_GENERATORS)))
+                    list(map(lambda i: finished_instances[i] < _args.targetinstances[i], range(NUM_GENERATORS)))
                 ]
                 generator = np.random.choice(unfinished_generators)
                 id = f"{GENERATOR_NAMES[generator]}_{actual_instances[generator]}"
@@ -162,7 +180,7 @@ if __name__ == "__main__":
             elif generator == GRIDGEN:
                 command = generate_gridgen()
 
-            return (id, command, True, True)
+            return (id, command, True, True, _args.cs2path, _args.lemonpath)
 
 
     thread_count = 0
@@ -191,7 +209,7 @@ if __name__ == "__main__":
                 assert False
 
 
-    threads = int(sys.argv[1])
+    threads = _args.n
     pool = ThreadPool(threads)
     pool.map_async(run_task_async, range(threads))
     while not is_finished():

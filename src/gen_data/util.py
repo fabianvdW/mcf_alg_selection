@@ -9,5 +9,5 @@ NUM_ALGORITHMS = 4
 TIME_LIMIT = 10 * 10 ** 6
 MAX_SAMPLES = 20000
 
-PATH_TO_PROJECT = os.path.join("../..")
+PATH_TO_PROJECT = os.path.join("..", "..")
 PATH_TO_DATA = os.path.join(PATH_TO_PROJECT, "data", "generated_data")
