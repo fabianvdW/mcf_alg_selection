@@ -18,7 +18,7 @@ def run_task(task):
         data_command[0].replace("python", sys.executable), capture_output=True, text=True, shell=True,
         input=data_command[1]
     ).stdout
-
+    instance_data = instance_data.replace("\n", "\r\n")
     if run_runtimes:
         costs = []
         N = [1 for _ in range(NUM_ALGORITHMS)]

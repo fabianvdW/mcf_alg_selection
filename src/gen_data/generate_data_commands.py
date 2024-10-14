@@ -84,7 +84,7 @@ if __name__ == "__main__":
     print(command, input)
     instance_data = subprocess.run(command, capture_output=True, text=True, input=input).stdout
     instance_data = instance_data.replace("\n", "\r\n")
-    print(instance_data.encode('utf-8'))
+    #print(instance_data.encode('utf-8'))
     print("Finished generating instance")
     for algo in [0]:
         print(f"Calling {algo}")
