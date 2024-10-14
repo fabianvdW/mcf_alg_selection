@@ -8,8 +8,8 @@
 #SBATCH --cpus-per-task=8                # use 8 thread per taks
 #SBATCH -N 1                             # request slots on 1 node
 #SBATCH --partition=cpuidle
-#SBATCH --output=$SCRATCH/gen_data/run_{$SLURM_ARRAY_TASK_ID}/test_%j_{$SLURM_ARRAY_TASK_ID}out.txt         # capture output
-#SBATCH --error=$SCRATCH/gen_data/run_{$SLURM_ARRAY_TASK_ID}/test_%j_{$SLURM_ARRAY_TASK_ID}err.txt          # and error streams
+#SBATCH --output=$SCRATCH/gen_data/run_%a/test_%j_%a.out        # capture output
+#SBATCH --error=$SCRATCH/gen_data/run_%a/test_%j_%a.err          # and error streams
 
 module load anaconda3/latest
 . $ANACONDA_HOME/etc/profile.d/conda.sh
@@ -23,8 +23,6 @@ cd ..
 touch data_commands.csv 
 touch features.csv
 touch runtimes.csv
-cd ~/mcf_alg_selection
-
-cd src/gen_data
+cd ~/mcf_alg_selection/src/gen_data
 python generate_features_runtimes_parallelized.py -n 8 -dsroot $SCRATCH/gen_data/run$SLURM_ARRAY_TASK_ID -cs2path $SCRATCH/gen_data/run$SLURM_ARRAY_TASK_ID/cs2
 conda deactivate
