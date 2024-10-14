@@ -13,7 +13,6 @@ def call_algorithm(algorithm, instance_data):
                 output = "Encountered unknown cs2 problem! Aborting: " + stderr
             else:
                 output = res.stdout
-                print(output)
         except subprocess.TimeoutExpired:
             return True, ""
     else:

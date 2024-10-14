@@ -28,7 +28,6 @@ def run_task(task):
             task_list = [j for j in range(NUM_ALGORITHMS) for _ in range(N[j])]
             task_list = np.random.permutation(task_list)
             for algo in task_list:
-                print(algo)
                 timed_out, result = call_algorithm(algo, instance_data)
                 try:
                     if timed_out:
@@ -61,8 +60,7 @@ def run_task(task):
                 res[3] = invalid_or_error
                 print(f"Task with id {id} has {invalid_or_error}")
                 return res
-            # N = is_significant_new(runtimes, debug=True)
-            N = None
+            N = is_significant_new(runtimes, debug=True)
             if N is None:
                 print(f"Task with id {id}: Finished as runtimes {runtimes} proved significant.")
                 res[3] = f"{runtimes}"
