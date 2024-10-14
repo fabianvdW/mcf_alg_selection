@@ -6254,3 +6254,37 @@ GOTO_1543 3219 97632 0 9999 381355700 0.3906442963208153 0.3263380671932675 1 15
 NETGEN_1538 Features not determined due to ERROR: Parsing not possible There is no feasible solution! Jumping to next file.
 GRIDGEN_1582 1451 61537 1 19998 320164983 0.2601662436422559 0.16840938413548237 1 66406 88607919 0.021683475614868233 0.11771122371305423 66406.0 506 1 251494 0.008673074203972122 0.02683974044373184 790862 0.008213445606805368 0.026412906150678147
 NETGEN_1539 Features not determined due to ERROR: Parsing not possible There is no feasible solution! Jumping to next file.
+GRIDGRAPH_1596 Features not determined due to ERROR: Parsing not possible 
+GRIDGRAPH_1597 Features not determined due to ERROR: Parsing not possible 
+GOTO_1544 Features not determined due to ERROR: Parsing not possible 
+GOTO_1545 Features not determined due to ERROR: Parsing not possible 
+GRIDGRAPH_1598 Features not determined due to ERROR: Parsing not possible 
+GRIDGRAPH_1599 Features not determined due to ERROR: Parsing not possible 
+GRIDGRAPH_1600 Features not determined due to ERROR: Parsing not possible 
+GOTO_1546 Features not determined due to ERROR: Parsing not possible 
+GRIDGRAPH_1601 Features not determined due to ERROR: Parsing not possible 
+NETGEN_1540 Features not determined due to ERROR: Parsing not possible There is no feasible solution! Jumping to next file.
+GOTO_1547 Features not determined due to ERROR: Parsing not possible 
+GRIDGRAPH_1602 Features not determined due to ERROR: Parsing not possible 
+GRIDGEN_1576 Features not determined due to ERROR: Parsing not possible 
+GRIDGRAPH_1603 Features not determined due to ERROR: Parsing not possible 
+GRIDGEN_1577 Features not determined due to ERROR: Parsing not possible 
+GRIDGRAPH_1604 Features not determined due to ERROR: Parsing not possible 
+NETGEN_1541 Features not determined due to ERROR: Parsing not possible 
+NETGEN_1542 Features not determined due to ERROR: Parsing not possible 
+NETGEN_1543 Features not determined due to ERROR: Parsing not possible 
+NETGEN_1544 Features not determined due to ERROR: Parsing not possible 
+NETGEN_1545 Features not determined due to ERROR: Parsing not possible Encountered unknown cs2 problem! Aborting: line 55312 of input - unbalanced problem
+GRIDGRAPH_1605 Features not determined due to ERROR: Parsing not possible 
+GRIDGRAPH_1606 Features not determined due to ERROR: Parsing not possible There is no feasible solution! Jumping to next file.
+GRIDGEN_1578 Features not determined as algorithms do not agree on one cost
+NETGEN_1546 Features not determined due to ERROR: Parsing not possible Encountered unknown cs2 problem! Aborting: line 168793 of input - unbalanced problem
+GRIDGEN_1579 Features not determined as algorithms do not agree on one cost
+GRIDGEN_1580 3298 192955 1 19998 995990596 0.25811463942901247 0.16353827125651052 1 43973 189556497 0.02234068791130881 0.10366741061218619 43973.0 780 2 384960 0.005838618438731953 0.017873426564156757 1659082 0.011443603676590886 0.018431435145981796
+NETGEN_1547 2216 47763 1 10000 249784626 0.5229667860059041 0.3008864461276647 1 166269 391144022 0.0492531277864019 0.2097172612624266 166269.0 1 2 688981 0.12826901864047846 0.11561085472781925 1102651 0.49781083521444697 0.28509668530674215
+NETGEN_1548 Features not determined due to ERROR: Parsing not possible There is no feasible solution! Jumping to next file.
+GRIDGEN_1581 Features not determined as algorithms do not agree on one cost
+GRIDGEN_1582 Features not determined as algorithms do not agree on one cost
+GOTO_1548 1486 80203 0 9999 312464947 0.38963155570198366 0.3278278362298517 1 438615 660186498 0.0187669002109193 0.13430968312768823 438615.0 1 3 5447 0.0007336026936026936 0.025939884571827294 633404 0.42696164177645657 0.31625783222045745
+GOTO_1549 4309 44722 0 9998 88292818 0.19746540873847146 0.2973984792399306 1 21692 107855377 0.11117854552899477 0.2903154005610124 21692.0 1 3 7077 0.0003285515320334262 0.015233122905815674 2017629 0.4688135210419333 0.305802264544372
+GOTO_1550 698 17401 0 9999 53672656 0.30847666112510913 0.3299671463352608 1 53034 40387079 0.043763681894042415 0.19423278838853894 53034.0 1 3 5349 0.0015348637015781923 0.037846988679386837 303046 0.4352214481339302 0.321967635490052

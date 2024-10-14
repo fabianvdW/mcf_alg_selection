@@ -6254,3 +6254,37 @@ GOTO_1543 [[140000], [250000], [10000000], [5657000]]
 NETGEN_1538 ERROR: Parsing not possible There is no feasible solution! Jumping to next file.
 GRIDGEN_1582 [[16000], [16000], [266000], [47000]]
 NETGEN_1539 ERROR: Parsing not possible There is no feasible solution! Jumping to next file.
+GRIDGRAPH_1596 ERROR: Parsing not possible 
+GRIDGRAPH_1597 ERROR: Parsing not possible 
+GOTO_1544 ERROR: Parsing not possible 
+GOTO_1545 ERROR: Parsing not possible 
+GRIDGRAPH_1598 ERROR: Parsing not possible 
+GRIDGRAPH_1599 ERROR: Parsing not possible 
+GRIDGRAPH_1600 ERROR: Parsing not possible 
+GOTO_1546 ERROR: Parsing not possible 
+GRIDGRAPH_1601 ERROR: Parsing not possible 
+NETGEN_1540 ERROR: Parsing not possible There is no feasible solution! Jumping to next file.
+GOTO_1547 ERROR: Parsing not possible 
+GRIDGRAPH_1602 ERROR: Parsing not possible 
+GRIDGEN_1576 ERROR: Parsing not possible 
+GRIDGRAPH_1603 ERROR: Parsing not possible 
+GRIDGEN_1577 ERROR: Parsing not possible 
+GRIDGRAPH_1604 ERROR: Parsing not possible 
+NETGEN_1541 ERROR: Parsing not possible 
+NETGEN_1542 ERROR: Parsing not possible 
+NETGEN_1543 ERROR: Parsing not possible 
+NETGEN_1544 ERROR: Parsing not possible 
+NETGEN_1545 ERROR: Parsing not possible Encountered unknown cs2 problem! Aborting: line 55312 of input - unbalanced problem
+GRIDGRAPH_1605 ERROR: Parsing not possible 
+GRIDGRAPH_1606 ERROR: Parsing not possible There is no feasible solution! Jumping to next file.
+GRIDGEN_1578 ERROR: The algorithms do not agree on one cost.
+NETGEN_1546 ERROR: Parsing not possible Encountered unknown cs2 problem! Aborting: line 168793 of input - unbalanced problem
+GRIDGEN_1579 ERROR: The algorithms do not agree on one cost.
+GRIDGEN_1580 [[10000000], [249137], [10000000], [10000000]]
+NETGEN_1547 [[10000000], [155296], [10000000], [10000000]]
+NETGEN_1548 ERROR: Parsing not possible There is no feasible solution! Jumping to next file.
+GRIDGEN_1581 ERROR: The algorithms do not agree on one cost.
+GRIDGEN_1582 ERROR: The algorithms do not agree on one cost.
+GOTO_1548 [[259370], [1054827], [10000000], [9310365]]
+GOTO_1549 [[162000], [310082], [10000000], [1119572]]
+GOTO_1550 [[17045], [57099], [5643291], [595831]]

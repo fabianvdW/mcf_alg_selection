@@ -13,3 +13,7 @@ src/__pycache__/
 *.pt
 __pycache__/
 .idea
+cs2
+netgen
+goto
+gridgen
