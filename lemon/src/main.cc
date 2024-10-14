@@ -108,6 +108,6 @@ int main(int argc, char** argv)
   }
   double elapsed = (c_end - c_start) * 1000000.0;
   printf("%.0f ",elapsed);
-  printf("%lu\n",(unsigned long)cost);
+  printf("%llu\n",(unsigned long long)cost);
   return 0;
 }

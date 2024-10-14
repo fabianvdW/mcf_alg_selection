@@ -991,6 +991,7 @@ namespace lemon {
       for (ArcIt a(_graph); a != INVALID; ++a) {
         int i = _arc_id[a];
         c += Number(_flow[i]) * Number(_cost[i]);
+		printf("%llu\n",(unsigned long long)c);
       }
       return c;
     }
