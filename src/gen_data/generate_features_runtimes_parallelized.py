@@ -28,6 +28,7 @@ def run_task(task):
             task_list = [j for j in range(NUM_ALGORITHMS) for _ in range(N[j])]
             task_list = np.random.permutation(task_list)
             for algo in task_list:
+                print(algo)
                 timed_out, result = call_algorithm(algo, instance_data)
                 try:
                     if timed_out:
