@@ -3,7 +3,7 @@ import os
 
 PATH_TO_DATA = os.path.join(util.PATH_TO_DATA, 'large_ds_parts', 'gen_data')
 
-run_folders = [os.path.join(PATH_TO_DATA, f"run{i}") for i in range(100)]
+run_folders = [os.path.join(PATH_TO_DATA, f"run{i}") for i in range(101)]
 
 if __name__ == "__main__":
     features_out_f, runtimes_out_f, commands_out_f = os.path.join(PATH_TO_DATA, "merged", "features.csv"), os.path.join(

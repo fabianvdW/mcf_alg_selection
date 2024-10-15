@@ -6,7 +6,7 @@ from io import StringIO
 from util import FEATURE_NAMES, ALGO_NAMES
 
 DATA_PATH = osp.dirname(osp.realpath(__file__))
-DATA_PATH = osp.join(DATA_PATH, "../..", "data", "generated_data", "small_ds_mcf")
+DATA_PATH = osp.join(DATA_PATH, "../..", "data", "generated_data", "large_ds_parts", "gen_data", "merged")
 
 
 def get_data():
