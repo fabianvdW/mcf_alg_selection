@@ -73,7 +73,7 @@ class MCFDataset(Dataset):
             # and our readdimacs.py
             command = self.id_to_cmd[graph_id]
             instance_data = subprocess.run(
-                command[0].replace("python", sys.executable), capture_output=True, text=True, shell=True,
+                command[0].replace("python", sys.executable).replace("generate_gridgraph", "../gen_data/generate_gridgraph"), capture_output=True, text=True, shell=True,
                 input=command[1]
             ).stdout
             lines = instance_data.split("\n")
