@@ -58,7 +58,7 @@ def get_space(name, tuple):
 def main(args, seed):
     torch_geometric.seed_everything(seed)
     torch.set_float32_matmul_precision("high")
-    dataset = MCFDatasetInMemory(args.dsroot).to(device).shuffle()
+    dataset = MCFDatasetInMemory(args.dsroot).shuffle()
     search_space = [get_space(name='batch_size', tuple=args.batch_size),
                     get_space(name='epochs', tuple=args.epochs),
                     get_space(name='lr', tuple=args.lr),

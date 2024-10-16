@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -t 0-08:00:00                    # time limit set 
-#SBATCH --mem=8G                         # reserve memory
+#SBATCH --mem=64G                         # reserve memory
 #SBATCH -J MCF_SMALL_DS_GNN                      # the job name
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT  # send notification emails
 #SBATCH -n 1                             # use 1 tasks
@@ -16,5 +16,5 @@ module load anaconda3/latest
 
 conda activate cuda
 cd src/torch_code
-python torch_trainer.py -dsroot $SCRATCH/small_ds_mcf/ -cuda 0 -compile_model True "$@"
+python torch_trainer.py -dsroot $SCRATCH/large_ds_mcf/ -cuda 0 -compile_model True "$@"
 conda deactivate
