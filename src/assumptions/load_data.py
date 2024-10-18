@@ -17,5 +17,5 @@ def load_data():
                 runtime_list.append([runtimes_algo for runtimes_algo in ast.literal_eval(rest)])
 
     runtime_list = np.array(runtime_list)
-    runtime_list = runtime_list[:119, :, :]
+    runtime_list = runtime_list[:, :, :]
     return runtime_list

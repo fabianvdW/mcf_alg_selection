@@ -18,3 +18,4 @@ netgen
 goto
 gridgen
 data/generated_data/large_ds_parts
+.Rproj.user

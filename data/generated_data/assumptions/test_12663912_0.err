@@ -1,0 +1,75 @@
+mkdir: cannot create directory ‘/scratch/vdwarth/gen_data/assumption0’: File exists
+In file included from cs2.c:347:
+parser_cs2.c: In function ‘int parse(long int*, long int*, node**, arc**, long int*, price_t*, long int**)’:
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+   };
+   ^
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+parser_cs2.c:134:3: warning: ISO C++ forbids converting a string constant to ‘char*’ [-Wwrite-strings]
+cs2.c: In function ‘void refine()’:
+cs2.c:907:8: warning: variable ‘np’ set but not used [-Wunused-but-set-variable]
+ long   np, nr, ns;  /* variables for additional print */
+        ^~
+cs2.c:907:12: warning: variable ‘nr’ set but not used [-Wunused-but-set-variable]
+ long   np, nr, ns;  /* variables for additional print */
+            ^~
+cs2.c:907:16: warning: variable ‘ns’ set but not used [-Wunused-but-set-variable]
+ long   np, nr, ns;  /* variables for additional print */
+                ^~
+cs2.c: In function ‘void cs2_cost_restart(double*)’:
+cs2.c:1829:11: warning: format ‘%f’ expects argument of type ‘double’, but argument 2 has type ‘price_t’ {aka ‘long long int’} [-Wformat=]
+   printf ("c Init. epsilon = %6.0f\n", epsilon);
+           ^~~~~~~~~~~~~~~~~~~~~~~~~~~  ~~~~~~~
+In file included from cs2.c:347:
+parser_cs2.c: In function ‘int parse(long int*, long int*, node**, arc**, long int*, price_t*, long int**)’:
+parser_cs2.c:333:1: warning: ‘total_n’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+ if ( ABS( total_p - total_n ) > 0.5 ) /* unbalanced problem */
+ ^~
+parser_cs2.c:333:1: warning: ‘total_p’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+parser_cs2.c:445:11: warning: ‘cap’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+ *cap_ad   = cap;
+ ~~~~~~~~~~^~~~~
+parser_cs2.c:306:3: warning: ‘m_c’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+   if ( cost > m_c && acap > 0 ) m_c = cost;
+   ^~
+parser_cs2.c:289:32: warning: ‘arc_current’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+   arc_current       -> sister  = arc_current + 1;
+   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+parser_cs2.c:443:10: warning: ‘arcs’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+ *arcs_ad = arcs;
+ ~~~~~~~~~^~~~~~
+parser_cs2.c:421:44: warning: ‘nodes’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+ for ( ndp = nodes + node_min; ndp <= nodes + node_max; ndp ++ )
+                                      ~~~~~~^~~~~~~~~~
+parser_cs2.c:448:26: warning: ‘arc_tail’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+ free ( arc_first ); free ( arc_tail );
+                     ~~~~~^~~~~~~~~~~~
+parser_cs2.c:448:6: warning: ‘arc_first’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+ free ( arc_first ); free ( arc_tail );
+ ~~~~~^~~~~~~~~~~~~
+parser_cs2.c:35:9: warning: ‘node_max’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+         node_max,               /* maximal no of nodes */
+         ^~~~~~~~
+parser_cs2.c:34:9: warning: ‘node_min’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+         node_min,               /* minimal no of node  */
+         ^~~~~~~~

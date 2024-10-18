@@ -1,0 +1,71 @@
+---
+title: "hoeffdingtest"
+output: html_document
+date: "2024-10-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+library(Hmisc)
+library(tidyverse)
+library(R.matlab)
+```
+
+## Import data into R and perform analysis
+
+Now, we'll import the data into R, reshape it back to 3D, calculate the means, and perform the Hoeffding independence test using the Hmisc library.
+
+```{r}
+# Import data from .mat file
+mat_data <- readMat('runtime_data.mat')
+runtime_array <- mat_data$runtime.list
+
+# Calculate means
+means <- apply(runtime_array, c(1, 2), mean)
+stds <- apply(runtime_array, c(1, 2), sd)
+
+# Recreate the combinations_indices
+combinations_indices <- lapply(0:3, function(i) c(i, 0, i, 1, i, 49, i, 99))
+combinations_indices <- matrix(unlist(combinations_indices), ncol=2, byrow=TRUE)
+
+# Function to perform Hoeffding test
+perform_hoeffding_test <- function(c_1, c_2) {
+  r_1 <- (runtime_array[, c_1[1] + 1, c_1[2] + 1] - means[, c_1[1] + 1])/(stds[, c_1[1] +1])
+  r_2 <-  (runtime_array[, c_2[1] + 1, c_2[2] + 1] - means[, c_2[1] + 1])/stds[, c_2[1] + 1]
+  result <- hoeffd(r_1, r_2)
+  return(list(D = result$D, p_value = result$P))
+}
+
+# Perform pairwise comparisons
+n_combinations <- nrow(combinations_indices)
+results_matrix <- matrix(NA, nrow = n_combinations, ncol = n_combinations)
+
+for (i in 1:(n_combinations - 1)) {
+  for (j in (i + 1):n_combinations) {
+    c_1 <- combinations_indices[i, ]
+    c_2 <- combinations_indices[j, ]
+    
+    test_result <- perform_hoeffding_test(c_1, c_2)
+    results_matrix[i, j] <- test_result$p_value[1, 2]
+    results_matrix[j, i] <- test_result$p_value[1, 2]
+    
+    cat("Comparison:", paste(c_1, collapse=","), paste(c_2, collapse=","), 
+        "D:", test_result$D, "p-value:", test_result$p_value[1,2], "\n")
+  }
+}
+
+# Set diagonal to 1 (self-comparison)
+diag(results_matrix) <- 1
+
+# Export P-value matrix as .mat file
+writeMat("p_value_matrix.mat", p_value_matrix = results_matrix)
+
+cat("\nP-value matrix exported to 'p_value_matrix.mat'\n")
+```
+
+## Conclusion
+
+This analysis performs the Hoeffding independence test using the `hoeffd` function from the Hmisc library in R, maintaining the 3D structure of the input data. It calculates means directly in R and provides p-values for each pairwise comparison. The P-value matrix is exported to a CSV file for further analysis in Python.
+
+The results are summarized and visualized to give an overview of the independence relationships in the data. The P-value matrix can be found in the 'p_value_matrix.csv' file for use in your Python analysis code.

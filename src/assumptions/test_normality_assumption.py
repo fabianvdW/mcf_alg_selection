@@ -9,7 +9,7 @@ if __name__ == '__main__':
     # Shape: Realization, Algo, Index
     print(runtime_list.shape)
     print(runtime_list[13, 3, :])
-    # hoeffding independence test for the following pairwise combinations
+
     results = {}
     tested_instances = 0
     passes_test = 0
@@ -23,12 +23,12 @@ if __name__ == '__main__':
             if all(runtime_list[instance, j, :] == 10000000.):
                 all_runtime_limit += 1
     print(tested_instances, passes_test, all_runtime_limit)
-    data = runtime_list[12, 3, :]
+    data = runtime_list[14, 0, :]
 
     plt.figure(figsize=(10, 6))  # Set the figure size
 
     # Create the histogram
-    n, bins, patches = plt.hist(data, bins=15, edgecolor='black')
+    n, bins, patches = plt.hist(data, bins=30, edgecolor='black')
 
     # Add labels and title
     plt.xlabel('Runtime (in microseconds)', fontsize=12)
