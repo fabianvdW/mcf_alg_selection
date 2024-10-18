@@ -6,7 +6,6 @@ from matplotlib import pyplot as plt
 if __name__ == '__main__':
     runtime_list = load_data.load_data()
 
-    # Shape: Realization, Algo, Index
     print(runtime_list.shape)
     print(runtime_list[13, 3, :])
 
