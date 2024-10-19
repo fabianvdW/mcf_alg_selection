@@ -31,8 +31,10 @@ combinations_indices <- matrix(unlist(combinations_indices), ncol=2, byrow=TRUE)
 
 # Function to perform Hoeffding test
 perform_hoeffding_test <- function(c_1, c_2) {
-  r_1 <- (runtime_array[, c_1[1] + 1, c_1[2] + 1] - means[, c_1[1] + 1])/(stds[, c_1[1] +1])
-  r_2 <-  (runtime_array[, c_2[1] + 1, c_2[2] + 1] - means[, c_2[1] + 1])/stds[, c_2[1] + 1]
+  #r_1 <- log(runtime_array[, c_1[1] + 1, c_1[2] + 1]) - log(means[, c_1[1] + 1])
+  #r_2 <-  log(runtime_array[, c_2[1] + 1, c_2[2] + 1]) - log(means[, c_2[1] + 1])
+  r_1 <- (runtime_array[, c_1[1] +1, c_1[2] + 1] - means[, c_1[1]+1])/stds[, c_1[1] +1]
+  r_2 <- (runtime_array[, c_2[1] +1, c_2[2] +1] - means[, c_2[1] + 1])/stds[, c_2[1] + 1]
   result <- hoeffd(r_1, r_2)
   return(list(D = result$D, p_value = result$P))
 }
@@ -40,7 +42,7 @@ perform_hoeffding_test <- function(c_1, c_2) {
 # Perform pairwise comparisons
 n_combinations <- nrow(combinations_indices)
 results_matrix <- matrix(NA, nrow = n_combinations, ncol = n_combinations)
-
+smaller_i <- 0
 for (i in 1:(n_combinations - 1)) {
   for (j in (i + 1):n_combinations) {
     c_1 <- combinations_indices[i, ]
@@ -49,6 +51,9 @@ for (i in 1:(n_combinations - 1)) {
     test_result <- perform_hoeffding_test(c_1, c_2)
     results_matrix[i, j] <- test_result$p_value[1, 2]
     results_matrix[j, i] <- test_result$p_value[1, 2]
+    if(test_result$p_value[1, 2] < 0.05){
+      smaller_i <- smaller_i + 1
+    }
     
     cat("Comparison:", paste(c_1, collapse=","), paste(c_2, collapse=","), 
         "D:", test_result$D, "p-value:", test_result$p_value[1,2], "\n")
@@ -69,3 +74,31 @@ cat("\nP-value matrix exported to 'p_value_matrix.mat'\n")
 This analysis performs the Hoeffding independence test using the `hoeffd` function from the Hmisc library in R, maintaining the 3D structure of the input data. It calculates means directly in R and provides p-values for each pairwise comparison. The P-value matrix is exported to a CSV file for further analysis in Python.
 
 The results are summarized and visualized to give an overview of the independence relationships in the data. The P-value matrix can be found in the 'p_value_matrix.csv' file for use in your Python analysis code.
+
+```{r}
+
+# Generate all combinations of the first index (0 to 3) and second index (0 to 99)
+combinations_indices <- expand.grid(0:3, 0:99)
+
+# Convert the result into a matrix, where each row is a combination of (i, j)
+combinations_indices <- as.matrix(combinations_indices)
+
+n_combinations <- nrow(combinations_indices)
+tests <- 0
+smaller_i <- 0
+p_values <- numeric()
+for (i in 1:(n_combinations - 1)) {
+  for (j in (i + 1):n_combinations) {
+    c_1 <- combinations_indices[i, ]
+    c_2 <- combinations_indices[j, ]
+    
+    test_result <- perform_hoeffding_test(c_1, c_2)
+    tests <- tests + 1
+    p_value <- test_result$p_value[1, 2]
+    p_values <- c(p_values, p_value)
+    if(p_value < 0.05){
+      smaller_i <- smaller_i + 1
+    }
+  }
+}
+```

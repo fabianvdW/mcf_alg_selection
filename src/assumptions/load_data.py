@@ -19,3 +19,14 @@ def load_data():
     runtime_list = np.array(runtime_list)
     runtime_list = runtime_list[:, :, :]
     return runtime_list
+
+
+def load_independence_data():
+    runtime_list = []
+    for i in range(30):
+        with open(osp.join(PATH_TO_DATA, f"assumptionind{i}", "runtimes.csv"), "r") as in_runtimes:
+            for line in in_runtimes:
+                _, rest = line.split("id>", 1)
+                runtime_list.append([runtimes_algo for runtimes_algo in ast.literal_eval(rest)])
+    runtime_list = np.array(runtime_list)
+    return runtime_list

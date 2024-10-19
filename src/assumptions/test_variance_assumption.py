@@ -3,9 +3,9 @@ import load_data
 
 if __name__ == '__main__':
     runtime_list = load_data.load_data()
-
+    runtime_list2 = load_data.load_independence_data()
+    runtime_list = np.concatenate((runtime_list, runtime_list2))
     # Shape: Realization, Algo, Index
-    print(runtime_list.shape)
     # hoeffding independence test for the following pairwise combinations
     stds = []
     counter = 0
