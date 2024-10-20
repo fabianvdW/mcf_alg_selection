@@ -23,8 +23,8 @@ def setup_parser():
                           'sampling.')
     out.add_argument("-dsroot", default=DATA_PATH, type=str, help="Root folder of ds")
     out.add_argument('-cuda', default=0, type=int, help='The cuda device used.')
-    out.add_argument('-batch_size', default=[8, 64], type=int, nargs=2, help='The minimum and maximum batch size.')
-    out.add_argument('-epochs', default=[10, 80], type=int, nargs=2,
+    out.add_argument('-batch_size', default=[24, 256], type=int, nargs=2, help='The minimum and maximum batch size.')
+    out.add_argument('-epochs', default=[4, 30], type=int, nargs=2,
                      help='The minimum and maximum amount of epochs.')
     out.add_argument('-lr', default=[-4.0, -1.5], type=float, nargs=2,
                      help='The minimum and maximum logarithmic learning '
@@ -58,7 +58,7 @@ def get_space(name, tuple):
 def main(args, seed):
     torch_geometric.seed_everything(seed)
     torch.set_float32_matmul_precision("high")
-    dataset = MCFDatasetInMemory(args.dsroot).shuffle()
+    dataset = MCFDatasetInMemory(args.dsroot).to(device).shuffle()
     search_space = [get_space(name='batch_size', tuple=args.batch_size),
                     get_space(name='epochs', tuple=args.epochs),
                     get_space(name='lr', tuple=args.lr),

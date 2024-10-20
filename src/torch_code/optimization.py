@@ -35,7 +35,7 @@ class Objective:
             start = time.time()
             for data in train_loader:
                 optimizer.zero_grad()
-                data = data.to(self.device)
+                #data = data.to(self.device)
                 out = self.model(data.x, data.edge_index, data.edge_attr, data.batch, data.batch_size)
                 pred = out.argmax(dim=-1)
 
@@ -92,7 +92,7 @@ class Objective:
         total_loss = 0.0
         with torch.no_grad():
             for data in eval_loader:
-                data = data.to(self.device)
+                #data = data.to(self.device)
                 out = self.model(data.x, data.edge_index, data.edge_attr, data.batch, data.batch_size)
                 pred = out.argmax(dim=-1)
                 for i in range(len(data.y)):
