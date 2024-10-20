@@ -23,7 +23,7 @@ def setup_parser():
                           'sampling.')
     out.add_argument("-dsroot", default=DATA_PATH, type=str, help="Root folder of ds")
     out.add_argument('-cuda', default=0, type=int, help='The cuda device used.')
-    out.add_argument('-batch_size', default=[24, 256], type=int, nargs=2, help='The minimum and maximum batch size.')
+    out.add_argument('-batch_size', default=[24, 128], type=int, nargs=2, help='The minimum and maximum batch size.')
     out.add_argument('-epochs', default=[4, 30], type=int, nargs=2,
                      help='The minimum and maximum amount of epochs.')
     out.add_argument('-lr', default=[-4.0, -1.5], type=float, nargs=2,
@@ -31,7 +31,7 @@ def setup_parser():
                           'rate, i.e. 10**lr is used for training.')
     out.add_argument('-weight_decay', default=[-10.0, -0.3], type=float, nargs=2,
                      help='The minimum and maximum logarithmic weight decay.')
-    out.add_argument('-hidden_channels', default=[16, 100], type=int, nargs=2,
+    out.add_argument('-hidden_channels', default=[16, 80], type=int, nargs=2,
                      help='The minimum and maximum number of hidden_channels used in the GNN.')
     out.add_argument('-num_gin_layers', default=[2, 6], type=int, nargs=2,
                      help='The minimum and maximum number of layers used in the GNN.')
