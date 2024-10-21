@@ -6,15 +6,15 @@
 #SBATCH -n 1                             # use 1 tasks
 #SBATCH --cpus-per-task=2                # use 8 thread per taks
 #SBATCH -N 1                             # request slots on 1 node
-#SBATCH --gpus=A100:1                    # request 1 Volta V100 GPU
+#SBATCH --gpus=V100:1                    # request 1 Volta V100 GPU
 #SBATCH --partition=gpuidle
-#SBATCH --output=test_%j_out.txt         # capture output
-#SBATCH --error=test_%j_err.txt          # and error streams
+#SBATCH --output=/scratch/vdwarth/large_ds_mcf/train/result/skip_f_loss_ce/test_%j_out.txt         # capture output
+#SBATCH --error=/scratch/vdwarth/large_ds_mcf/train/result/skip_f_loss_ce/test_%j_err.txt          # and error streams
 
 module load anaconda3/latest
 . $ANACONDA_HOME/etc/profile.d/conda.sh
 
 conda activate cuda
 cd src/torch_code
-python torch_trainer.py -dsroot $SCRATCH/large_ds_mcf/train -cuda 0 -compile_model True "$@"
+python torch_trainer.py -dsroot $SCRATCH/large_ds_mcf/train -cuda 0 -compile_model True -experiment_name skip_f_loss_ce "$@"
 conda deactivate
