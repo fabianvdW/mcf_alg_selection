@@ -5,19 +5,22 @@ from torch_geometric.loader import DataLoader
 from sklearn.model_selection import KFold
 import skopt
 from skopt.utils import use_named_args
+from skopt.callbacks import CheckpointSaver
 import time
 from constants import NUM_CLASSES
 from gin import GIN, GINRes
+import os
 
 
 class Objective:
-    def __init__(self, dataset, seed, device, num_workers, compile_model):
+    def __init__(self, dataset, seed, device, num_workers, compile_model, log_info, checkpoint_function):
         self.dataset = dataset
         self.seed = seed
         self.device = device
         self.num_workers = num_workers
         self.compile_model = compile_model
-        self.log_info = []
+        self.log_info = log_info
+        self.checkpoint_function = checkpoint_function  # Function for saving checkpoint of log_info
 
     def train(self, train_loader, eval_loader, lr, weight_decay, epochs, step_size, loss_fn, loss_weight):
         self.model.train()
@@ -35,7 +38,7 @@ class Objective:
             start = time.time()
             for data in train_loader:
                 optimizer.zero_grad()
-                #data = data.to(self.device)
+                data = data.to(self.device)
                 out = self.model(data.x, data.edge_index, data.edge_attr, data.batch, data.batch_size)
                 pred = out.argmax(dim=-1)
 
@@ -47,8 +50,10 @@ class Objective:
                 if loss_fn == "expected_runtime":
                     loss = torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
                 elif loss_fn == "mix_expected_runtime":
-                    er_loss = (torch.sum(F.softmax(out, dim=1) * data.label, dim=1) -torch.min(data.label, dim=1)[0])/ 10 ** 4
-                    loss = loss_weight * F.cross_entropy(out, data.y) + (1. - loss_weight) * torch.sum(er_loss) / data.batch_size
+                    er_loss = (torch.sum(F.softmax(out, dim=1) * data.label, dim=1) - torch.min(data.label, dim=1)[
+                        0]) / 10 ** 4
+                    loss = loss_weight * F.cross_entropy(out, data.y) + (1. - loss_weight) * torch.sum(
+                        er_loss) / data.batch_size
                 elif loss_fn == "cross_entropy":
                     loss = F.cross_entropy(out, data.y)
                 loss.backward()
@@ -92,7 +97,7 @@ class Objective:
         total_loss = 0.0
         with torch.no_grad():
             for data in eval_loader:
-                #data = data.to(self.device)
+                data = data.to(self.device)
                 out = self.model(data.x, data.edge_index, data.edge_attr, data.batch, data.batch_size)
                 pred = out.argmax(dim=-1)
                 for i in range(len(data.y)):
@@ -103,8 +108,10 @@ class Objective:
                 if loss_fn == "expected_runtime":
                     loss = torch.sum(F.softmax(out, dim=1) * data.label / 10 ** 5) / data.batch_size
                 elif loss_fn == "mix_expected_runtime":
-                    er_loss = (torch.sum(F.softmax(out, dim=1) * data.label, dim=1) -torch.min(data.label, dim=1)[0])/ 10 ** 4
-                    loss = loss_weight * F.cross_entropy(out, data.y) + (1. - loss_weight) * torch.sum(er_loss) / data.batch_size
+                    er_loss = (torch.sum(F.softmax(out, dim=1) * data.label, dim=1) - torch.min(data.label, dim=1)[
+                        0]) / 10 ** 4
+                    loss = loss_weight * F.cross_entropy(out, data.y) + (1. - loss_weight) * torch.sum(
+                        er_loss) / data.batch_size
                 elif loss_fn == "cross_entropy":
                     loss = F.cross_entropy(out, data.y)
                 total_loss += float(loss) * data.batch_size
@@ -138,7 +145,7 @@ class Objective:
         print(kwargs)
         start = time.time()
         objective_values = []
-        kf = KFold(n_splits=5, random_state=self.seed, shuffle=True)
+        kf = KFold(n_splits=2, random_state=self.seed, shuffle=True)
         gen = kf.split(list(range(len(self.dataset))))
         train_infos = []
         if kwargs["skip_connections"]:
@@ -160,7 +167,8 @@ class Objective:
             train_loader = DataLoader(self.dataset[list(train_indices)], batch_size=int(kwargs["batch_size"]),
                                       shuffle=True, drop_last=True, num_workers=self.num_workers)
             # Need to enable drop_last so that there are no batches of size 1, which would error the batch norm layers.(No need during evaluation)
-            eval_loader = DataLoader(self.dataset[list(eval_indices)], batch_size=int(kwargs["batch_size"]), num_workers=self.num_workers)
+            eval_loader = DataLoader(self.dataset[list(eval_indices)], batch_size=int(kwargs["batch_size"]),
+                                     num_workers=self.num_workers)
             epochs_info = self.train_eval(train_loader, eval_loader, kwargs)
             objective_values.append(epochs_info[-1]['eval_obj'])
             print(f"Finished split with value {objective_values[-1]}")
@@ -171,21 +179,47 @@ class Objective:
         calc_factor = 0
         print(f"Finished current parameter set with {-objective + calc_factor} in {end - start}s")
         self.log_info.append((kwargs, train_infos, objective_values, end - start))
+        self.checkpoint_function(self.log_info)
         return -objective + calc_factor
 
 
-def optimize(dataset, device, search_space, num_bayes_samples, num_workers, seed, compile_model):
-    obj = Objective(dataset, seed, device, num_workers, compile_model)
+def optimize(dataset, device, search_space, num_bayes_samples, num_workers, seed, compile_model,
+             checkpoint_functions_log, checkpoint_file_skopt):
+    save_checkpoint_log, load_checkpoint_log = checkpoint_functions_log
+    log_info = load_checkpoint_log()
+    print(f"Restored log checkpoint with {len(log_info)} many samples!")
+    # Restore skopt checkpoint if exists
+    checkpoint_saver = CheckpointSaver(checkpoint_file_skopt,
+                                       compress=9, store_objective=False)  # keyword arguments will be passed to `skopt.dump`
+    x0 = None
+    y0 = None
+    if os.path.exists(checkpoint_file_skopt):
+        res = skopt.load(checkpoint_file_skopt)
+        x0 = res.x_iters
+        y0 = res.func_vals
+        assert len(x0) == len(y0)
+        assert len(x0) <= len(log_info)
+        assert len(x0) >= len(log_info) - 1
+        if len(x0) < len(log_info):
+            log_info.pop()
+        print(f"Restored checkpoint with {len(x0)} many samples!")
+    else:
+        print(f"No checkpoint found at {checkpoint_file_skopt}")
+
+    obj = Objective(dataset, seed, device, num_workers, compile_model, log_info, save_checkpoint_log)
 
     @use_named_args(dimensions=search_space)
     def objective(**kwargs):
         return obj(**kwargs)
 
+    n_initial_points = int(num_bayes_samples / 5) if num_bayes_samples / 5 >= 1 else 1
     res = skopt.gp_minimize(
         objective,
         search_space,
-        n_calls=num_bayes_samples,
-        random_state=seed,
-        n_initial_points=int(num_bayes_samples / 5) if num_bayes_samples / 5 >= 1 else 1,
+        x0=x0,
+        y0=y0,
+        n_calls=num_bayes_samples - len(x0) if x0 else num_bayes_samples,
+        n_initial_points=max(n_initial_points - len(x0) if x0 else n_initial_points, 0),
+        callback=[checkpoint_saver]
     )
-    return res, obj.log_info
+    return res

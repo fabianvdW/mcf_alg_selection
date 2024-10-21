@@ -5,6 +5,7 @@ import torch
 import torch_geometric
 from optimization import optimize
 import pickle
+from pathlib import Path
 
 from skopt.utils import use_named_args
 from skopt.space import Real, Integer, Categorical
@@ -12,6 +13,10 @@ from constants import *
 from torch_in_memory_loader import MCFDatasetInMemory
 
 
+# TODO: LaPlace eigenvectors, weird cause not invariant and some randomness
+# TODO: Alternative random walk kernels (This is a sort of feature preprocessing)
+# https://github.com/G-Taxonomy-Workgroup/GPSE
+# https://github.com/G-Taxonomy-Workgroup/GPSE/blob/6cafeb05dd20b3590f4fe588d17528d44044a21c/graphgym/transform/posenc_stats.py#L138
 def setup_parser():
     out = argparse.ArgumentParser()
     out.add_argument('-num_workers', default=0, type=int,
@@ -22,9 +27,10 @@ def setup_parser():
                      help='The seeds used, one after the other, to determine the splits as well as the baysian'
                           'sampling.')
     out.add_argument("-dsroot", default=DATA_PATH, type=str, help="Root folder of ds")
+    out.add_argument("-experiment_name", type=str, help="Name of the experiment")
     out.add_argument('-cuda', default=0, type=int, help='The cuda device used.')
     out.add_argument('-batch_size', default=[24, 128], type=int, nargs=2, help='The minimum and maximum batch size.')
-    out.add_argument('-epochs', default=[4, 30], type=int, nargs=2,
+    out.add_argument('-epochs', default=[1, 2], type=int, nargs=2,
                      help='The minimum and maximum amount of epochs.')
     out.add_argument('-lr', default=[-4.0, -1.5], type=float, nargs=2,
                      help='The minimum and maximum logarithmic learning '
@@ -55,10 +61,26 @@ def get_space(name, tuple):
     assert False
 
 
+def checkpoint_log_info_functions(args):
+    def save_checkpoint(log_info):
+        with open(os.path.join(args.dsroot, 'result', args.experiment_name, 'log_info_result.pkl'), 'wb') as f:
+            pickle.dump(log_info, f)
+
+    def load_checkpoint():
+        try:
+            with open(os.path.join(args.dsroot, 'result', args.experiment_name, 'log_info_result.pkl'), 'rb') as f:
+                log_info = pickle.load(f)
+                return log_info
+        except:
+            return []
+
+    return save_checkpoint, load_checkpoint
+
+
 def main(args, seed):
     torch_geometric.seed_everything(seed)
     torch.set_float32_matmul_precision("high")
-    dataset = MCFDatasetInMemory(args.dsroot).to(device).shuffle()
+    dataset = MCFDatasetInMemory(args.dsroot).shuffle()
     search_space = [get_space(name='batch_size', tuple=args.batch_size),
                     get_space(name='epochs', tuple=args.epochs),
                     get_space(name='lr', tuple=args.lr),
@@ -72,30 +94,28 @@ def main(args, seed):
                     Categorical([
                         "cross_entropy",
                         # "expected_runtime"
-                        #"mix_expected_runtime"
+                        # "mix_expected_runtime"
                     ], name="loss"),  # Part of evaluation, i.e. make this constant
-                    #get_space(name="loss_weight", tuple=(0., 1.))
+                    # get_space(name="loss_weight", tuple=(0., 1.))
                     ]
 
     start = time.time()
-    result, log_info = optimize(dataset=dataset, device=device, search_space=search_space,
-                                num_bayes_samples=args.num_bayes_samples, num_workers=args.num_workers, seed=seed,
-                                compile_model=args.compile_model)
+    Path(os.path.join(args.dsroot, 'result', args.experiment_name)).mkdir(parents=True, exist_ok=True)
+    checkpoint_file_skopt = os.path.join(args.dsroot, 'result', args.experiment_name, 'checkpoint_skopt.pkl')
+    result = optimize(dataset=dataset, device=device, search_space=search_space,
+                      num_bayes_samples=args.num_bayes_samples, num_workers=args.num_workers, seed=seed,
+                      compile_model=args.compile_model, checkpoint_functions_log=checkpoint_log_info_functions(args),
+                      checkpoint_file_skopt=checkpoint_file_skopt)
     end = time.time()
     print(end - start, 's')
     print(result)
-    try:
-        os.mkdir(os.path.join(args.dsroot, 'result'))
-    except FileExistsError:
-        pass
 
     @use_named_args(dimensions=search_space)
     def to_kwargs(**kwargs):
         return kwargs
-    with open(os.path.join(args.dsroot, 'result', 'skopt_result.pkl'), 'wb') as f:
+
+    with open(os.path.join(args.dsroot, 'result', args.experiment_name, 'skopt_result.pkl'), 'wb') as f:
         pickle.dump(to_kwargs(result.x), f)
-    with open(os.path.join(args.dsroot, 'result', 'log_info_result.pkl'), 'wb') as f:
-        pickle.dump(log_info, f)
 
 
 if __name__ == "__main__":
