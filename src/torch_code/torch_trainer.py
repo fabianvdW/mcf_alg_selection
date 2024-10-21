@@ -21,7 +21,7 @@ def setup_parser():
     out = argparse.ArgumentParser()
     out.add_argument('-num_workers', default=0, type=int,
                      help='The number of workers used for training and evaluation.')
-    out.add_argument('-num_bayes_samples', default=50, type=int,
+    out.add_argument('-num_bayes_samples', default=5, type=int,
                      help='The number of samples used to estimate the optimal hyperparameters.')
     out.add_argument('-seeds', default=[42], type=int, nargs='+',
                      help='The seeds used, one after the other, to determine the splits as well as the baysian'
