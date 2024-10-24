@@ -145,7 +145,7 @@ class Objective:
         print(kwargs)
         start = time.time()
         objective_values = []
-        kf = KFold(n_splits=2, random_state=self.seed, shuffle=True)
+        kf = KFold(n_splits=5, random_state=self.seed, shuffle=True)
         gen = kf.split(list(range(len(self.dataset))))
         train_infos = []
         if kwargs["skip_connections"]:

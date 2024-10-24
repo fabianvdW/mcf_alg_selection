@@ -13,7 +13,7 @@ def setup_parser():
     return out
 
 
-result_folder = "result_skip=False_loss=ermixHPO2"
+result_folder = os.path.join("result", "skip_f_loss_ce")
 
 
 def main(args):
