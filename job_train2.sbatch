@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -t 11-10:00:00                    # time limit set 
+#SBATCH -t 10-00:00:00                    # time limit set 
 #SBATCH --mem=76G                         # reserve memory
 #SBATCH -J MCF_SMALL_DS_GNN                      # the job name
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT  # send notification emails
@@ -7,7 +7,7 @@
 #SBATCH --cpus-per-task=2                # use 8 thread per taks
 #SBATCH -N 1                             # request slots on 1 node
 #SBATCH --gpus=V100:1                    # request 1 Volta V100 GPU
-#SBATCH --partition=informatik-mind
+#SBATCH --partition=gpuidle
 #SBATCH --output=/scratch/vdwarth/large_ds_mcf/train/result/skip_f_loss_mix/test_%j_out.txt         # capture output
 #SBATCH --error=/scratch/vdwarth/large_ds_mcf/train/result/skip_f_loss_mix/test_%j_err.txt          # and error streams
 
