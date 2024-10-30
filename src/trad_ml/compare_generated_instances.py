@@ -64,55 +64,92 @@ def plot_fastest_algo_allgen():
     )
     plt.savefig("pieplot_algorithms_all.png")
 
+
 def plot_alg_generators():
     datanet = combined_data[combined_data["Generator"] == "NETGEN"]
     dataggen = combined_data[combined_data["Generator"] == "GRIDGEN"]
     dataggraph = combined_data[combined_data["Generator"] == "GRIDGRAPH"]
     datagoto = combined_data[combined_data["Generator"] == "GO_TO"]
 
+    # Get Set2 colors
+    set2_colors = sns.color_palette("Set2", 7)
+    color_dict = {
+        'NS': set2_colors[0],  # Green
+        'CS2': set2_colors[1],  # Coral
+        'SSP': set2_colors[2],  # Purple
+        'CAS': set2_colors[3]  # Blue
+    }
+
+    # Function to reorder data and colors to maintain consistent positioning
+    def prepare_pie_data(data_counts, algo_names):
+        full_data = []
+        colors = []
+        for algo in algo_names:
+            if algo in color_dict:  # Only include algorithms we want to show
+                count = data_counts[algo_names.index(algo)]
+                if count > 0:
+                    full_data.append(count)
+                    colors.append(color_dict[algo])
+        return full_data, colors
+
+    fig, axs = plt.subplots(2, 3, figsize=(10, 7))
+
     # Netgen
     number_of_minimum_net = np.array([len(datanet[datanet["Minimum"] == alg]) for alg in ALGO_NAMES])
-    indices_where_not_0 = [i for i in range(len(number_of_minimum_net)) if number_of_minimum_net[i] != 0]
-
-    fig, axs = plt.subplots(2, 3, figsize=(7, 5))
-    patches, _ = axs[0, 0].pie(number_of_minimum_net[indices_where_not_0], colors=sns.color_palette("Set2", 7))
+    data_net, colors_net = prepare_pie_data(
+        number_of_minimum_net,
+        ALGO_NAMES
+    )
+    axs[0, 0].pie(data_net, colors=colors_net, startangle=90)
     axs[0, 0].set_title("Netgen")
 
     # Gridgen
     number_of_minimum_ggen = np.array([len(dataggen[dataggen["Minimum"] == alg]) for alg in ALGO_NAMES])
-    indices_where_not_0 = [i for i in range(len(number_of_minimum_ggen)) if number_of_minimum_ggen[i] != 0]
-
-    patches, _ = axs[0, 1].pie(number_of_minimum_ggen[indices_where_not_0], colors=sns.color_palette("Set2", 7))
+    data_ggen, colors_ggen = prepare_pie_data(
+        number_of_minimum_ggen,
+        ALGO_NAMES
+    )
+    axs[0, 1].pie(data_ggen, colors=colors_ggen, startangle=90)
     axs[0, 1].set_title("Gridgen")
 
     # Gridgraph
     number_of_minimum_ggraph = np.array([len(dataggraph[dataggraph["Minimum"] == alg]) for alg in ALGO_NAMES])
-    indices_where_not_0 = [i for i in range(len(number_of_minimum_ggraph)) if number_of_minimum_ggraph[i] != 0]
-
-    patches, _ = axs[1, 0].pie(number_of_minimum_ggraph[indices_where_not_0], colors=sns.color_palette("Set2", 7))
-    fig.legend(patches[:-3], ["NS", "CS2", "SSP", "CAS"], loc="upper right")
-
+    data_ggraph, colors_ggraph = prepare_pie_data(
+        number_of_minimum_ggraph,
+        ALGO_NAMES
+    )
+    axs[1, 0].pie(data_ggraph, colors=colors_ggraph, startangle=90)
     axs[1, 0].set_title("Gridgraph")
 
     # Goto
     number_of_minimum_goto = np.array([len(datagoto[datagoto["Minimum"] == alg]) for alg in ALGO_NAMES])
-    indices_where_not_0 = [i for i in range(len(number_of_minimum_ggraph)) if number_of_minimum_goto[i] != 0]
-
-    patches, _ = axs[1, 1].pie(number_of_minimum_goto[indices_where_not_0], colors=sns.color_palette("Set2", 7))
+    data_goto, colors_goto = prepare_pie_data(
+        number_of_minimum_goto,
+        ALGO_NAMES
+    )
+    axs[1, 1].pie(data_goto, colors=colors_goto, startangle=90)
     axs[1, 1].set_title("Goto")
 
+    # Remove empty subplot
     axs[0, 2].axis("off")
 
-    # Alle
+    # All data
     number_of_minimum = np.array([len(combined_data[combined_data["Minimum"] == alg]) for alg in ALGO_NAMES])
-    indices_where_not_0 = [i for i in range(len(number_of_minimum)) if number_of_minimum[i] != 0]
-
-    patches, _ = axs[1, 2].pie(number_of_minimum[indices_where_not_0], colors=sns.color_palette("Set2", 7))
-
+    data_all, colors_all = prepare_pie_data(
+        number_of_minimum,
+        ALGO_NAMES
+    )
+    axs[1, 2].pie(data_all, colors=colors_all, startangle=90)
     axs[1, 2].set_title("All")
-    #TODO: Legend, make order of colors the same if possible.
 
-    plt.savefig("test.png")
+    # Create custom legend
+    legend_elements = [plt.Rectangle((0, 0), 1, 1, facecolor=color_dict[algo])
+                       for algo in ['NS', 'CS2', 'SSP', 'CAS']]
+    fig.legend(legend_elements, ['NS', 'CS2', 'SSP', 'CAS'],
+               loc='center right', bbox_to_anchor=(0.98, 0.6))
+
+    plt.tight_layout()
+    plt.savefig("test.png", bbox_inches='tight', dpi=300)
 
 if __name__ == "__main__":
     combined_data_train = get_data(True)
