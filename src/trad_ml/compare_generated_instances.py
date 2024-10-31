@@ -56,16 +56,10 @@ def plot_features(gen):
         plt.title("param: " + param + ", generator: " + gen)
 
 
-def plot_fastest_algo_allgen():
-    number_of_minimum = np.array([len(combined_data[combined_data["Minimum"] == alg]) for alg in ALGO_NAMES])
-    patches, _ = plt.pie(
-        number_of_minimum, colors=sns.color_palette("Set2", 7),
-        labels=ALGO_NAMES
-    )
-    plt.savefig("pieplot_algorithms_all.png")
-
 
 def plot_alg_generators():
+
+
     datanet = combined_data[combined_data["Generator"] == "NETGEN"]
     dataggen = combined_data[combined_data["Generator"] == "GRIDGEN"]
     dataggraph = combined_data[combined_data["Generator"] == "GRIDGRAPH"]
@@ -84,19 +78,29 @@ def plot_alg_generators():
     def prepare_pie_data(data_counts, algo_names):
         full_data = []
         colors = []
+        labels = []
         for algo in algo_names:
             if algo in color_dict:  # Only include algorithms we want to show
                 count = data_counts[algo_names.index(algo)]
                 if count > 0:
                     full_data.append(count)
                     colors.append(color_dict[algo])
-        return full_data, colors
+                    labels.append(algo)
+        return full_data, colors, labels
+
+    number_of_minimum = np.array([len(combined_data[combined_data["Minimum"] == alg]) for alg in ALGO_NAMES])
+    data_all, colors_all, labels = prepare_pie_data(
+        number_of_minimum,
+        ALGO_NAMES
+    )
+    plt.pie(data_all, colors=colors_all, startangle=90, labels=labels)
+    plt.savefig("pieplot_algorithms_all.png")
 
     fig, axs = plt.subplots(2, 3, figsize=(10, 7))
 
     # Netgen
     number_of_minimum_net = np.array([len(datanet[datanet["Minimum"] == alg]) for alg in ALGO_NAMES])
-    data_net, colors_net = prepare_pie_data(
+    data_net, colors_net, _ = prepare_pie_data(
         number_of_minimum_net,
         ALGO_NAMES
     )
@@ -105,7 +109,7 @@ def plot_alg_generators():
 
     # Gridgen
     number_of_minimum_ggen = np.array([len(dataggen[dataggen["Minimum"] == alg]) for alg in ALGO_NAMES])
-    data_ggen, colors_ggen = prepare_pie_data(
+    data_ggen, colors_ggen, _ = prepare_pie_data(
         number_of_minimum_ggen,
         ALGO_NAMES
     )
@@ -114,7 +118,7 @@ def plot_alg_generators():
 
     # Gridgraph
     number_of_minimum_ggraph = np.array([len(dataggraph[dataggraph["Minimum"] == alg]) for alg in ALGO_NAMES])
-    data_ggraph, colors_ggraph = prepare_pie_data(
+    data_ggraph, colors_ggraph, _ = prepare_pie_data(
         number_of_minimum_ggraph,
         ALGO_NAMES
     )
@@ -123,7 +127,7 @@ def plot_alg_generators():
 
     # Goto
     number_of_minimum_goto = np.array([len(datagoto[datagoto["Minimum"] == alg]) for alg in ALGO_NAMES])
-    data_goto, colors_goto = prepare_pie_data(
+    data_goto, colors_goto, _ = prepare_pie_data(
         number_of_minimum_goto,
         ALGO_NAMES
     )
@@ -135,7 +139,7 @@ def plot_alg_generators():
 
     # All data
     number_of_minimum = np.array([len(combined_data[combined_data["Minimum"] == alg]) for alg in ALGO_NAMES])
-    data_all, colors_all = prepare_pie_data(
+    data_all, colors_all, _ = prepare_pie_data(
         number_of_minimum,
         ALGO_NAMES
     )
@@ -158,7 +162,6 @@ if __name__ == "__main__":
     combined_data["Generator"] = combined_data.apply(get_algorithm_from_seed, axis=1)
 
     instances = len(combined_data)
-    #plot_fastest_algo_allgen()
     plot_alg_generators()
 
 """
