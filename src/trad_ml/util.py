@@ -28,6 +28,10 @@ FEATURE_NAMES = [
 ALGO_NAMES = ["NS", "CS2", "SSP", "CAS"]
 
 
+def get_generator_name(instance_id: str) -> str:
+    return instance_id.split("_")[0]
+
+
 def algorithm_selection_metric(algorithm_list, df_section):
     # Maybe one can vectorize this(cf. https://stackoverflow.com/questions/24833130/how-can-i-select-a-specific-column-from-each-row-in-a-pandas-dataframe)
     return int(sum(df_section.iloc[i][algo] for i, algo in enumerate(algorithm_list)))
