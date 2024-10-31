@@ -13,7 +13,7 @@ def setup_parser():
     return out
 
 
-result_folder = os.path.join("result", "skip_t_loss_ce")
+result_folder = os.path.join("result", "skip_t_loss_mix")
 
 
 def main(args):

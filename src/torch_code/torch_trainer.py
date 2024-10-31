@@ -17,6 +17,17 @@ from torch_in_memory_loader import MCFDatasetInMemory
 # TODO: Alternative random walk kernels (This is a sort of feature preprocessing)
 # https://github.com/G-Taxonomy-Workgroup/GPSE
 # https://github.com/G-Taxonomy-Workgroup/GPSE/blob/6cafeb05dd20b3590f4fe588d17528d44044a21c/graphgym/transform/posenc_stats.py#L138
+
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
 def setup_parser():
     out = argparse.ArgumentParser()
     out.add_argument('-num_workers', default=0, type=int,
@@ -48,9 +59,9 @@ def setup_parser():
     out.add_argument('-step_size', default=[0.01, 1.0], type=float, nargs=2,
                      help='The minimum and maximum step_size used for the learning rate to drop relative to the number '
                           'of epochs.')
-    out.add_argument("-compile_model", default=False, type=bool)
-    out.add_argument("-skip", type=bool, help='Residual connections on/off')
-    out.add_argument("-loss_ce", type=bool, help='Loss function is CE(true) or mix (false)')
+    out.add_argument("-compile_model", default=False, type=str2bool)
+    out.add_argument("-skip", type=str2bool, help='Residual connections on/off')
+    out.add_argument("-loss_ce", type=str2bool, help='Loss function is CE(true) or mix (false)')
     return out
 
 
