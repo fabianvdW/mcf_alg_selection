@@ -135,7 +135,7 @@ def main():
             data_transformed = feature_map_nystroem.fit_transform(train_data)
             clf.fit(data_transformed, train_label)
             y_pred_test = clf.predict(feature_map_nystroem.transform(test_data))
-        elif algo == "MLPClassifier" or algo_name == "KNeighborsClassifier":
+        elif algo_name == "MLPClassifier" or algo_name == "KNeighborsClassifier":
             clf = make_pipeline(StandardScaler(), algo(**best_args))
             clf.fit(train_data, train_label)
             y_pred_test = clf.predict(test_data)

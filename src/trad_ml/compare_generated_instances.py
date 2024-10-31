@@ -4,10 +4,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from src.gen_data import util as g_util
-from util import ALGO_NAMES
-from data_loader_trad import get_data
+from util import ALGO_NAMES, load_dict
+from data_loader_trad import get_data, DATA_PATH
 import matplotlib as mpl
 import seaborn as sns
+import os
 
 plt.style.use("seaborn-v0_8")
 sns.set_palette("pastel")
@@ -41,6 +42,7 @@ def get_algorithm_from_seed(seed):
         return "GO_TO"
 
 
+"""
 def plot_features(gen):
     data = combined_data[combined_data["Generator"] == gen]
     for param in names_features[1:]:
@@ -54,12 +56,75 @@ def plot_features(gen):
         plt.yscale("log")
         plt.legend()
         plt.title("param: " + param + ", generator: " + gen)
+"""
+
+
+def plot_results():
+    results = load_dict(os.path.join(DATA_PATH, "result_trad", "1", "production_training_runs.json"))
+    classifiers = ["KNN", "SVC", "DTree", "RForest", "MLP", "ADA", "NS", "Base"]
+    accuracies = [x["test_accuracy"] for x in results]
+    plt.figure(dpi=1200)
+    plt.bar(
+        classifiers,
+        accuracies,
+        color=[
+            (0.4, 0.7607843137254902, 0.6470588235294118) if clf != "NS" and clf != "Base" else (
+                0.9882352941176471, 0.5529411764705883, 0.3843137254901961)
+            for clf in classifiers
+        ],
+    )
+    plt.savefig("results1.png")
+
+    classifiers.append("GT")
+    minruntime = results[0]['test_minruntime_sum']
+    results.append({'name': 'GT', 'test_runtime_sum': minruntime})
+
+    time = [x["test_runtime_sum"] / 10 ** 6 for x in results]
+
+    plt.figure(dpi=1200)
+    plt.bar(
+        classifiers,
+        time,
+        color=[
+            (
+                (0.4, 0.7607843137254902, 0.6470588235294118)
+                if clf != "NS" and clf != "Base" and clf != "GT"
+                else (0.9882352941176471, 0.5529411764705883, 0.3843137254901961)
+            )
+            for clf in classifiers
+        ],
+    )
+    plt.yticks([200, 400, 600, 800, 1000, 1200, 1400, 1600], [200, 400, 600, 800, 1000, 1200, 1400, 1600])
+    plt.ylabel("time in seconds")
+    plt.savefig("results2.png")
+
+    #Dont show Network Simplex for thrid graphic, show ratios
+    idx_ns = classifiers.index("NS")
+    del classifiers[idx_ns]
+    del time[idx_ns]
+    ratios = [x / (minruntime / 10 ** 6) for x in time]
+    print(ratios)
+    plt.figure(dpi=1200)
+    plt.bar(
+        classifiers,
+        ratios,
+        color=[
+            (
+                (0.4, 0.7607843137254902, 0.6470588235294118)
+                if clf != "NS" and clf != "Base" and clf != "GT"
+                else (0.9882352941176471, 0.5529411764705883, 0.3843137254901961)
+            )
+            for clf in classifiers
+        ],
+    )
+    plt.ylim(0.99, 1.06)
+    plt.yticks([1., 1.01, 1.02, 1.03, 1.04, 1.05], [1., 1.01, 1.02, 1.03, 1.04, 1.05])
+    plt.ylabel("Runtime ratio metric")
+    plt.savefig("results3.png")
 
 
 
 def plot_alg_generators():
-
-
     datanet = combined_data[combined_data["Generator"] == "NETGEN"]
     dataggen = combined_data[combined_data["Generator"] == "GRIDGEN"]
     dataggraph = combined_data[combined_data["Generator"] == "GRIDGRAPH"]
@@ -155,127 +220,21 @@ def plot_alg_generators():
     plt.tight_layout()
     plt.savefig("test.png", bbox_inches='tight', dpi=300)
 
-if __name__ == "__main__":
-    combined_data_train = get_data(True)
-    combined_data_test = get_data(False)
-    combined_data = pd.concat([combined_data_train, combined_data_test])
-    combined_data["Generator"] = combined_data.apply(get_algorithm_from_seed, axis=1)
 
-    instances = len(combined_data)
-    plot_alg_generators()
+if __name__ == "__main__":
+    #combined_data_train = get_data(True)
+    #combined_data_test = get_data(False)
+    #combined_data = pd.concat([combined_data_train, combined_data_test])
+    #combined_data["Generator"] = combined_data.apply(get_algorithm_from_seed, axis=1)
+
+    #instances = len(combined_data)
+    #plot_alg_generators()
+    plot_results()
 
 """
 
 
 
-
-
-
-
-
-# plot_alg_generators()
-
-
-# generator = "GRIDGEN"
-# combined_data = combined_data[combined_data["Generator"] == generator]
-
-
-def plot_results(alle=True):
-    if alle:
-        results = util.load_dict("../../experiments/basic_sklearn_classifiers/6/production_training_runs.json")
-        classifiers = ["KNN", "SVC", "DTree", "RForest", "NN", "Ada", "NS"]
-        size_ds = str(73130 // 5)
-    else:
-        results = util.load_dict("../../experiments/basic_sklearn_classifiers/2/production_training_runs.json")
-        classifiers = ["KNN", "SVC", "GaussP", "Tree", "Forest", "NN", "Ada", "Gauss", "QDA", "NS"]
-        size_ds = str(3119 // 5)
-
-    accuracies = [x["test_accuracy"] for x in results[:-1] if x["name"] != "GaussianNB"]
-    plt.figure(dpi=1200)
-    plt.bar(
-        classifiers,
-        accuracies,
-        color=[
-            (0.4, 0.7607843137254902, 0.6470588235294118) if clf != "NS" else (
-            0.9882352941176471, 0.5529411764705883, 0.3843137254901961)
-            for clf in classifiers
-        ],
-    )
-    # if alle:
-    #     plt.title("Accuracy of all classifiers on " + size_ds + " test instances")
-    # else:
-    #     plt.title("Accuracy of all classifiers on " + size_ds + " Gridgraph test instances")
-
-    classifiers.append("GT")
-
-    if alle:
-        # classifiers.remove("Gauss")
-        time = [x["test_time"] / 10 ** 6 for x in results if x["name"] != "GaussianNB"]
-    else:
-        classifiers.remove("GaussP")
-        time = [x["test_time"] / 10 ** 6 for x in results if x["name"] != "GaussianProcessClassifier"]
-
-    plt.figure(dpi=1200)
-    plt.bar(
-        classifiers,
-        time,
-        color=[
-            (
-                (0.4, 0.7607843137254902, 0.6470588235294118)
-                if clf != "NS" and clf != "GT"
-                else (0.9882352941176471, 0.5529411764705883, 0.3843137254901961)
-            )
-            for clf in classifiers
-        ],
-    )
-    if alle:
-        plt.yticks([10, 20, 30, 40, 50, 60, 70, 80], [10, 20, 30, 40, 50, 60, 70, 80])
-        plt.ylabel("time in seconds")
-        # plt.title("Time needed with algorithms predicted by classifier on " + size_ds + " test instances")
-    else:
-        plt.yticks([1, 2, 3, 4, 5], [1, 2, 3, 4, 5])
-        plt.ylabel("time in seconds")
-        # plt.title("Time needed with algorithms predicted by classifier on " + size_ds + " Gridgraph test instances ")
-
-    classifiers = ["DTree", "RForest", "NetworkSimplex", "GroundTruth"]
-    time = [
-        x["test_time"] / 10 ** 6
-        for x in results
-        if x["name"] in ["DecisionTreeClassifier", "RandomForestClassifier", "baseline", "GroundTruth"]
-    ]
-    plt.figure(dpi=1200)
-    barplot = plt.bar(
-        classifiers,
-        time,
-        color=[
-            (
-                (0.4, 0.7607843137254902, 0.6470588235294118)
-                if clf != "NetworkSimplex" and clf != "GroundTruth"
-                else (0.9882352941176471, 0.5529411764705883, 0.3843137254901961)
-            )
-            for clf in classifiers
-        ],
-    )
-    if alle:
-        plt.ylim(53.5, 60)
-        # plt.title("Time needed with algorithms predicted by classifier on " + size_ds + " test instances")
-        bar_label = ["+1,04\%", "+0,74\%", "+8,5\%", ""]
-        plt.yticks([54, 55, 56, 57, 58, 59], [54, 55, 56, 57, 58, 59])
-        plt.ylabel("time in seconds")
-    else:
-        plt.ylim(1, 1.125654)
-        # plt.title("Time needed with algorithms predicted by classifier on " + size_ds + " Gridgraph test instances")
-        bar_label = ["+1,01\%", "+0,93\%", "+11,43\%", ""]
-        plt.yticks([1, 1.02, 1.04, 1.06, 1.08, 1.1, 1.12], [1, 1.02, 1.04, 1.06, 1.08, 1.1, 1.12])
-        plt.ylabel("time in seconds")
-
-    def autolabel(rects):
-        for idx, rect in enumerate(barplot):
-            height = rect.get_height()
-            plt.text(rect.get_x() + rect.get_width() / 2.0, height, bar_label[idx], ha="center", va="bottom",
-                     rotation=0)
-
-    autolabel(barplot)
 
 
 # plot_results(True)
