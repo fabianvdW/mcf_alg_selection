@@ -6,6 +6,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 from constants import *
 
+nice_fonts = {
+    # Use LaTeX to write all text
+    "font.family": "serif",
+    # Use 10pt font in plots, to match 10pt font in document
+    "axes.labelsize": 18,
+    "font.size": 18,
+    # Make the legend/label fonts a little smaller
+    "legend.fontsize": 18,
+    "xtick.labelsize": 14,
+    "ytick.labelsize": 14,
+    'figure.autolayout': True,
+    'figure.dpi': 180
+}
+
 
 def setup_parser():
     out = argparse.ArgumentParser()
@@ -13,7 +27,7 @@ def setup_parser():
     return out
 
 
-result_folder = os.path.join("result", "skip_t_loss_mix")
+result_folder = os.path.join("result", "skip_t_loss_ce")
 
 
 def main(args):
@@ -29,7 +43,7 @@ def main(args):
     except FileExistsError:
         pass
     plt.style.use('seaborn-v0_8-paper')
-    matplotlib.rcParams.update({'font.family': 'serif', 'figure.autolayout': True})
+    matplotlib.rcParams.update(nice_fonts)
 
     def key_formatter(key):
         if key == "weight_decay":
@@ -54,20 +68,20 @@ def main(args):
     for i, configuration in enumerate(log_info_result):
         parameters, cv_epoch_info, obj_values, runtime = configuration
 
-        fig, (ax1, ax2, ax3) = plt.subplots(nrows=3, ncols=1, sharex=True, dpi=180, figsize=(10, 10))
+        fig, (ax1, ax2, ax3) = plt.subplots(nrows=3, ncols=1, sharex=True, figsize=(10, 10))
         final_obj = -np.mean(obj_values)
         subtitle = ", ".join(
             [f"{key_formatter(key)}={value_formatter(value)}" for key, value in parameters.items()] + [
                 f"Final obj.={final_obj:.4f}",
                 f"Runtime={runtime:.1f}s"])
-        fig.suptitle(f'Visualized metrics of bayes sample {i}\n', fontsize=14)
-        fig.text(s=subtitle, x=0.5, y=0.95, fontsize=6, ha='center', va='center')
+        #fig.suptitle(f'Visualized metrics of bayes sample {i}\n', fontsize=14)
+        #fig.text(s=subtitle, x=0.5, y=0.95, fontsize=6, ha='center', va='center')
         ax1.set_xlabel("Epochs")
         ax1.set_ylim([0.7, 1.0])
         ax2.set_xlabel("Epochs")
         ax2.set_ylim([1.0, 1.3])
         ax3.set_xlabel("Epochs")
-        ax3.set_ylim([0.0, 7.0])
+        ax3.set_ylim([0.0, 1.0])
 
         cv_runs = len(cv_epoch_info)
         assert cv_runs == 5
