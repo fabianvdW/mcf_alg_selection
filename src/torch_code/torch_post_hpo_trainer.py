@@ -30,20 +30,19 @@ def setup_parser():
                      help='The number of workers used for training and evaluation.')
     out.add_argument("-dsroottrain", default=DATA_PATH, type=str, help="Root folder of train ds")
     out.add_argument("-dsroottest", default=DATA_PATH, type=str, help="Root folder of test ds")
-    out.add_argument("-experiment_name", type=str, help="Name of the experiment")
+    out.add_argument("-experiment_name", default="test", type=str, help="Name of the experiment")
     out.add_argument('-cuda', default=0, type=int, help='The cuda device used.')
     out.add_argument("-compile_model", default=False, type=str2bool)
     return out
 
 
-def main(args, seed):
-    torch_geometric.seed_everything(seed)
+def main(args):
     torch.set_float32_matmul_precision("high")
     train_dataset = MCFDatasetInMemory(args.dsroottrain).shuffle()
     test_dataset = MCFDatasetInMemory(args.dsroottest).shuffle()
-    hyperparameters = {'batch_size': 107, 'epochs': 21, 'lr': -1.872624908086312, 'weight_decay': -5.002064645866807,
-                       'step_size': 0.7116809739665613, 'hidden_channels': 38, 'num_gin_layers': 4, 'num_mlp_layers': 0,
-                       'num_mlp_readout_layers': 3, 'skip_connections': True, 'loss': 'cross_entropy'}
+    hyperparameters = {'batch_size': 24, 'epochs': 25, 'lr': -2.9871179346013337, 'weight_decay': -10.0, 'step_size': 0.5809405735679614,
+     'hidden_channels': 73, 'num_gin_layers': 6, 'num_mlp_layers': 2, 'num_mlp_readout_layers': 3,
+     'skip_connections': False, 'loss': 'mix_expected_runtime', 'loss_weight': 0.6831435486104581}
 
     def save_checkpoint(log_info):
         with open(os.path.join(args.dsroottrain, 'result', args.experiment_name, 'log_info_posthpo_result.pkl'),
@@ -85,5 +84,4 @@ if __name__ == "__main__":
         device = _args.cuda
     else:
         device = "cpu"
-    for seed in _args.seeds:
-        main(_args, seed)
+    main(_args)

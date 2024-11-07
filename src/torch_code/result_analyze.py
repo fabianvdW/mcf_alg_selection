@@ -27,7 +27,7 @@ def setup_parser():
     return out
 
 
-result_folder = os.path.join("result", "skip_t_loss_ce")
+result_folder = os.path.join("result", "skip_t_loss_mix")
 
 
 def main(args):
@@ -37,6 +37,7 @@ def main(args):
         log_info_result = pickle.load(f)
     optimal_index = np.argmax([configuration[0] == skopt_result for configuration in log_info_result])
     print("Best parameters are given by the following configuration, achieved in bayes sample ", optimal_index)
+    print("Achieved in bayes sample ", -np.mean(log_info_result[optimal_index][2]))
     print(skopt_result)
     try:
         os.mkdir(os.path.join(args.dsroot, result_folder, "plots"))
