@@ -61,7 +61,7 @@ def plot_features(gen):
 
 def plot_results():
     results = load_dict(os.path.join(DATA_PATH, "result_trad", "1", "production_training_runs.json"))
-    classifiers = ["KNN", "SVC", "DTree", "RForest", "MLP", "ADA", "NS", "Base"]
+    classifiers = ["KNN", "SVC", "DTree", "RForest", "MLP", "ADA", "GNN", "NS", "Base"]
     accuracies = [x["test_accuracy"] for x in results]
     plt.figure(dpi=1200)
     plt.bar(

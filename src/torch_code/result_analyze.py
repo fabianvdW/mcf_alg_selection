@@ -27,10 +27,20 @@ def setup_parser():
     return out
 
 
-result_folder = os.path.join("result", "skip_t_loss_mix")
+result_folder = os.path.join("result", "skip_f_loss_mix_post_hpo")
 
 
 def main(args):
+    if os.path.exists(os.path.join(args.dsroot, result_folder, "log_info_post_hpo.pkl")):
+        with open(os.path.join(args.dsroot, result_folder, "log_info_post_hpo.pkl"), "rb") as f:
+            log_info_result = pickle.load(f)
+        a, b, c, d= log_info_result
+        print(a)
+        for x in b:
+            print(x)
+        print(c)
+        print(d)
+        assert False
     with open(os.path.join(args.dsroot, result_folder, 'skopt_result.pkl'), "rb") as f:
         skopt_result = pickle.load(f)
     with open(os.path.join(args.dsroot, result_folder, 'log_info_result.pkl'), "rb") as f:

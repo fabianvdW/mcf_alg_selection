@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH -t 1-00:00:00                    # time limit set 
-#SBATCH --mem=96G                         # reserve memory
+#SBATCH -t 10:00:00                    # time limit set 
+#SBATCH --mem=76G                         # reserve memory
 #SBATCH -J MCF_SMALL_DS_GNN                      # the job name
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT  # send notification emails
 #SBATCH -n 1                             # use 1 tasks
