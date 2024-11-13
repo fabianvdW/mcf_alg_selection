@@ -30,6 +30,8 @@ class Objective:
         )
         epochs_info = []
         for epoch in range(epochs):
+            samples_per_generator = {"GOTO": 0, "GRIDGEN": 0, "NETGEN": 0, "GRIDGRAPH": 0}
+            correct_per_generator = {"GOTO": 0, "GRIDGEN": 0, "NETGEN": 0, "GRIDGRAPH": 0}
             samples_per_class = [0 for _ in range(NUM_CLASSES)]
             correct_per_class = [0 for _ in range(NUM_CLASSES)]
             runtime_sum = 0.0
@@ -43,6 +45,8 @@ class Objective:
                 pred = out.argmax(dim=-1)
 
                 for i in range(len(data.y)):
+                    samples_per_generator[data.generator[i]] += 1
+                    correct_per_generator[data.generator[i]] += int(pred[i] == data.y[i])
                     samples_per_class[data.y[i]] += 1
                     correct_per_class[data.y[i]] += int(pred[i] == data.y[i])
                     runtime_sum += data.label[i, pred[i]]
@@ -60,6 +64,12 @@ class Objective:
                 optimizer.step()
                 total_loss += float(loss) * data.batch_size
             scheduler.step()
+            acc_per_generator = " ".join(
+                [
+                    f"{correct}/{num_samples}={1 if num_samples == 0 else correct / num_samples:.2f}"
+                    for (num_samples, correct) in zip(samples_per_generator.values(), correct_per_generator.values())
+                ]
+            )
             acc_per_class = " ".join(
                 [
                     f"{correct}/{num_samples}={1 if num_samples == 0 else correct / num_samples:.2f}"
@@ -69,6 +79,7 @@ class Objective:
             total_acc = sum(correct_per_class) / sum(samples_per_class)
             total_loss /= len(train_loader.dataset)
             epoch_info = {}
+            epoch_info['train_acc_per_generator'] = acc_per_generator
             epoch_info['train_acc_per_class'] = acc_per_class
             epoch_info['train_total_acc'] = total_acc
             epoch_info['train_runtime_sum'] = float(runtime_sum)
@@ -89,7 +100,8 @@ class Objective:
 
     def eval(self, eval_loader, epoch, epoch_info, loss_fn, loss_weight):
         self.model.eval()
-
+        samples_per_generator = {"GOTO": 0, "GRIDGEN": 0, "NETGEN": 0, "GRIDGRAPH": 0}
+        correct_per_generator = {"GOTO": 0, "GRIDGEN": 0, "NETGEN": 0, "GRIDGRAPH": 0}
         samples_per_class = [0 for _ in range(NUM_CLASSES)]
         correct_per_class = [0 for _ in range(NUM_CLASSES)]
         runtime_sum = 0.0
@@ -101,6 +113,8 @@ class Objective:
                 out = self.model(data.x, data.edge_index, data.edge_attr, data.batch, data.batch_size)
                 pred = out.argmax(dim=-1)
                 for i in range(len(data.y)):
+                    samples_per_generator[data.generator[i]] += 1
+                    correct_per_generator[data.generator[i]] += int(pred[i] == data.y[i])
                     samples_per_class[data.y[i]] += 1
                     correct_per_class[data.y[i]] += int(pred[i] == data.y[i])
                     runtime_sum += data.label[i, pred[i]]
@@ -115,6 +129,12 @@ class Objective:
                 elif loss_fn == "cross_entropy":
                     loss = F.cross_entropy(out, data.y)
                 total_loss += float(loss) * data.batch_size
+        acc_per_generator = " ".join(
+            [
+                f"{correct}/{num_samples}={1 if num_samples == 0 else correct / num_samples:.2f}"
+                for (num_samples, correct) in zip(samples_per_generator.values(), correct_per_generator.values())
+            ]
+        )
         acc_per_class = " ".join(
             [
                 f"{correct}/{num_samples}={1 if num_samples == 0 else correct / num_samples:.2f}"
@@ -123,6 +143,7 @@ class Objective:
         )
         total_acc = sum(correct_per_class) / sum(samples_per_class)
         total_loss /= len(eval_loader.dataset)
+        epoch_info['eval_acc_per_generator'] = acc_per_generator
         epoch_info['eval_acc_per_class'] = acc_per_class
         epoch_info['eval_total_acc'] = total_acc
         epoch_info['eval_runtime_sum'] = float(runtime_sum)
@@ -190,7 +211,8 @@ def optimize(dataset, device, search_space, num_bayes_samples, num_workers, seed
     print(f"Restored log checkpoint with {len(log_info)} many samples!")
     # Restore skopt checkpoint if exists
     checkpoint_saver = CheckpointSaver(checkpoint_file_skopt,
-                                       compress=9, store_objective=False)  # keyword arguments will be passed to `skopt.dump`
+                                       compress=9,
+                                       store_objective=False)  # keyword arguments will be passed to `skopt.dump`
     x0 = None
     y0 = None
     if os.path.exists(checkpoint_file_skopt):

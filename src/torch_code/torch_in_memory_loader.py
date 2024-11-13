@@ -101,6 +101,7 @@ class MCFDataset(Dataset):
                     data_dict["capacity"].append(float(cap))
                     data_dict["weight"].append(float(cost))
                     edge_num += 1
+            data_dict["generator"] = graph_id.split("_")[0]
             data_dict["label"] = self.id_to_runtime[graph_id]
             data_dict["y"] = np.argmin(data_dict["label"])
             for key, value in data_dict.items():

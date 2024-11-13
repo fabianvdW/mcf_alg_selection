@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -t 0-08:00:00                    # time limit set 
-#SBATCH --mem=64G                         # reserve memory
+#SBATCH --mem=192G                         # reserve memory
 #SBATCH -J MCF_LARGE_DS_MERGE                    # the job name
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT  # send notification emails
 #SBATCH -n 1                             # use 1 tasks
