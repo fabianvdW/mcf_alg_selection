@@ -27,7 +27,7 @@ nice_fonts = {
 COLORS = dict(zip(ALGO_NAMES, ["red", "green", "blue", "yellow", "black", "orange", "purple"]))
 
 mpl.rcParams.update(nice_fonts)
-mpl.rcParams["figure.dpi"] = 1200
+mpl.rcParams["figure.dpi"] = 300
 
 
 def get_algorithm_from_seed(seed):
@@ -63,7 +63,7 @@ def plot_results():
     results = load_dict(os.path.join(DATA_PATH, "result_trad", "1", "production_training_runs.json"))
     classifiers = ["KNN", "SVC", "DTree", "RForest", "MLP", "ADA", "GNN", "NS", "Base"]
     accuracies = [x["test_accuracy"] for x in results]
-    plt.figure(dpi=1200)
+    plt.figure(dpi=300)
     plt.bar(
         classifiers,
         accuracies,
@@ -81,7 +81,7 @@ def plot_results():
 
     time = [x["test_runtime_sum"] / 10 ** 6 for x in results]
 
-    plt.figure(dpi=1200)
+    plt.figure(dpi=300)
     plt.bar(
         classifiers,
         time,
@@ -104,7 +104,7 @@ def plot_results():
     del time[idx_ns]
     ratios = [x / (minruntime / 10 ** 6) for x in time]
     print(ratios)
-    plt.figure(dpi=1200)
+    plt.figure(dpi=300)
     plt.bar(
         classifiers,
         ratios,
