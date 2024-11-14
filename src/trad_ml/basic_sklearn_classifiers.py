@@ -61,7 +61,7 @@ def main():
                 ("hidden_layer_sizes", [(100), (50, 50), (50, 100, 100, 50)]),
                 ("activation", ["tanh", "relu"]),
                 ("solver", ["sgd", "adam"]),
-                ("learning_rate_init", [0.001, 0.01, 0.1]),
+                ("learning_rate_init", [0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1]),
             ],
         ),
         (AdaBoostClassifier, [("n_estimators", [5, 7, 9, 11, 13, 50]), ("learning_rate", [0.8, 0.85, 1.0, 1.15, 1.3]),
@@ -147,13 +147,25 @@ def main():
             # test algorithm selection time difference
             y_pred_test = clf.predict(test_data)
         test_accuracy = sl.metrics.accuracy_score(test_label, y_pred_test)
+        # Determine accuracy on all generators:
+        accuracies_per_generator = {x: 0 for x in GEN_TO_ALGO.keys()}
+        for algo in GEN_TO_ALGO.keys():
+            y_pred_algo = [y_pred for i, y_pred in enumerate(y_pred_test) if
+                           get_generator_name(test_data.iloc[i].name) == algo]
+            indices_algo = [i for i in range(len(test_data)) if get_generator_name(test_data.iloc[i].name) == algo]
+            test_accuracy_algo = sl.metrics.accuracy_score(test_label.iloc[indices_algo], y_pred_algo)
+            accuracies_per_generator[algo] = test_accuracy_algo
+
+
         test_runtime_sum = algorithm_selection_metric(y_pred_test, test_times)
         test_minruntime_sum = algorithm_selection_metric(test_label, test_times)
         test_ratio = test_runtime_sum / test_minruntime_sum
         production_training_runs.append(
             {"name": algo_name, "test_accuracy": test_accuracy, "test_runtime_sum": test_runtime_sum,
              "test_minruntime_sum": test_minruntime_sum, "test_ratio": test_ratio,
-             "hyperparameters": best_args}
+             "hyperparameters": best_args,
+             "test_accuracy_split": accuracies_per_generator
+             }
         )
         print("Algorithm ", algo_name, " has achieved test_acc:", test_accuracy, "and test_time:", test_runtime_sum)
         print("The optimal hyperparameters were determined as", best_args)
