@@ -31,6 +31,7 @@ def setup_parser():
     out.add_argument("-dsroottrain", default=DATA_PATH, type=str, help="Root folder of train ds")
     out.add_argument("-dsroottest", default=DATA_PATH, type=str, help="Root folder of test ds")
     out.add_argument("-experiment_name", default="test", type=str, help="Name of the experiment")
+    out.add_argument("-ntrain", default=48000, type=int, help="Number of training datapoints used")
     out.add_argument('-cuda', default=0, type=int, help='The cuda device used.')
     out.add_argument("-compile_model", default=False, type=str2bool)
     return out
@@ -38,11 +39,16 @@ def setup_parser():
 
 def main(args):
     torch.set_float32_matmul_precision("high")
-    train_dataset = MCFDatasetInMemory(args.dsroottrain).shuffle()
+    if args.ntrain < 1000:
+        args.ntrain = args.ntrain * 1000
+    train_dataset = MCFDatasetInMemory(args.dsroottrain).shuffle()[:args.ntrain]
     test_dataset = MCFDatasetInMemory(args.dsroottest).shuffle()
-    hyperparameters = {'batch_size': 24, 'epochs': 25, 'lr': -2.9871179346013337, 'weight_decay': -10.0, 'step_size': 0.5809405735679614,
-     'hidden_channels': 73, 'num_gin_layers': 6, 'num_mlp_layers': 2, 'num_mlp_readout_layers': 3,
-     'skip_connections': False, 'loss': 'mix_expected_runtime', 'loss_weight': 0.6831435486104581}
+    # Scale epochs according to ntrain
+    epochs = int(25 * 48000 / args.ntrain)
+    hyperparameters = {'batch_size': 24, 'epochs': epochs, 'lr': -2.9871179346013337, 'weight_decay': -10.0,
+                       'step_size': 0.5809405735679614,
+                       'hidden_channels': 73, 'num_gin_layers': 6, 'num_mlp_layers': 2, 'num_mlp_readout_layers': 3,
+                       'skip_connections': False, 'loss': 'mix_expected_runtime', 'loss_weight': 0.6831435486104581}
 
     def save_checkpoint(log_info):
         with open(os.path.join(args.dsroottrain, 'result', args.experiment_name, 'log_info_posthpo_result.pkl'),
