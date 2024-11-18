@@ -30,11 +30,55 @@ def setup_parser():
 result_folder = os.path.join("result", "skip_f_loss_mix_post_hpo")
 
 
+def post_hpo(args):
+    info_results = []
+    for i in range(1, 49):
+        if i == 38:
+            continue
+        with open(os.path.join(args.dsroot, "result", "skip_f_loss_mix_post_hpo" + (f"_{i}" if i < 48 else ""),
+                               f"log_info_post{'_' if i==48 else ''}hpo" + ("_result.pkl" if i < 48 else ".pkl")), "rb") as f:
+            info_results.append(pickle.load(f))
+    accuracies = []
+    ratios = []
+    for _, epochs_info, _, _ in info_results:
+        accuracies.append(epochs_info[-1]['eval_total_acc'])
+        ratios.append(epochs_info[-1]['eval_runtime_sum'] / epochs_info[-1]['eval_minruntime_sum'])
+
+    plt.style.use('seaborn-v0_8-paper')
+    matplotlib.rcParams.update(nice_fonts)
+
+    # First plot: Accuracies
+    fig1 = plt.figure(figsize=(10, 10))
+    plt.scatter(range(1, len(accuracies)+1), accuracies, marker='o', s=100)
+    plt.xlabel('Number of training data points (in 1,000)')
+    plt.ylabel('Accuracy')
+    plt.ylim(0.8, 1.0)
+    plt.grid(True)
+
+    fig1.savefig(os.path.join(args.dsroot, "result", "skip_f_loss_mix_post_hpo",
+                              f"sensitivity_acc.png"))
+    plt.close(fig1)
+
+    # Second plot: Ratios
+    fig2 = plt.figure(figsize=(10, 10))
+    plt.scatter(range(1, len(ratios)+1), ratios, marker='o', color='orange', s=100)
+    plt.xlabel('Number of training data points (in 1,000)')
+    plt.ylabel('Runtime Ratio')
+    plt.ylim(1.0, 1.04)
+    plt.grid(True)
+
+    fig2.savefig(os.path.join(args.dsroot, "result", "skip_f_loss_mix_post_hpo",
+                              f"sensitivity_ratio.png"))
+    plt.close(fig2)
+
+    print(accuracies)
+    print(ratios)
+
 def main(args):
     if os.path.exists(os.path.join(args.dsroot, result_folder, "log_info_post_hpo.pkl")):
         with open(os.path.join(args.dsroot, result_folder, "log_info_post_hpo.pkl"), "rb") as f:
             log_info_result = pickle.load(f)
-        a, b, c, d= log_info_result
+        a, b, c, d = log_info_result
         print(a)
         for x in b:
             print(x)
@@ -55,6 +99,7 @@ def main(args):
         pass
     plt.style.use('seaborn-v0_8-paper')
     matplotlib.rcParams.update(nice_fonts)
+
 
     def key_formatter(key):
         if key == "weight_decay":
@@ -85,8 +130,8 @@ def main(args):
             [f"{key_formatter(key)}={value_formatter(value)}" for key, value in parameters.items()] + [
                 f"Final obj.={final_obj:.4f}",
                 f"Runtime={runtime:.1f}s"])
-        #fig.suptitle(f'Visualized metrics of bayes sample {i}\n', fontsize=14)
-        #fig.text(s=subtitle, x=0.5, y=0.95, fontsize=6, ha='center', va='center')
+        # fig.suptitle(f'Visualized metrics of bayes sample {i}\n', fontsize=14)
+        # fig.text(s=subtitle, x=0.5, y=0.95, fontsize=6, ha='center', va='center')
         ax1.set_xlabel("Epochs")
         ax1.set_ylim([0.7, 1.0])
         ax2.set_xlabel("Epochs")
@@ -161,4 +206,5 @@ if __name__ == "__main__":
     os.chdir("..")
     parser = setup_parser()
     _args = parser.parse_args()
-    main(_args)
+    #main(_args)
+    post_hpo(_args)
